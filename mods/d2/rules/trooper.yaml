@@ -1,23 +1,23 @@
 trooper:
-	Inherits: ^Infantry
-	Inherits@AUTOTARGET: ^AutoTargetGroundAssaultMove
-	Buildable:
-		Queue: Trooper
-		BuildPaletteOrder: 20
-		BuildDuration: 700
-		BuildDurationModifier: 40
-		Description: Anti-tank/Anti-aircraft infantry\n  Strong vs Tanks, Aircraft\n  Weak vs Infantry, Artillery
-	Valued:
-		Cost: 100
-	Tooltip:
-		Name: Trooper
-	Health:
-		HP: 45
-	Mobile:
-		Speed: 31
-	Armament:
-		Weapon: Bazooka
-		LocalOffset: 128,0,256
-	AttackFrontal:
-	WithInfantryBody:
-		DefaultAttackSequence: shoot
+    Inherits: ^Infantry
+    Inherits@AUTOTARGET: ^AutoTargetGroundAssaultMove
+    Buildable:
+        Queue: Trooper
+        BuildPaletteOrder: 20
+        BuildDuration: 700
+        BuildDurationModifier: 40
+        Description: Anti-tank/Anti-aircraft infantry\n  Strong vs Tanks, Aircraft\n  Weak vs Infantry, Artillery
+    Valued:
+        Cost: 100
+    Tooltip:
+        Name: Trooper
+    Health:
+        HP: 45
+    Mobile:
+        Speed: 31
+    Armament:
+        Weapon: Bazooka
+        LocalOffset: 128,0,256
+    AttackFrontal:
+    WithInfantryBody:
+        DefaultAttackSequence: shoot

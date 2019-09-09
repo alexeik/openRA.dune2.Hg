@@ -1,0 +1,15 @@
+Background@MAINMENU_PRERELEASE_NOTIFICATION:
+	Logic: Dune2VideoWSAPlayerLogic
+	X: (WINDOW_RIGHT - WIDTH) / 2
+	Y: (WINDOW_BOTTOM - HEIGHT) / 2
+	Width: WINDOW_RIGHT
+	Height: WINDOW_BOTTOM
+	Background: dialog3
+	Visible: True
+	Children:
+		WsaPlayer@PLAYER:
+			X: 0
+			Y: 0
+			Width: WINDOW_RIGHT
+			Height: WINDOW_BOTTOM
+

@@ -83,7 +83,7 @@ namespace OpenRA.Mods.D2.FileFormats
 				currentFrame = 0;
 		}
 
-		ISpriteFrame CurrentSpriteFrame()
+        ISpriteFrame CurrentSpriteFrame()
 		{
 			if (frames != null && currentFrame < frames.Length)
 				return frames[currentFrame];

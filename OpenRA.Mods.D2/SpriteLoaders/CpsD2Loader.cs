@@ -20,6 +20,7 @@ namespace OpenRA.Mods.D2.SpriteLoaders
 	{
 		public const int TileWidth = 320;
 		public const int TileHeight = 200;
+        public string SpriteFilename = "";
 
 		public const int TileSize = TileWidth * TileHeight;
 		const int NumTiles = 1;
@@ -41,8 +42,13 @@ namespace OpenRA.Mods.D2.SpriteLoaders
 				LCWCompression.DecodeInto(tempData, Data);
 			}
 		}
-
-		bool IsCpsD2(Stream s)
+        public CpsD2Loader(string spriteFilename)
+        {
+            SpriteFilename = spriteFilename;
+        }
+        public CpsD2Loader()
+        { }
+        bool IsCpsD2(Stream s)
 		{
 			if (s.Length < 10)
 				return false;

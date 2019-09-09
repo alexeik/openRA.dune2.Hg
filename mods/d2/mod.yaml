@@ -24,7 +24,7 @@ Packages:
 	~INTRO.PAK
 	~FINALE.PAK
 	~SCENARIO.PAK
-	#~INTROVOC.PAK
+	~INTROVOC.PAK
 	#~MENTAT.PAK
 	#~MERC.PAK
 	#~ENGLISH.PAK
@@ -188,6 +188,7 @@ ChromeLayout:
 	common|chrome/ingame.yaml
 	common|chrome/ingame-chat.yaml
 	common|chrome/ingame-fmvplayer.yaml
+	d2|chrome/mainmenu-prerelease-notification.yaml
 	d2k|chrome/ingame-menu.yaml
 	common|chrome/ingame-info.yaml
 	common|chrome/ingame-infoscripterror.yaml
