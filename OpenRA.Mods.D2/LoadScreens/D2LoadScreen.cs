@@ -129,15 +129,24 @@ namespace OpenRA.Mods.D2
 
 			lastUpdate.Restart();
 			var text = messages.Random(Game.CosmeticRandom);
-			var textSize = r.Fonts["Bold"].Measure(text);
+			var textSize = r.Fonts["Original"].Measure(text);
 
 			r.BeginFrame(int2.Zero, 1f);
 
 			if (logo != null)
 				r.SpriteRenderer.DrawSprite(logo, logoPos, pr, logo.Size);
-
-			r.Fonts["Bold"].DrawText(text, new float2(r.Resolution.Width - textSize.X - 20, r.Resolution.Height - textSize.Y - 20), Color.White);
-			r.EndFrame(new NullInputHandler());
+            Color textcolor=Color.White;
+           if  (this.info.ContainsKey("TextColor"))
+                {
+                Color ss ;
+               ss= FieldLoader.GetValue<Color>("(value)", info["TextColor"]);
+                textcolor =ss;
+            }
+           // r.Flush();
+            //r.SetViewportParams(int2.Zero, 1f);
+			//r.Fonts["Original"].DrawText(text, new float2(r.Resolution.Width - textSize.X - 20, r.Resolution.Height - textSize.Y - 20), textcolor);
+            r.Fonts["Original"].DrawTextWithShadow(text, new float2(r.Resolution.Width - textSize.X - 20, r.Resolution.Height - textSize.Y - 20), textcolor, Color.FromArgb(150, 0, 0), Color.FromArgb(100, 100, 0, 0), 3);
+            r.EndFrame(new NullInputHandler());
 		}
 
 		protected override void Dispose(bool disposing)

@@ -48,12 +48,13 @@ namespace OpenRA.Mods.D2.Widgets
 
         Action onComplete;
         public Queue<string> VideoStackList;
-        public List<FrameLine> frameline;
-
+        public List<FrameSoundLine> frameSoundLine;
+        public List<FrameTextLine> frameTextLine;
 
         public WsaPlayerWidget()
         {
             LoadPalette();
+          
         }
 
         public void Load(string filename)
@@ -93,6 +94,17 @@ namespace OpenRA.Mods.D2.Widgets
             var pal = hardwarePalette.GetPalette("chrome");
             pr = new PaletteReference("chromeref", hardwarePalette.GetPaletteIndex("chrome"), pal, hardwarePalette);
         }
+        void LoadPalette(ImmutablePalette cpspalette,string customname)
+        {
+
+            palette = cpspalette;
+            hardwarePalette = new HardwarePalette();
+            hardwarePalette.AddPalette(customname, palette, false);
+            hardwarePalette.Initialize();
+            Game.Renderer.SetPalette(hardwarePalette);
+            var pal = hardwarePalette.GetPalette(customname);
+            pr = new PaletteReference(customname+"ref", hardwarePalette.GetPaletteIndex(customname), pal, hardwarePalette);
+        }
 
         public void Open(WsaReader video)
         {
@@ -121,13 +133,15 @@ namespace OpenRA.Mods.D2.Widgets
             paused = true;
             //onComplete = () => { };
             TypeDictionary metadata;
+            ImmutablePalette cpspalette;
             using (var stream = Game.ModData.DefaultFileSystem.Open(image.SpriteFilename))
             {
 
                
-                video.TryParseSprite(stream, out imageSprite, out metadata);
-
+                video.TryParseSpritePlusPalette(stream, out imageSprite, out metadata,out cpspalette);
+                //LoadPalette(cpspalette, image.SpriteFilename);
             }
+
             var imwidth = imageSprite[0].FrameSize.Width;
             var imheight = imageSprite[0].FrameSize.Height;
 
@@ -148,6 +162,7 @@ namespace OpenRA.Mods.D2.Widgets
         long CountForWaitNextFrameMs = 0;
         long CountForPause = 0;
         Sprite prevSprite = null;
+        FrameTextLine prevText = null;
         long PauseInSeconds = 5;
         long DrawPrevFrameEveryXMs = 300;
         public void PlayMp3()
@@ -166,18 +181,25 @@ namespace OpenRA.Mods.D2.Widgets
 
             //Bass.Free(); // Free the device.
         }
+        public void DrawWsaText(FrameTextLine ftl)
+        {
+            var textSize = Game.Renderer.Fonts["Original"].Measure(ftl.Text);
+            // Game.Renderer.Fonts["Original"].DrawText(ftl.Text, ftl.Pos, ftl.TextColor);
+             Game.Renderer.Fonts["Original"].DrawTextWithShadow(ftl.Text, ftl.Pos, ftl.TextColor, Color.FromArgb(150, 0, 0), Color.FromArgb(100,100, 0, 0), 2);
+            //Game.Renderer.Fonts["Original"].DrawTextWithContrast(ftl.Text, ftl.Pos, ftl.TextColor, Color.FromArgb(150, 0, 0), Color.FromArgb(100, 255, 255, 255), 1);
+        }
         public override void Draw()
         {
             if (String.IsNullOrEmpty(cachedVideo ))
                 return;
-            if (video==null)
-            {
-                return;
-            }
+            //if (video==null)
+            //{
+            //    return;
+            //}
             //Game.RunTime MilliSeconds 1s=1000ms=50ms*20times
             var deltaScale = Game.RunTime - lastDrawTime;
             CountForWaitNextFrameMs += deltaScale;
-
+         
             //if we need pause wait it
 
             if (CountForPause > PauseInSeconds * 1000)
@@ -188,17 +210,16 @@ namespace OpenRA.Mods.D2.Widgets
                     {
                         CountForPause = 0;
                         CountForWaitNextFrameMs = 0;
-                        //PlayMp3();
-                        //Game.Sound.Play(SoundType.UI, "3HOUSES.VOC");
-                        //Game.Sound.Play(SoundType.UI, "BEGINS.VOC");
                         Load(VideoStackList.Dequeue());
                         lastDrawTime = Game.RunTime;
                         stopped = paused = false;
                         return;
                     }
+                    //stop video 
                 }
-
-                CloseVideo();
+                //нужно остановить медиа=сцену и передать контроль дальше
+                cachedVideo = null;
+                Exit();
                 return;
             }
             if (CountForWaitNextFrameMs < DrawPrevFrameEveryXMs) //code runs every tick before Next Video frame to fill the gap
@@ -212,6 +233,10 @@ namespace OpenRA.Mods.D2.Widgets
 
 
                 }
+                if (prevText != null)
+                {
+                    DrawWsaText(prevText);
+                }
                 return;
             }
             else
@@ -224,6 +249,10 @@ namespace OpenRA.Mods.D2.Widgets
                         Game.Renderer.SpriteRenderer.DrawSprite(prevSprite, videoOrigin, pr, videoSize);
                         CountForPause += deltaScale; //incerease CountForPause to enter at if (CountForPause > PauseInSeconds * 1000)
                         lastDrawTime = Game.RunTime;
+                        if (prevText != null)
+                        {
+                            DrawWsaText(prevText);
+                        }
 
                         return;
                     }
@@ -238,37 +267,59 @@ namespace OpenRA.Mods.D2.Widgets
                     lastDrawTime = Game.RunTime;
                     return;
                 }
+
+                if (prevText != null)
+                {
+                    DrawWsaText(prevText);
+                }
                 //||
                 //\/               
             }
 
             if (video != null)
             {
-                if (frameline == null)
+                if (frameSoundLine == null)
                 {
 
                 }
 
                 else
                 {
-                    if (frameline.Contains(new FrameLine() { WSAfilename = cachedVideo, FrameNumber = video.CurrentFrame }))
+                    if (frameSoundLine.Contains(new FrameSoundLine() { WSAfilename = cachedVideo, FrameNumber = video.CurrentFrame }))
                     {
-                        var vocfilename = frameline.Find(x => x.WSAfilename.Contains(cachedVideo) && x.FrameNumber == video.CurrentFrame).VOCfilename;
+                        var vocfilename = frameSoundLine.Find(x => x.WSAfilename.Contains(cachedVideo) && x.FrameNumber == video.CurrentFrame).VOCfilename;
                         Game.Sound.Play(SoundType.UI, vocfilename);
+                    }
+                }
+                if (frameTextLine == null)
+                {
+
+                }
+
+                else
+                {
+                    if (frameTextLine.Contains(new FrameTextLine() { WSAfilename = cachedVideo, FrameNumber = video.CurrentFrame }))
+                    {
+                        FrameTextLine ft = frameTextLine.Find(x => x.WSAfilename.Contains(cachedVideo) && x.FrameNumber == video.CurrentFrame);
+                 
+                        DrawWsaText(ft);
+                        prevText = ft;
                     }
                 }
             }
             var sheetBuilder = new SheetBuilder(SheetType.Indexed, 512);
-
+           
             //router for WSA  frame or CPS frame
             Sprite videoSprite=null;
             if (cachedVideo.Contains("WSA"))
             {
+                //videoSprite = new Sprite(sheetBuilder.Current, new Rectangle(0, 0, 320, 200), TextureChannel.RGBA);
                  videoSprite = sheetBuilder.Add(video.Frame);
             }
             else
             {
-                 videoSprite = sheetBuilder.Add(imageSprite[0]);
+                //videoSprite = new Sprite(sheetBuilder.Current, new Rectangle(0, 0, 320, 200), TextureChannel.RGBA);
+                videoSprite = sheetBuilder.Add(imageSprite[0]);
             }
             prevSprite = videoSprite;
 
@@ -280,8 +331,8 @@ namespace OpenRA.Mods.D2.Widgets
             //Game.Renderer.DisableScissor();
 
             Game.Renderer.SpriteRenderer.DrawSprite(videoSprite, videoOrigin, pr, videoSize);
-
-
+            
+   
             CountForWaitNextFrameMs = 0;
             lastDrawTime = Game.RunTime;
         }
@@ -333,12 +384,16 @@ namespace OpenRA.Mods.D2.Widgets
             if (stopped || video == null)
                 return;
 
+
             stopped = true;
             paused = true;
             video.Reset();
             Game.RunAfterTick(onComplete);
         }
-
+        public void Exit()
+        {
+            Game.RunAfterTick(onComplete);
+        }
         public void CloseVideo()
         {
             Stop();

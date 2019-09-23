@@ -10,22 +10,42 @@
 #endregion
 
 using OpenRA.Mods.Common.Widgets;
+using OpenRA.Primitives;
 using OpenRA.Widgets;
 using System;
 using System.Collections.Generic;
 
 namespace OpenRA.Mods.D2.Widgets.Logic
 {
-    public class FrameLine : IEquatable<FrameLine>
+    public class FrameSoundLine : IEquatable<FrameSoundLine>
     {
         public string WSAfilename;
         public int FrameNumber;
         public string VOCfilename;
-        public bool Equals(FrameLine other)
+        public bool Equals(FrameSoundLine other)
         {
             if (other == null) return false;
 
             if (this.WSAfilename==other.WSAfilename && this.FrameNumber==other.FrameNumber)
+            {
+                return true;
+            }
+            return false;
+        }
+
+    }
+    public class FrameTextLine : IEquatable<FrameTextLine>
+    {
+        public string WSAfilename;
+        public int FrameNumber;
+        public string Text;
+        public float2 Pos;
+        public Color TextColor;
+        public bool Equals(FrameTextLine other)
+        {
+            if (other == null) return false;
+
+            if (this.WSAfilename == other.WSAfilename && this.FrameNumber == other.FrameNumber)
             {
                 return true;
             }
@@ -49,9 +69,9 @@ namespace OpenRA.Mods.D2.Widgets.Logic
             fullscreenVideoPlayer.Visible = true;
             fsPlayer.VideoStackList = new System.Collections.Generic.Queue<string>();
          
-            //fsPlayer.VideoStackList.Enqueue("WESTWOOD.WSA");
-            //fsPlayer.VideoStackList.Enqueue("VIRGIN.CPS");
-            fsPlayer.VideoStackList.Enqueue("INTRO1.WSA");
+            fsPlayer.VideoStackList.Enqueue("WESTWOOD.WSA");
+            fsPlayer.VideoStackList.Enqueue("VIRGIN.CPS");
+            //fsPlayer.VideoStackList.Enqueue("INTRO1.WSA");
             //fsPlayer.VideoStackList.Enqueue("INTRO2.WSA");
             //fsPlayer.VideoStackList.Enqueue("INTRO3.WSA");
             //fsPlayer.VideoStackList.Enqueue("INTRO4.WSA");
@@ -66,12 +86,16 @@ namespace OpenRA.Mods.D2.Widgets.Logic
             //fsPlayer.VideoStackList.Enqueue("INTRO10.WSA");
             //fsPlayer.VideoStackList.Enqueue("INTRO11.WSA");
 
-            List<FrameLine> fl = new List<FrameLine>();
-            fl.Add(new FrameLine() { WSAfilename = "INTRO1.WSA", FrameNumber = 31, VOCfilename = "DUNE.VOC" });
-            fl.Add(new FrameLine() { WSAfilename = "INTRO1.WSA", FrameNumber =37, VOCfilename = "BLDING.VOC" });
-            fl.Add(new FrameLine() { WSAfilename = "INTRO1.WSA", FrameNumber = 48, VOCfilename = "DYNASTY.VOC" });
-            fsPlayer.frameline = fl;
+            List<FrameSoundLine> fl = new List<FrameSoundLine>();
+            fl.Add(new FrameSoundLine() { WSAfilename = "INTRO1.WSA", FrameNumber = 31, VOCfilename = "DUNE.VOC" });
+            fl.Add(new FrameSoundLine() { WSAfilename = "INTRO1.WSA", FrameNumber =37, VOCfilename = "BLDING.VOC" });
+            fl.Add(new FrameSoundLine() { WSAfilename = "INTRO1.WSA", FrameNumber = 48, VOCfilename = "DYNASTY.VOC" });
+            fsPlayer.frameSoundLine = fl;
 
+            List<FrameTextLine> ftl = new List<FrameTextLine>();
+            ftl.Add(new FrameTextLine() { WSAfilename = "INTRO1.WSA", FrameNumber = 37, Text="The Building of A Dynasty",Pos=new float2(230,560) ,TextColor=Color.FromArgb(150,0,0)});
+            fsPlayer.frameTextLine = ftl;
+           // PlayVideoStack(fsPlayer, () => { });
             PlayVideoStack(fsPlayer, () => ShowMainMenu(world));
 
         }
@@ -138,7 +162,7 @@ namespace OpenRA.Mods.D2.Widgets.Logic
                 // video playback runs asynchronously
                 player.PlayThen(() =>
                 {
-                    StopVideo(player);
+                    //StopVideo(player);
                     if (onComplete != null)
                         onComplete();
                 });
