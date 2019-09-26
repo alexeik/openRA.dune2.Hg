@@ -70,8 +70,9 @@ namespace OpenRA.Mods.D2.Widgets.Logic
             fsPlayer.VideoStackList = new System.Collections.Generic.Queue<string>();
          
             fsPlayer.VideoStackList.Enqueue("WESTWOOD.WSA");
+            fsPlayer.VideoStackList.Enqueue("AND.ENG");
             fsPlayer.VideoStackList.Enqueue("VIRGIN.CPS");
-            //fsPlayer.VideoStackList.Enqueue("INTRO1.WSA");
+            fsPlayer.VideoStackList.Enqueue("INTRO1.WSA");
             //fsPlayer.VideoStackList.Enqueue("INTRO2.WSA");
             //fsPlayer.VideoStackList.Enqueue("INTRO3.WSA");
             //fsPlayer.VideoStackList.Enqueue("INTRO4.WSA");
