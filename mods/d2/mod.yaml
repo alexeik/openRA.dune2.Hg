@@ -27,7 +27,7 @@ Packages:
 	~INTROVOC.PAK
 	#~MENTAT.PAK
 	#~MERC.PAK
-	#~ENGLISH.PAK
+	~ENGLISH.PAK
 	~SOUND.RS
 	d2|bits
 	d2k|bits
