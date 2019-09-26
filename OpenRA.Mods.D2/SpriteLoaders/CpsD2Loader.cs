@@ -30,7 +30,9 @@ namespace OpenRA.Mods.D2.SpriteLoaders
 		uint palSize;
         bool HasEmbeddedPalette = false;
         ImmutablePalette CpsPalette;
-        byte[] paldata;
+        Color[] paldataColor;
+        byte[] paldataByte;
+
 
         public class CpsD2Tile : ISpriteFrame
         {
@@ -94,19 +96,27 @@ namespace OpenRA.Mods.D2.SpriteLoaders
 		}
         public void ReadEmbeddedPalette(Stream s)
         {
-            int n = 768;
-            paldata = new byte[n]; 
-            for (var i = 0; i < n; i++)
-                paldata[i] = s.ReadUInt8();
+            //int n = 768;
+            //paldata = new byte[n]; 
+            //for (var i = 0; i < n; i++)
+            //    paldata[i] = s.ReadUInt8();
 
 
-            //paldata = StreamExts.ReadBytes(s, 768);
-            
-            //Stream stream = new MemoryStream(tempData);
-            //CpsPalette = new ImmutablePalette(stream, new int[] { }); 
+            //paldata = new Color[256];
+            //for (var i = 0; i < 768 / 3; i++)
+            //{
+            //    var r = s.ReadByte(); var g = s.ReadByte(); var b = s.ReadByte();
+            //    paldata[i] = Color.FromArgb(r, g, b);
+            //}
+
+
+            paldataByte = StreamExts.ReadBytes(s, 768);
+
+            Stream stream = new MemoryStream(paldataByte);
+            CpsPalette = new ImmutablePalette(stream, new int[] { });
 
         }
-		CpsD2Tile[] ParseFrames(Stream s)
+        CpsD2Tile[] ParseFrames(Stream s)
 		{
 			var start = s.Position;
 
@@ -119,7 +129,8 @@ namespace OpenRA.Mods.D2.SpriteLoaders
                 tiles[i] = new CpsD2Tile(s);
                 if (HasEmbeddedPalette)
                 {
-                    ApplyPalette2(tiles[i], paldata);
+                    //ApplyPalette2(tiles[i], paldata);
+                   // FastCopyIntoSprite(null, paldata, tiles[i]);
                 }
             }
            
@@ -137,22 +148,22 @@ namespace OpenRA.Mods.D2.SpriteLoaders
             //    image.Data[j] = palette[image.Data[j]];
 
 
-            for (int i = 0; i < image.Data.Length; i+=3)
+            for (int i = 0; i < image.Data.Length; i += 3)
             {
                 sourcePalIndex = image.Data[i];
 
                 //red
-                palcolor = paldata[sourcePalIndex];
-                newimage[k] = (byte)(palcolor * 4);
+                //palcolor = paldata[sourcePalIndex];
+                //newimage[k] = (byte)(palcolor * 4);
 
-                 // green
-                palcolor = paldata[sourcePalIndex + 1];
-                newimage[k+1] = (byte)(palcolor * 4);
+                //// green
+                //palcolor = paldata[sourcePalIndex + 1];
+                //newimage[k + 1] = (byte)(palcolor * 4);
 
-                 //blue
-                palcolor = paldata[sourcePalIndex + 2];
-                newimage[k+2] = (byte)(palcolor * 4);
-                k+=3;//for next new pixel
+                ////blue
+                //palcolor = paldata[sourcePalIndex + 2];
+                //newimage[k + 2] = (byte)(palcolor * 4);
+                k += 3;//for next new pixel
 
 
 
@@ -193,7 +204,57 @@ namespace OpenRA.Mods.D2.SpriteLoaders
             }
             image.Data = dataArgb;
         }
-		public bool TryParseSprite(Stream s, out ISpriteFrame[] frames, out TypeDictionary metadata)
+        public static void FastCopyIntoSprite(Sprite dest, Color[] pal,CpsD2Tile srccps)
+        {
+           
+       
+
+            byte[] destData = new byte[4 * 320 * 200];
+            var destStride = 320;
+            var width =320;
+            var height =200;
+
+            unsafe
+            {
+                // Cast the data to an int array so we can copy the src data directly
+                fixed (byte* bd = &destData[0])
+                {
+                    var data = (int*)bd;
+                    var x = 0;
+                    var y = 0;
+
+                    var k = 0;
+                    for (var yy = 0; yy < height; yy++)
+                    {
+                        for (var xx = 0; xx < width; xx++)
+                        {
+                            Color cc;
+                            if (pal == null)
+                            {
+                                var r = srccps.Data[k++];
+                                var g = srccps.Data[k++];
+                                var b = srccps.Data[k++];
+                                var a = srccps.Data[k++];
+                                cc = Color.FromArgb(a, r, g, b);
+                            }
+                            else
+                                cc = pal[srccps.Data[k++]];
+
+                            data[(y + yy) * destStride + x + xx] = PremultiplyAlpha(cc).ToArgb();
+                        }
+                    }
+                }
+            }
+            srccps.Data = destData;
+        }
+        public static Color PremultiplyAlpha(Color c)
+        {
+            if (c.A == byte.MaxValue)
+                return c;
+            var a = c.A / 255f;
+            return Color.FromArgb(c.A, (byte)(c.R * a + 0.5f), (byte)(c.G * a + 0.5f), (byte)(c.B * a + 0.5f));
+        }
+        public bool TryParseSprite(Stream s, out ISpriteFrame[] frames, out TypeDictionary metadata)
 		{
 			metadata = null;
 			if (!IsCpsD2(s))
