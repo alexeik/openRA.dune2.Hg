@@ -66,6 +66,14 @@ namespace OpenRA.Mods.D2.Widgets
             prevSprite = null;
             if (filename.Contains("WSA"))
             {
+                if (filename.Contains("INTRO"))
+                {
+                    LoadPalette();
+                }
+                else
+                {
+                    LoadPaletteWSA();
+                }
                 var video = new WsaReader(Game.ModData.DefaultFileSystem.Open(filename));
                 cachedVideo = filename;
                 Open(video);
@@ -93,6 +101,20 @@ namespace OpenRA.Mods.D2.Widgets
             Game.Renderer.SetPalette(hardwarePalette);
             var pal = hardwarePalette.GetPalette("chrome");
             pr = new PaletteReference("chromeref", hardwarePalette.GetPaletteIndex("chrome"), pal, hardwarePalette);
+        }
+        void LoadPaletteWSA()
+        {
+            using (var stream = Game.ModData.DefaultFileSystem.Open("WESTWOOD.PAL"))
+            {
+                palette = new ImmutablePalette(stream, new int[] { });
+            }
+
+            hardwarePalette = new HardwarePalette();
+            hardwarePalette.AddPalette("WESTWOOD.PAL", palette, false);
+            hardwarePalette.Initialize();
+            Game.Renderer.SetPalette(hardwarePalette);
+            var pal = hardwarePalette.GetPalette("WESTWOOD.PAL");
+            pr = new PaletteReference("WESTWOOD.PALref", hardwarePalette.GetPaletteIndex("WESTWOOD.PAL"), pal, hardwarePalette);
         }
         void LoadPalette(ImmutablePalette cpspalette,string customname)
         {
@@ -139,7 +161,7 @@ namespace OpenRA.Mods.D2.Widgets
 
                
                 video.TryParseSpritePlusPalette(stream, out imageSprite, out metadata,out cpspalette);
-                //LoadPalette(cpspalette, image.SpriteFilename);
+                LoadPalette(cpspalette, image.SpriteFilename);
             }
 
             var imwidth = imageSprite[0].FrameSize.Width;
@@ -190,6 +212,9 @@ namespace OpenRA.Mods.D2.Widgets
         }
         public override void Draw()
         {
+            //вызовы SetPalette в Draw для UI элементов, конкурируют с RefreshPalette в World.Draw.
+            Game.Renderer.SetPalette(hardwarePalette);
+
             if (String.IsNullOrEmpty(cachedVideo ))
                 return;
             //if (video==null)
@@ -228,8 +253,9 @@ namespace OpenRA.Mods.D2.Widgets
 
                 if (prevSprite != null)
                 {
+                  
                     //just draw the same frame 
-                   Game.Renderer.SpriteRenderer.DrawSprite(prevSprite, videoOrigin, pr, videoSize);
+                    Game.Renderer.SpriteRenderer.DrawSprite(prevSprite, videoOrigin, pr, videoSize);
 
 
                 }
@@ -245,6 +271,7 @@ namespace OpenRA.Mods.D2.Widgets
                 {
                     if (video.CurrentFrame >= video.Length - 1) //this code runs every DrawFrameEveryXMilliseconds when video is ended.
                     {
+                        
                         //on video last frame draw always last frame
                         Game.Renderer.SpriteRenderer.DrawSprite(prevSprite, videoOrigin, pr, videoSize);
                         CountForPause += deltaScale; //incerease CountForPause to enter at if (CountForPause > PauseInSeconds * 1000)
@@ -262,6 +289,8 @@ namespace OpenRA.Mods.D2.Widgets
                 }
                 if (image!=null && prevSprite!=null)
                 {
+                   
+
                     Game.Renderer.SpriteRenderer.DrawSprite(prevSprite, videoOrigin, pr, videoSize);
                     CountForPause += deltaScale; //incerease CountForPause to enter at if (CountForPause > PauseInSeconds * 1000)
                     lastDrawTime = Game.RunTime;
@@ -314,22 +343,24 @@ namespace OpenRA.Mods.D2.Widgets
             if (cachedVideo.Contains("WSA"))
             {
                 //videoSprite = new Sprite(sheetBuilder.Current, new Rectangle(0, 0, 320, 200), TextureChannel.RGBA);
+               
                  videoSprite = sheetBuilder.Add(video.Frame);
             }
             else
             {
+               
                 //videoSprite = new Sprite(sheetBuilder.Current, new Rectangle(0, 0, 320, 200), TextureChannel.RGBA);
                 videoSprite = sheetBuilder.Add(imageSprite[0]);
             }
             prevSprite = videoSprite;
 
-           
+
             //Game.Renderer.EnableScissor(RenderBounds);
             //Game.Renderer.RgbaColorRenderer.FillRect(
             //    new float2(RenderBounds.Left, RenderBounds.Top),
             //    new float2(RenderBounds.Right, RenderBounds.Bottom), OpenRA.Primitives.Color.Black);
             //Game.Renderer.DisableScissor();
-
+          
             Game.Renderer.SpriteRenderer.DrawSprite(videoSprite, videoOrigin, pr, videoSize);
             
    
