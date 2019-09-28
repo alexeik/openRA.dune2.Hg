@@ -206,8 +206,8 @@ namespace OpenRA.Mods.D2.Widgets
         public void DrawWsaText(FrameTextLine ftl)
         {
             var textSize = Game.Renderer.Fonts["Original"].Measure(ftl.Text);
-            // Game.Renderer.Fonts["Original"].DrawText(ftl.Text, ftl.Pos, ftl.TextColor);
-             Game.Renderer.Fonts["Original"].DrawTextWithShadow(ftl.Text, ftl.Pos, ftl.TextColor, Color.FromArgb(150, 0, 0), Color.FromArgb(100,100, 0, 0), 2);
+             Game.Renderer.Fonts["Original"].DrawText(ftl.Text, ftl.Pos, ftl.TextColor);
+            // Game.Renderer.Fonts["Original"].DrawTextWithShadow(ftl.Text, ftl.Pos, ftl.TextColor, Color.FromArgb(150, 0, 0), Color.FromArgb(100,100, 0, 0), 2);
             //Game.Renderer.Fonts["Original"].DrawTextWithContrast(ftl.Text, ftl.Pos, ftl.TextColor, Color.FromArgb(150, 0, 0), Color.FromArgb(100, 255, 255, 255), 1);
         }
         public override void Draw()
@@ -423,6 +423,10 @@ namespace OpenRA.Mods.D2.Widgets
         }
         public void Exit()
         {
+            if (onComplete == null)
+            {
+                return;
+            }
             Game.RunAfterTick(onComplete);
         }
         public void CloseVideo()

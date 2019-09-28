@@ -279,10 +279,12 @@ Fonts:
 		Font: d2|dune2.otf
 		Size:50
 	Regular:
-		Font: common|FreeSans.ttf
+		Font: d2|dune2.otf
+		#Font: common|FreeSans.ttf
 		Size:14
 	Bold:
-		Font: common|FreeSansBold.ttf
+		Font: d2|dune2.otf
+		#Font: common|FreeSansBold.ttf
 		Size:14
 	Title:
 		Font: d2k|Dune2k.ttf

@@ -144,8 +144,8 @@ namespace OpenRA.Mods.D2
             }
            // r.Flush();
             //r.SetViewportParams(int2.Zero, 1f);
-			//r.Fonts["Original"].DrawText(text, new float2(r.Resolution.Width - textSize.X - 20, r.Resolution.Height - textSize.Y - 20), textcolor);
-            r.Fonts["Original"].DrawTextWithShadow(text, new float2(r.Resolution.Width - textSize.X - 20, r.Resolution.Height - textSize.Y - 20), textcolor, Color.FromArgb(150, 0, 0), Color.FromArgb(100, 100, 0, 0), 3);
+			r.Fonts["Original"].DrawText(text, new float2(r.Resolution.Width - textSize.X - 20, r.Resolution.Height - textSize.Y - 20), textcolor);
+            //r.Fonts["Original"].DrawTextWithShadow(text, new float2(r.Resolution.Width - textSize.X - 20, r.Resolution.Height - textSize.Y - 20), textcolor, Color.FromArgb(150, 0, 0), Color.FromArgb(100, 100, 0, 0), 3);
             r.EndFrame(new NullInputHandler());
 		}
 
