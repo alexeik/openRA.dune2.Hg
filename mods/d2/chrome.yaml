@@ -155,7 +155,7 @@ flags: buttons.png
 
 # Used for the menu
 dialog: dialog.png
-	background: 0,0,480,480
+	background: 514,1,11,11
 	border-r: 489,0,9,192
 	border-l: 480,0,9,192
 	border-b: 0,489,191,9

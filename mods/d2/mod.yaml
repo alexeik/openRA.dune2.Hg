@@ -28,6 +28,7 @@ Packages:
 	#~MENTAT.PAK
 	#~MERC.PAK
 	~ENGLISH.PAK
+	~SOUND.PAK
 	~SOUND.RS
 	d2|bits
 	d2k|bits
@@ -200,7 +201,7 @@ ChromeLayout:
 	common|chrome/ingame-debug.yaml
 	common|chrome/ingame-debuginfo.yaml
 	common|chrome/ingame-infochat.yaml
-	d2k|chrome/mainmenu.yaml
+	d2|chrome/mainmenu.yaml
 	common|chrome/settings.yaml
 	common|chrome/credits.yaml
 	common|chrome/lobby.yaml
@@ -285,7 +286,7 @@ Fonts:
 	Bold:
 		Font: d2|dune2.otf
 		#Font: common|FreeSansBold.ttf
-		Size:14
+		Size:19
 	Title:
 		Font: d2k|Dune2k.ttf
 		Size:32

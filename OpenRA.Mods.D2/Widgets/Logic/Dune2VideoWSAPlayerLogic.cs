@@ -72,6 +72,7 @@ namespace OpenRA.Mods.D2.Widgets.Logic
             fsPlayer.VideoStackList.Enqueue("WESTWOOD.WSA");
             fsPlayer.VideoStackList.Enqueue("AND.ENG");
             fsPlayer.VideoStackList.Enqueue("VIRGIN.CPS");
+            //fsPlayer.VideoStackList.Enqueue("SCREEN.CPS");
             fsPlayer.VideoStackList.Enqueue("INTRO1.WSA");
             //fsPlayer.VideoStackList.Enqueue("INTRO2.WSA");
             //fsPlayer.VideoStackList.Enqueue("INTRO3.WSA");
@@ -88,13 +89,14 @@ namespace OpenRA.Mods.D2.Widgets.Logic
             //fsPlayer.VideoStackList.Enqueue("INTRO11.WSA");
 
             List<FrameSoundLine> fl = new List<FrameSoundLine>();
+            fl.Add(new FrameSoundLine() { WSAfilename = "INTRO1.WSA", FrameNumber = 0, VOCfilename = "DUNE0.ADL" });
             fl.Add(new FrameSoundLine() { WSAfilename = "INTRO1.WSA", FrameNumber = 31, VOCfilename = "DUNE.VOC" });
             fl.Add(new FrameSoundLine() { WSAfilename = "INTRO1.WSA", FrameNumber =37, VOCfilename = "BLDING.VOC" });
             fl.Add(new FrameSoundLine() { WSAfilename = "INTRO1.WSA", FrameNumber = 48, VOCfilename = "DYNASTY.VOC" });
             fsPlayer.frameSoundLine = fl;
 
             List<FrameTextLine> ftl = new List<FrameTextLine>();
-            ftl.Add(new FrameTextLine() { WSAfilename = "INTRO1.WSA", FrameNumber = 37, Text="The Building of A Dynasty",Pos=new float2(230,560) ,TextColor=Color.FromArgb(150,0,0)});
+            ftl.Add(new FrameTextLine() { WSAfilename = "INTRO1.WSA", FrameNumber = 37, Text="The Building of A Dynasty",Pos=new float2(230,560) ,TextColor=Color.FromArgb(250,0,32)});
             fsPlayer.frameTextLine = ftl;
            // PlayVideoStack(fsPlayer, () => { });
             PlayVideoStack(fsPlayer, () => ShowMainMenu(world));

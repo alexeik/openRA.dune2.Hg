@@ -30,9 +30,16 @@ namespace OpenRA.Mods.D2.Widgets
         private Sprite stolb_line_sprite;
         private Sprite stolb_horiz_sprite;
         private Sprite stolb_horiz_left_sprite;
+        private Sprite stolb_horiz_right_sprite;
         private Sprite bg_sprite;
         private Sprite but1_sprite;
         private Sprite but2_sprite;
+        private Sprite credits_sprite;
+        private Sprite status_l_sprite;
+        private Sprite status_horiz_sprite;
+        private Sprite status_r_sprite;
+        private Sprite vert_line_sprite;
+        private Sprite vertbord_line_sprite;
         private Sprite bu1_sprite;
 
         public D2GameScreenWidget()
@@ -59,41 +66,121 @@ namespace OpenRA.Mods.D2.Widgets
                 screen_cps_sprite = sheetBuilder.Add(imageSprite[0]);
                 screen_cps_sprite.Sheet.CreateBuffer();
                 screen_cps_sprite.Sheet.ReleaseBuffer();
-                Png screen_as_png;
-                screen_as_png = screen_cps_sprite.Sheet.AsPng(TextureChannel.Blue, hardwarePalette.GetPalette("chrome"));
-                stolb_sprite = new Sprite(screen_cps_sprite.Sheet, new Rectangle(241, 142, 11,39), TextureChannel.Red);
-                stolb_top_sprite= new Sprite(screen_cps_sprite.Sheet, new Rectangle(241, 136, 11, 5), TextureChannel.Red);
-                stolb_bot_sprite = new Sprite(screen_cps_sprite.Sheet, new Rectangle(241, 182, 11, 4), TextureChannel.Red);
-                stolb_shpere_sprite = new Sprite(screen_cps_sprite.Sheet, new Rectangle(241, 124, 11, 10), TextureChannel.Red);
-                stolb_line_sprite = new Sprite(screen_cps_sprite.Sheet, new Rectangle(241, 135, 11, 1), TextureChannel.Red);
-                stolb_horiz_sprite = new Sprite(screen_cps_sprite.Sheet, new Rectangle(259, 127, 55, 5), TextureChannel.Red);
-                stolb_horiz_left_sprite = new Sprite(screen_cps_sprite.Sheet, new Rectangle(254, 127, 4, 5), TextureChannel.Red);
+                //Png screen_as_png;
+                //screen_as_png = screen_cps_sprite.Sheet.AsPng(TextureChannel.Blue, hardwarePalette.GetPalette("chrome"));
+
+                stolb_sprite = new Sprite(screen_cps_sprite.Sheet, new Rectangle(241, 142, 12,39), TextureChannel.Red);
+                stolb_top_sprite= new Sprite(screen_cps_sprite.Sheet, new Rectangle(241, 136, 12, 5), TextureChannel.Red);
+                stolb_bot_sprite = new Sprite(screen_cps_sprite.Sheet, new Rectangle(241, 182, 12, 4), TextureChannel.Red);
+                stolb_shpere_sprite = new Sprite(screen_cps_sprite.Sheet, new Rectangle(241, 124, 12, 11), TextureChannel.Red);
+                stolb_line_sprite = new Sprite(screen_cps_sprite.Sheet, new Rectangle(241, 135, 12, 1), TextureChannel.Red);
+
+                stolb_horiz_sprite = new Sprite(screen_cps_sprite.Sheet, new Rectangle(259, 127, 55, 6), TextureChannel.Red);
+                stolb_horiz_left_sprite = new Sprite(screen_cps_sprite.Sheet, new Rectangle(254, 127, 5, 6), TextureChannel.Red);
+                stolb_horiz_right_sprite = new Sprite(screen_cps_sprite.Sheet, new Rectangle(315, 127, 5, 6), TextureChannel.Red);
 
                 bg_sprite = new Sprite(screen_cps_sprite.Sheet, new Rectangle(0, 0, 15, 16), TextureChannel.Red);
                 but1_sprite = new Sprite(screen_cps_sprite.Sheet, new Rectangle(16,1, 78, 15), TextureChannel.Red);
                 but2_sprite = new Sprite(screen_cps_sprite.Sheet, new Rectangle(104, 1, 78, 15), TextureChannel.Red);
+                credits_sprite = new Sprite(screen_cps_sprite.Sheet, new Rectangle(201, 1, 118, 15), TextureChannel.Red);
 
-                int offsetX = 768; //75%
-                rect_stold_sphere = new Rectangle(offsetX, 0+50, 11, 10);
-                rect_line = new Rectangle(offsetX, 10+50, 11, 1);
-                rect_stold_top = new Rectangle(offsetX, 12+50, 11, 5);
-                rect_stold = new Rectangle(offsetX, 18+50, 11, 558-50);
-                rect_stold_bot = new Rectangle(offsetX, 572, 11, 4);
-                rect_line_2 = new Rectangle(offsetX, 576, 11, 1);
-                rect_stold_sphere_2 = new Rectangle(offsetX, 577, 11, 10);
-                rect_stold_top_3 = new Rectangle(offsetX, 589, 11, 5);
-                rect_stold_2 = new Rectangle(offsetX, 594, 11, 160);
-                rect_stold_bot_2 = new Rectangle(offsetX, 594+160+1, 11, 4);
-                rect_stold_sphere_3 = new Rectangle(offsetX, 594+160+4+1, 11, 10);
+                status_l_sprite = new Sprite(screen_cps_sprite.Sheet, new Rectangle(0, 17, 8, 22), TextureChannel.Red);
+                status_horiz_sprite = new Sprite(screen_cps_sprite.Sheet, new Rectangle(8, 17,303, 22), TextureChannel.Red);
+                status_r_sprite = new Sprite(screen_cps_sprite.Sheet, new Rectangle(312, 17, 8, 22), TextureChannel.Red);
 
-                rect_stold_horiz = new Rectangle(offsetX+13+4, 580 ,  444, 5);
-                rect_stold_left_horiz = new Rectangle(offsetX+13, 580 , 4, 5);
+                vert_line_sprite = new Sprite(screen_cps_sprite.Sheet, new Rectangle(240, 40, 240, 123), TextureChannel.Red);
+                vertbord_line_sprite = new Sprite(screen_cps_sprite.Sheet, new Rectangle(254, 134, 1,65), TextureChannel.Red);
 
-                rect_bg = new Rectangle(0, 0, 1024,50);
-                rect_but1 = new Rectangle(30, 15, 78, 15);
-                rect_but2 = new Rectangle(30+100, 15, 78, 15);
+                int screenwidth = 0;
+                int screenH = 0;
+                screenH = Game.Settings.Graphics.WindowedSize.Y;
+                screenwidth = Game.Settings.Graphics.WindowedSize.X;
+ 
+                int offsetX; // 776 + 17; //75%
+                offsetX = screenwidth - 231;//
+  
+                luiComs = new List<uiCom>();
+                uiCom uic = new uiCom(new Rectangle(offsetX,31,12,11), stolb_shpere_sprite);
+                luiComs.Add(uic);
+                uic = new uiCom(new Rectangle(offsetX, 0, 12, 1), stolb_line_sprite); //12
+                luiComs.Add(uic);
+                uic = new uiCom(new Rectangle(offsetX, 0, 12, 5), stolb_top_sprite); //17
+                luiComs.Add(uic);
+                uic = new uiCom(new Rectangle(offsetX, 0, 12, 538), stolb_sprite); //555
+                luiComs.Add(uic);
+                uic = new uiCom(new Rectangle(offsetX, 0, 12, 5), stolb_bot_sprite); //560
+                luiComs.Add(uic);
+                uic = new uiCom(new Rectangle(offsetX, 0, 12, 1), stolb_line_sprite); //561 
+                luiComs.Add(uic);
+                uic = new uiCom(new Rectangle(offsetX, 0, 12, 11), stolb_shpere_sprite); //572
+                luiComs.Add(uic);
+                uic = new uiCom(new Rectangle(offsetX, 0, 12, 5), stolb_top_sprite); //577
+                luiComs.Add(uic);
+                uic = new uiCom(new Rectangle(offsetX, 0, 12,screenH-47-577), stolb_sprite); 
+                luiComs.Add(uic);
+                uic = new uiCom(new Rectangle(offsetX, 0, 12, 5), stolb_bot_sprite); //17
+                luiComs.Add(uic);
+                uic = new uiCom(new Rectangle(offsetX, 0, 12, 1), stolb_line_sprite); //12
+                luiComs.Add(uic);
+                uic = new uiCom(new Rectangle(offsetX, 0, 12, 11), stolb_shpere_sprite);
+                luiComs.Add(uic);
+
+                uic = new uiCom(new Rectangle(offsetX+12, 595, 5, 6), stolb_horiz_left_sprite, false,true);
+                luiComs.Add(uic);
+                uic = new uiCom(new Rectangle(0, 595, 233, 6), stolb_horiz_sprite, false, true);
+                luiComs.Add(uic);
+                uic = new uiCom(new Rectangle(0, 595, 5, 6), stolb_horiz_right_sprite, false, true);
+                luiComs.Add(uic);
+
+                uic = new uiCom(new Rectangle(0, 0, screenwidth, 30), bg_sprite, false, false);
+                luiComs.Add(uic);
+                uic = new uiCom(new Rectangle(screenwidth-474, 8, 78, 15), but1_sprite, false, false);
+                luiComs.Add(uic);
+                uic = new uiCom(new Rectangle(screenwidth-374, 8, 78, 15), but2_sprite, false, false);
+                luiComs.Add(uic);
+                uic = new uiCom(new Rectangle(screenwidth-174, 8, 118, 15), credits_sprite, false, false);
+                luiComs.Add(uic);
+
+                uic = new uiCom(new Rectangle(5, 5, 8, 22), status_l_sprite, false, true,true);
+                luiComs.Add(uic);
+                uic = new uiCom(new Rectangle(0, 5, screenwidth - 574, 22), status_horiz_sprite, false, true);
+                luiComs.Add(uic);
+                uic = new uiCom(new Rectangle(0, 5, 8, 22), status_r_sprite, false, true);
+                luiComs.Add(uic);
             }
+
         }
+        public List<uiCom> luiComs;
+        public class uiCom
+        {
+            public uiCom(Rectangle rect,Sprite spr)
+            {
+                this.rect = rect;
+                this.spr = spr;
+            }
+            public uiCom(Rectangle rect, Sprite spr,bool moveY,bool moveX)
+            {
+                this.rect = rect;
+                this.spr = spr;
+                this.MoveY= moveY;
+                this.MoveX = moveX;
+            }
+            public uiCom(Rectangle rect, Sprite spr, bool moveY, bool moveX,bool resetX)
+            {
+                this.rect = rect;
+                this.spr = spr;
+                this.MoveY = moveY;
+                this.MoveX = moveX;
+                this.ResetOffsetX = resetX;
+            }
+            public Rectangle rect;
+            public Sprite spr;
+            public bool MoveY=true;
+            public bool MoveX = false;
+            public bool ResetOffsetY = false;
+            public bool ResetOffsetX = false;
+        }
+
         void LoadPalette(ImmutablePalette cpspalette, string customname)
         {
 
@@ -119,44 +206,42 @@ namespace OpenRA.Mods.D2.Widgets
             var pal = hardwarePalette.GetPalette("chrome");
             pr = new PaletteReference("chromeref", hardwarePalette.GetPaletteIndex("chrome"), pal, hardwarePalette);
         }
-        Rectangle rect_stold;
-        Rectangle rect_stold_top;
-        private Rectangle rect_stold_bot;
-        private Rectangle rect_line_2;
-        private Rectangle rect_stold_sphere_2;
-        private Rectangle rect_stold_top_3;
-        private Rectangle rect_stold_2;
-        private Rectangle rect_stold_bot_2;
-        private Rectangle rect_stold_sphere_3;
-        private Rectangle rect_stold_horiz;
-        private Rectangle rect_stold_left_horiz;
-        private Rectangle rect_bg;
-        private Rectangle rect_but1;
-        private Rectangle rect_but2;
-        private Rectangle rect_stold_sphere;
-        private Rectangle rect_line;
+
 
         public override void Draw()
         {
             Game.Renderer.SetPalette(hardwarePalette);
-            WidgetUtils.FillRectWithSprite(rect_stold, stolb_sprite, pr);
-            WidgetUtils.FillRectWithSprite(rect_stold_top, stolb_top_sprite, pr);
-            WidgetUtils.FillRectWithSprite(rect_stold_bot, stolb_bot_sprite, pr);
-            WidgetUtils.FillRectWithSprite(rect_stold_sphere, stolb_shpere_sprite, pr);
-            WidgetUtils.FillRectWithSprite(rect_line, stolb_line_sprite, pr);
-            WidgetUtils.FillRectWithSprite(rect_stold_sphere_2, stolb_shpere_sprite, pr);
-            WidgetUtils.FillRectWithSprite(rect_stold_top_3, stolb_top_sprite, pr);
-            WidgetUtils.FillRectWithSprite(rect_stold_2, stolb_sprite, pr);
-            WidgetUtils.FillRectWithSprite(rect_stold_bot_2, stolb_bot_sprite, pr);
-            WidgetUtils.FillRectWithSprite(rect_stold_sphere_3, stolb_shpere_sprite, pr);
+            int offsetY = 0;
+            int offsetX = 0;
+            Rectangle temprect = new Rectangle();
+            foreach (uiCom u in luiComs)
+            {
 
-            WidgetUtils.FillRectWithSprite(rect_stold_left_horiz, stolb_horiz_left_sprite, pr);
-            WidgetUtils.FillRectWithSprite(rect_stold_horiz, stolb_horiz_sprite, pr);
-
-            WidgetUtils.FillRectWithSprite(rect_bg, bg_sprite, pr);
-
-            WidgetUtils.FillRectWithSprite(rect_but1, but1_sprite, pr);
-            WidgetUtils.FillRectWithSprite(rect_but2, but2_sprite, pr);
+                temprect = u.rect;
+                if (u.ResetOffsetX)
+                {
+                    offsetX = 0;
+                }
+                if (u.MoveX)
+                {
+                   
+                    temprect.X += offsetX;
+                }
+                if (u.MoveY)
+                {
+                    temprect.Y += offsetY;
+                }
+                WidgetUtils.FillRectWithSprite(temprect, u.spr, pr);
+                if (u.MoveY)
+                {
+                    offsetY = offsetY + u.rect.Height + u.rect.Y;
+                }
+                if (u.MoveX)
+                {
+                    offsetX = offsetX + u.rect.Width + u.rect.X;
+                }
+            }
+           
         }
     }
 }

@@ -11,7 +11,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using ManagedBass;
+using OpenRA.FileSystem;
 using OpenRA.Graphics;
 using OpenRA.Mods.D2.FileFormats;
 using OpenRA.Mods.D2.SpriteLoaders;
@@ -161,7 +163,10 @@ namespace OpenRA.Mods.D2.Widgets
 
                
                 video.TryParseSpritePlusPalette(stream, out imageSprite, out metadata,out cpspalette);
-                LoadPalette(cpspalette, image.SpriteFilename);
+                if (cpspalette != null)
+                {
+                    LoadPalette(cpspalette, image.SpriteFilename);
+                }
             }
 
             var imwidth = imageSprite[0].FrameSize.Width;
@@ -187,22 +192,6 @@ namespace OpenRA.Mods.D2.Widgets
         FrameTextLine prevText = null;
         long PauseInSeconds = 5;
         long DrawPrevFrameEveryXMs = 300;
-        public void PlayMp3()
-        {
-            Bass.Init(); // Initialize with default options.
-
-            int handle = Bass.CreateStream(@"D:\games.dev\dune2.mod\mods\d2\audio\INTO.ogg");
-
-            Bass.ChannelPlay(handle); // Begin Playback.
-
-          
-
-            //Bass.ChannelStop(handle); // Stop Playback.
-
-            
-
-            //Bass.Free(); // Free the device.
-        }
         public void DrawWsaText(FrameTextLine ftl)
         {
             var textSize = Game.Renderer.Fonts["Original"].Measure(ftl.Text);
@@ -316,8 +305,43 @@ namespace OpenRA.Mods.D2.Widgets
                 {
                     if (frameSoundLine.Contains(new FrameSoundLine() { WSAfilename = cachedVideo, FrameNumber = video.CurrentFrame }))
                     {
+                        
                         var vocfilename = frameSoundLine.Find(x => x.WSAfilename.Contains(cachedVideo) && x.FrameNumber == video.CurrentFrame).VOCfilename;
-                        Game.Sound.Play(SoundType.UI, vocfilename);
+                        if (vocfilename.Contains("ADL"))
+                        {
+                            IReadOnlyFileSystem fileSystem =Game.ModData.DefaultFileSystem;
+
+                            if (!fileSystem.Exists(vocfilename))
+                            {
+                                Log.Write("sound", "LoadSound, file does not exist: {0}", vocfilename);
+                                
+                            }
+                            DuneMusic.DuneMusic.Quit();
+                            DuneMusic.DuneMusic.Init(44100, "", DuneMusic.DuneMusic.DuneMusicOplEmu.kOplEmuNuked);
+                           
+                            using (var stream = fileSystem.Open(vocfilename))
+                            {
+                                
+                                DuneMusic.DuneMusic.InsertMemoryFile("test", stream.ReadAllBytes());
+                                byte[] temp=new byte[28106880];
+                              
+                                UIntPtr temp3 ;
+                                temp3 = (UIntPtr)1000000;
+                                temp3=DuneMusic.DuneMusic.SynthesizeAudio("test", 2, -1, temp, (UIntPtr)temp.Length);
+                                ISoundSource soundSource;
+                                soundSource =Game.Sound.soundEngine.AddSoundSourceFromMemory(temp, 2, 16, 44100);
+                                ISound temp2 = Game.Sound.soundEngine.Play2D(soundSource, false, true, WPos.Zero, 100, false);
+
+                            }
+
+
+
+                        }
+                        else
+                        {
+                            Game.Sound.Play(SoundType.UI, vocfilename);
+                        }
+
                     }
                 }
                 if (frameTextLine == null)
@@ -342,8 +366,7 @@ namespace OpenRA.Mods.D2.Widgets
             Sprite videoSprite=null;
             if (cachedVideo.Contains("WSA"))
             {
-                //videoSprite = new Sprite(sheetBuilder.Current, new Rectangle(0, 0, 320, 200), TextureChannel.RGBA);
-               
+
                  videoSprite = sheetBuilder.Add(video.Frame);
             }
             else
@@ -351,16 +374,35 @@ namespace OpenRA.Mods.D2.Widgets
                
                 //videoSprite = new Sprite(sheetBuilder.Current, new Rectangle(0, 0, 320, 200), TextureChannel.RGBA);
                 videoSprite = sheetBuilder.Add(imageSprite[0]);
+                //дампинг ресурсов игры в png
+                //videoSprite.Sheet.CreateBuffer();
+                //videoSprite.Sheet.ReleaseBuffer();
+                ////videoSprite.Sheet.AsPng().Save("VIRGIN.png");
+                //IPalette exppal;
+                //try
+                //{
+                //    exppal = hardwarePalette.GetPalette(cachedVideo);
+                //}
+                //catch (Exception)
+                //{
+
+                //    exppal = null;
+                //}
+           
+                //if (exppal==null)
+                //{
+                //    LoadPalette();
+                //    videoSprite.Sheet.AsPng(TextureChannel.Blue, hardwarePalette.GetPalette("chrome")).Save(cachedVideo + ".png");
+                //}
+                //else
+                //{
+                //    videoSprite.Sheet.AsPng(TextureChannel.Blue, exppal).Save(cachedVideo + ".png");
+                //}
+               
             }
             prevSprite = videoSprite;
 
-
-            //Game.Renderer.EnableScissor(RenderBounds);
-            //Game.Renderer.RgbaColorRenderer.FillRect(
-            //    new float2(RenderBounds.Left, RenderBounds.Top),
-            //    new float2(RenderBounds.Right, RenderBounds.Bottom), OpenRA.Primitives.Color.Black);
-            //Game.Renderer.DisableScissor();
-          
+         
             Game.Renderer.SpriteRenderer.DrawSprite(videoSprite, videoOrigin, pr, videoSize);
             
    

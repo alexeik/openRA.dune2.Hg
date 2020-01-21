@@ -96,19 +96,6 @@ namespace OpenRA.Mods.D2.SpriteLoaders
 		}
         public void ReadEmbeddedPalette(Stream s)
         {
-            //int n = 768;
-            //paldata = new byte[n]; 
-            //for (var i = 0; i < n; i++)
-            //    paldata[i] = s.ReadUInt8();
-
-
-            //paldata = new Color[256];
-            //for (var i = 0; i < 768 / 3; i++)
-            //{
-            //    var r = s.ReadByte(); var g = s.ReadByte(); var b = s.ReadByte();
-            //    paldata[i] = Color.FromArgb(r, g, b);
-            //}
-
 
             paldataByte = StreamExts.ReadBytes(s, 768);
 
@@ -127,126 +114,12 @@ namespace OpenRA.Mods.D2.SpriteLoaders
             for (var i = 0; i < tiles.Length; i++)
             {
                 tiles[i] = new CpsD2Tile(s);
-                if (HasEmbeddedPalette)
-                {
-                    //ApplyPalette2(tiles[i], paldata);
-                   // FastCopyIntoSprite(null, paldata, tiles[i]);
-                }
             }
            
 			s.Position = start;
 			return tiles;
 		}
-        public void ApplyPalette(CpsD2Tile image,byte[] palette)
-        {
-            byte[] newimage=new byte[64000*4];
-            int k = 0;
-            byte palcolor;
-            byte sourcePalIndex;
 
-            //for (var j = 0; j < image.Data.Length; j++)
-            //    image.Data[j] = palette[image.Data[j]];
-
-
-            for (int i = 0; i < image.Data.Length; i += 3)
-            {
-                sourcePalIndex = image.Data[i];
-
-                //red
-                //palcolor = paldata[sourcePalIndex];
-                //newimage[k] = (byte)(palcolor * 4);
-
-                //// green
-                //palcolor = paldata[sourcePalIndex + 1];
-                //newimage[k + 1] = (byte)(palcolor * 4);
-
-                ////blue
-                //palcolor = paldata[sourcePalIndex + 2];
-                //newimage[k + 2] = (byte)(palcolor * 4);
-                k += 3;//for next new pixel
-
-
-
-            }
-            image.Data = newimage;
-        }
-        public void ApplyPalette2(CpsD2Tile image, byte[] palette)
-        {
-            // Byte[] data = image data
-            //Byte[] palette = 6 - bit palette
-            Int32 stride = 320 * 4; //number of bytes on one line of the image
-             Int32 width = 320;
-            Int32 height = 200;
-
-
-
-            Int32 lineOffset = 0;
-            Int32 lineOffsetQuad = 0;
-            Int32 strideQuad = width * 3;
-
-            Byte[] dataArgb = new Byte[strideQuad * height];
-            for (Int32 y = 0; y < height; ++y)
-            {
-                Int32 offset = lineOffset;
-                Int32 outOffset = lineOffsetQuad;
-                for (Int32 x = 0; x < width; ++x)
-                {
-                    // get colour index, then get the correct location in the palette array
-                    // by multiplying it by 3 (the length of one full colour)
-                    Int32 colIndex = image.Data[offset++] * 3;
-                    dataArgb[outOffset++] = palette[colIndex + 2]; // Blue
-                    dataArgb[outOffset++] = palette[colIndex + 1]; // Green
-                    dataArgb[outOffset++] = palette[colIndex]; // Red
-                    //dataArgb[outOffset++] = (colIndex == 0 ? (Byte)0 : (Byte)255); // Alpha: set to 0 for background black
-                }
-                lineOffset += stride;
-                lineOffsetQuad += strideQuad;
-            }
-            image.Data = dataArgb;
-        }
-        public static void FastCopyIntoSprite(Sprite dest, Color[] pal,CpsD2Tile srccps)
-        {
-           
-       
-
-            byte[] destData = new byte[4 * 320 * 200];
-            var destStride = 320;
-            var width =320;
-            var height =200;
-
-            unsafe
-            {
-                // Cast the data to an int array so we can copy the src data directly
-                fixed (byte* bd = &destData[0])
-                {
-                    var data = (int*)bd;
-                    var x = 0;
-                    var y = 0;
-
-                    var k = 0;
-                    for (var yy = 0; yy < height; yy++)
-                    {
-                        for (var xx = 0; xx < width; xx++)
-                        {
-                            Color cc;
-                            if (pal == null)
-                            {
-                                var r = srccps.Data[k++];
-                                var g = srccps.Data[k++];
-                                var b = srccps.Data[k++];
-                                var a = srccps.Data[k++];
-                                cc = Color.FromArgb(a, r, g, b);
-                            }
-                            else
-                                cc = pal[srccps.Data[k++]];
-
-                            data[(y + yy) * destStride + x + xx] = PremultiplyAlpha(cc).ToArgb();
-                        }
-                    }
-                }
-            }
-            srccps.Data = destData;
-        }
         public static Color PremultiplyAlpha(Color c)
         {
             if (c.A == byte.MaxValue)
