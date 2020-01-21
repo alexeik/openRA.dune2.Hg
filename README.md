@@ -1,5 +1,9 @@
 # d2 mod for OpenRA
 
+SCREENSHOTS:
+https://github.com/alexeik/openRA.dune2.Hg/issues/1
+
+
 This repository contains a `d2 mod` for the [OpenRA](https://github.com/OpenRA/OpenRA) engine.
 It is based on [OpenRAModSDK](https://github.com/OpenRA/OpenRAModSDK) and should be updated if `OpenRAModSDK` changed
 
