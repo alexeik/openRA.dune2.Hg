@@ -74,9 +74,9 @@ namespace OpenRA.Mods.D2.Widgets.Logic
             fsPlayer.VideoStackList.Enqueue("VIRGIN.CPS");
             //fsPlayer.VideoStackList.Enqueue("SCREEN.CPS");
             fsPlayer.VideoStackList.Enqueue("INTRO1.WSA");
-            //fsPlayer.VideoStackList.Enqueue("INTRO2.WSA");
-            //fsPlayer.VideoStackList.Enqueue("INTRO3.WSA");
-            //fsPlayer.VideoStackList.Enqueue("INTRO4.WSA");
+            fsPlayer.VideoStackList.Enqueue("INTRO2.WSA");
+            fsPlayer.VideoStackList.Enqueue("INTRO3.WSA");
+            fsPlayer.VideoStackList.Enqueue("INTRO4.WSA");
             //fsPlayer.VideoStackList.Enqueue("INTRO5.WSA");
             //fsPlayer.VideoStackList.Enqueue("INTRO6.WSA");
             //fsPlayer.VideoStackList.Enqueue("INTRO7A.WSA");
@@ -97,6 +97,7 @@ namespace OpenRA.Mods.D2.Widgets.Logic
 
             List<FrameTextLine> ftl = new List<FrameTextLine>();
             ftl.Add(new FrameTextLine() { WSAfilename = "INTRO1.WSA", FrameNumber = 37, Text="The Building of A Dynasty",Pos=new float2(230,560) ,TextColor=Color.FromArgb(250,0,32)});
+            ftl.Add(new FrameTextLine() { WSAfilename = "INTRO2.WSA", FrameNumber = 0, Text = "", Pos = new float2(230, 560), TextColor = Color.FromArgb(250, 0, 32) });
             fsPlayer.frameTextLine = ftl;
            // PlayVideoStack(fsPlayer, () => { });
             PlayVideoStack(fsPlayer, () => ShowMainMenu(world));

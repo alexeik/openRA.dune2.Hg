@@ -28,7 +28,6 @@
       <HintPath>../engine/thirdparty/download/Eluant.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <PackageReference Include="ManagedBass" Version="2.0.4" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.118" />
     <AdditionalFiles Include="../engine/stylecop.json" />
   </ItemGroup>

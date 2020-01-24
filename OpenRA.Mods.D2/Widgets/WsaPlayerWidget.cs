@@ -12,7 +12,6 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using ManagedBass;
 using OpenRA.FileSystem;
 using OpenRA.Graphics;
 using OpenRA.Mods.D2.FileFormats;
@@ -346,7 +345,9 @@ namespace OpenRA.Mods.D2.Widgets
                 }
                 if (frameTextLine == null)
                 {
-
+                    prevText = new FrameTextLine() { Text="" };
+                    DrawWsaText(prevText);
+               
                 }
 
                 else
@@ -358,6 +359,7 @@ namespace OpenRA.Mods.D2.Widgets
                         DrawWsaText(ft);
                         prevText = ft;
                     }
+                   
                 }
             }
             var sheetBuilder = new SheetBuilder(SheetType.Indexed, 512);

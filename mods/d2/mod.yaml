@@ -10,6 +10,7 @@ PackageFormats: PakFile, D2kSoundResources
 
 Packages:
 	~^Content/d2/Unpacked
+    ~^Content/d2/Font
 	~^Content/d2
 	~^Content/d2k/v2
 	.
