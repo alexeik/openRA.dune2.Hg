@@ -30,7 +30,7 @@ Container@MAINMENU:
 							Y: 20
 							Width: 200
 							Height: 30
-							Text: OpenRA
+							Text: DUNE 2
 							Align: Center
 							Font: Bold
 						Button@SINGLEPLAYER_BUTTON:

@@ -29,7 +29,7 @@ namespace OpenRA.Mods.D2.Widgets.Logic
 		readonly Action onStart;
 		readonly ScrollPanelWidget descriptionPanel;
 		readonly LabelWidget description;
-		readonly SpriteFont descriptionFont;
+		readonly SpriteFontMSDF descriptionFont;
 		readonly DropDownButtonWidget difficultyButton;
 		readonly DropDownButtonWidget gameSpeedButton;
 		readonly ButtonWidget startBriefingVideoButton;

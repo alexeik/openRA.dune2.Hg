@@ -278,34 +278,41 @@ ChromeMetrics:
 
 Fonts:
 	Original:
-		Font: d2|dune2.otf
+		#Font: d2|dune2.otf
+        Font: common|FreeSans.ttf
 		Size:50
 	Regular:
-		Font: d2|dune2.otf
-		#Font: common|FreeSans.ttf
-		Size:14
+		#Font: d2|dune2.otf
+		Font: common|FreeSans.ttf
+		Size:15
 	Bold:
-		Font: d2|dune2.otf
-		#Font: common|FreeSansBold.ttf
-		Size:19
+		#Font: d2|dune2.otf
+		Font: common|FreeSans.ttf
+		Size:15
 	Title:
-		Font: d2k|Dune2k.ttf
+        Font: common|FreeSans.ttf
+		#Font: d2|dune2.otf
 		Size:32
 	MediumBold:
-		Font: common|FreeSansBold.ttf
+        #Font: d2|dune2.otf
+		Font: common|FreeSans.ttf
 		Size:18
 	BigBold:
-		Font: common|FreeSansBold.ttf
+        #Font: d2|dune2.otf
+		Font: common|FreeSans.ttf
 		Size:24
 	Small:
+        #Font: d2|dune2.otf
 		Font: common|FreeSans.ttf
 		Size:12
 	Tiny:
+        #Font: d2|dune2.otf
 		Font: common|FreeSans.ttf
-		Size:10
+		Size:14
 	TinyBold:
-		Font: common|FreeSansBold.ttf
-		Size:10
+        #Font: d2|dune2.otf
+		Font: common|FreeSans.ttf
+		Size:14
 
 Missions:
 	d2|missions.yaml
