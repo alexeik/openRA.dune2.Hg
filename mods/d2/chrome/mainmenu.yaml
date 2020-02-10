@@ -316,3 +316,8 @@ Container@MAINMENU:
 		Container@PLAYER_PROFILE_CONTAINER:
 			X: 5
 			Y: 5
+        D2IG@igui:
+			X: 300
+			Y: 200
+			Width: 500
+			Height: 400
