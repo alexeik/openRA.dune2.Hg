@@ -17,6 +17,7 @@ using OpenRA.Graphics;
 using OpenRA.Mods.Common.Traits;
 using OpenRA.Mods.Common.Widgets;
 using OpenRA.Network;
+using OpenRA.Primitives;
 using OpenRA.Widgets;
 
 namespace OpenRA.Mods.D2.Widgets.Logic

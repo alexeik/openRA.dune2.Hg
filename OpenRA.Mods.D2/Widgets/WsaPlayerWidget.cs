@@ -329,7 +329,7 @@ namespace OpenRA.Mods.D2.Widgets
                                 temp3=DuneMusic.DuneMusic.SynthesizeAudio("test", 2, -1, temp, (UIntPtr)temp.Length);
                                 ISoundSource soundSource;
                                 soundSource =Game.Sound.soundEngine.AddSoundSourceFromMemory(temp, 2, 16, 44100);
-                                ISound temp2 = Game.Sound.soundEngine.Play2D(soundSource, false, true, WPos.Zero, 100, false);
+                                ISound temp2 = Game.Sound.soundEngine.Play2D(Game.LocalTick, soundSource, false, true, WPos.Zero, 100, false);
 
                             }
 
