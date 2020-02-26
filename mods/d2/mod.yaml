@@ -182,7 +182,6 @@ Chrome:
 
 Assemblies:
 	common|OpenRA.Mods.Common.dll
-	common|OpenRA.Mods.Cnc.dll
 	d2k|OpenRA.Mods.D2k.dll
 	d2|OpenRA.Mods.D2.dll
 
