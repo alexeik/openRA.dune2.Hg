@@ -40,7 +40,6 @@ namespace OpenRA.Mods.D2.Widgets
         private Sprite status_r_sprite;
         private Sprite vert_line_sprite;
         private Sprite vertbord_line_sprite;
-        private Sprite bu1_sprite;
 
         public D2GameScreenWidget()
         {

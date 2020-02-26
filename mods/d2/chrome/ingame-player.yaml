@@ -32,8 +32,8 @@ Container@PLAYER_WIDGETS:
 					SoundDown: RadarDown
 					Children:
 						VqaPlayer@PLAYER:
-							X: 806
-							Y: 601
+							X: 100
+							Y: 100
 							Width: 218
 							Height: 167
 							Skippable: false

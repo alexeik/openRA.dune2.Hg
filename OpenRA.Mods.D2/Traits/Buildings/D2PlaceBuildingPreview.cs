@@ -29,9 +29,9 @@ namespace OpenRA.Mods.D2.Traits
 		[Desc("If true, all tiles should be buildable for drawing without cross, if false - any tile can be buildable for drawing without cross.")]
 		public bool StrictBuildableChecks = true;
 
-		protected override IPlaceBuildingPreview CreatePreview(WorldRenderer wr, ActorInfo ai, TypeDictionary init)
+		protected override IPlaceBuildingPreview CreatePreview(WorldRenderer wr, Actor actor, ActorInfo ai, TypeDictionary init)
 		{
-			return new D2PlaceBuildingPreviewPreview(wr, ai, this, init);
+			return new D2PlaceBuildingPreviewPreview(wr, actor, ai, this, init);
 		}
 
 		public override object Create(ActorInitializer init)
@@ -54,8 +54,8 @@ namespace OpenRA.Mods.D2.Traits
 
 		protected float t = 0.0f;
 	
-		public D2PlaceBuildingPreviewPreview(WorldRenderer wr, ActorInfo ai, D2PlaceBuildingPreviewInfo info, TypeDictionary init)
-			: base(wr, ai, info, init)
+		public D2PlaceBuildingPreviewPreview(WorldRenderer wr,Actor actor, ActorInfo ai, D2PlaceBuildingPreviewInfo info, TypeDictionary init)
+			: base(wr, actor, ai, info, init)
 		{
 			this.info = info;
 			this.ai = ai;
