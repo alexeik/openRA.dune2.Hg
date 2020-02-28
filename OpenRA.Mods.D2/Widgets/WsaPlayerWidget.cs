@@ -75,15 +75,15 @@ namespace OpenRA.Mods.D2.Widgets
                 {
                     LoadPaletteWSA();
                 }
-                var video = new WsaReader(Game.ModData.DefaultFileSystem.Open(filename));
+                var video1 = new WsaReader(Game.ModData.DefaultFileSystem.Open(filename));
                 cachedVideo = filename;
-                Open(video);
+                Open(video1);
             }
             else
             {
-                var video = new CpsD2Loader(filename);
+                var video1 = new CpsD2Loader(filename);
                 cachedVideo = filename;
-                Open(video);
+                Open(video1);
 
             }
           
