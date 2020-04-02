@@ -10,9 +10,11 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using OpenRA.Graphics;
 using OpenRA.Mods.Common.FileFormats;
+using OpenRA.Mods.Common.Graphics;
 using OpenRA.Primitives;
 
 namespace OpenRA.Mods.D2.SpriteLoaders
@@ -135,8 +137,14 @@ namespace OpenRA.Mods.D2.SpriteLoaders
 				frames = null;
 				return false;
 			}
+            if (CpsPalette!=null)
+            {
+                var palettes = new Dictionary<int, uint[]>();
+                palettes.Add(CpsPalette.colors.Length, CpsPalette.colors);
+                metadata = new TypeDictionary { new EmbeddedSpritePalette(framePalettes: palettes) };
+            }
 
-			s.Position = 0;
+            s.Position = 0;
 			frames = ParseFrames(s);
 			return true;
 		}
