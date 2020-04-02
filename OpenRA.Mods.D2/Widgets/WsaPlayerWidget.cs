@@ -12,12 +12,14 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using OpenRA;
 using OpenRA.FileSystem;
 using OpenRA.Graphics;
 using OpenRA.Mods.D2.FileFormats;
 using OpenRA.Mods.D2.SpriteLoaders;
 using OpenRA.Mods.D2.Widgets.Logic;
 using OpenRA.Primitives;
+using OpenRA.Traits;
 using OpenRA.Widgets;
 
 namespace OpenRA.Mods.D2.Widgets
@@ -51,11 +53,17 @@ namespace OpenRA.Mods.D2.Widgets
         public Queue<string> VideoStackList;
         public List<FrameSoundLine> frameSoundLine;
         public List<FrameTextLine> frameTextLine;
+        Animation anim1, anim2;
+        World world;
 
-        public WsaPlayerWidget()
+        public WsaPlayerWidget() //этот виджет, загрузиться, когда загрузиться shellmap, поэтому метод WorldLoaded заполнит нам world
         {
             LoadPalette();
-          
+            world = Game.worldRenderer.World;
+            anim1 = new Animation(world, "video1");
+            anim1.Play("play");
+            //  anim1 = new Animation(null, ""); // нужно иметь заполненым переменную world.Map.Rules.Sequences;
+
         }
 
         public void Load(string filename)
@@ -75,58 +83,53 @@ namespace OpenRA.Mods.D2.Widgets
                 {
                     LoadPaletteWSA();
                 }
-                var video1 = new WsaReader(Game.ModData.DefaultFileSystem.Open(filename));
-                cachedVideo = filename;
-                Open(video1);
+                anim1.ChangeSequenceGroup(filename.Replace(".", ""));
+                anim1.Play("play");
+                SetSize(anim1.Image.Size.XY.ToInt2().X, anim1.Image.Size.XY.ToInt2().Y);
             }
             else
             {
-                var video1 = new CpsD2Loader(filename);
-                cachedVideo = filename;
-                Open(video1);
+                //var video1 = new CpsD2Loader(filename);
+                //cachedVideo = filename;
+                //Open(video1);
 
             }
-          
+
         }
 
         void LoadPalette()
         {
-            using (var stream = Game.ModData.DefaultFileSystem.Open("IBM.PAL"))
-            {
-                palette = new ImmutablePalette(stream, new int[] { });
-            }
-
-            hardwarePalette = new HardwarePalette();
-            hardwarePalette.AddPalette("chrome", palette, false);
-            hardwarePalette.Initialize();
-            Game.Renderer.SetPalette(hardwarePalette);
-            var pal = hardwarePalette.GetPalette("chrome");
-            pr = new PaletteReference("chromeref", hardwarePalette.GetPaletteIndex("chrome"), pal, hardwarePalette);
+            pr = Game.worldRenderer.Palette("d2"); //d2 палитра назначена в d2\rules\palettes.yaml
         }
         void LoadPaletteWSA()
         {
-            using (var stream = Game.ModData.DefaultFileSystem.Open("WESTWOOD.PAL"))
+            pr = Game.worldRenderer.Palette("westwood"); //d2 палитра назначена в d2\rules\palettes.yaml
+        }
+        void LoadPalette(ImmutablePalette cpspalette, string customname)
+        {
+            try
             {
-                palette = new ImmutablePalette(stream, new int[] { });
+                pr = Game.worldRenderer.Palette(customname);
+                return;
+            }
+            catch (Exception)
+            {
+                pr = null;
+
             }
 
-            hardwarePalette = new HardwarePalette();
-            hardwarePalette.AddPalette("WESTWOOD.PAL", palette, false);
-            hardwarePalette.Initialize();
-            Game.Renderer.SetPalette(hardwarePalette);
-            var pal = hardwarePalette.GetPalette("WESTWOOD.PAL");
-            pr = new PaletteReference("WESTWOOD.PALref", hardwarePalette.GetPaletteIndex("WESTWOOD.PAL"), pal, hardwarePalette);
-        }
-        void LoadPalette(ImmutablePalette cpspalette,string customname)
-        {
-
-            palette = cpspalette;
-            hardwarePalette = new HardwarePalette();
-            hardwarePalette.AddPalette(customname, palette, false);
-            hardwarePalette.Initialize();
-            Game.Renderer.SetPalette(hardwarePalette);
-            var pal = hardwarePalette.GetPalette(customname);
-            pr = new PaletteReference(customname+"ref", hardwarePalette.GetPaletteIndex(customname), pal, hardwarePalette);
+            if (pr == null)
+            {
+                Game.worldRenderer.AddPalette(customname, cpspalette, false, false);
+                pr = Game.worldRenderer.Palette(customname);
+            }
+            //palette = cpspalette;
+            //hardwarePalette = new HardwarePalette();
+            //hardwarePalette.AddPalette(customname, palette, false);
+            //hardwarePalette.Initialize();
+            //Game.Renderer.SetPalette(hardwarePalette);
+            //var pal = hardwarePalette.GetPalette(customname);
+            //pr = new PaletteReference(customname+"ref", hardwarePalette.GetPaletteIndex(customname), pal, hardwarePalette);
         }
 
         public void Open(WsaReader video)
@@ -148,6 +151,20 @@ namespace OpenRA.Mods.D2.Widgets
             // Round size to integer pixels. Round up to be consistent with the scale calculation.
             videoSize = new float2((int)Math.Ceiling(video.Width * scale), (int)Math.Ceiling(video.Height * AspectRatio * scale));
         }
+
+        public void SetSize(int w, int h)
+        {
+            var size = Math.Max(w, h);
+            var textureSize = Exts.NextPowerOf2(size);
+
+            var scale = Math.Min((float)RenderBounds.Width / w, (float)RenderBounds.Height / h * AspectRatio);
+            videoOrigin = new float2(
+                RenderBounds.X + (RenderBounds.Width - scale * w) / 2,
+                RenderBounds.Y + (RenderBounds.Height - scale * h * AspectRatio) / 2);
+
+            // Round size to integer pixels. Round up to be consistent with the scale calculation.
+            videoSize = new float2((int)Math.Ceiling(w * scale), (int)Math.Ceiling(h * AspectRatio * scale));
+        }
         public void Open(CpsD2Loader video)
         {
             this.image = video;
@@ -160,8 +177,8 @@ namespace OpenRA.Mods.D2.Widgets
             using (var stream = Game.ModData.DefaultFileSystem.Open(image.SpriteFilename))
             {
 
-               
-                video.TryParseSpritePlusPalette(stream, out imageSprite, out metadata,out cpspalette);
+
+                video.TryParseSpritePlusPalette(stream, out imageSprite, out metadata, out cpspalette);
                 if (cpspalette != null)
                 {
                     LoadPalette(cpspalette, image.SpriteFilename);
@@ -191,19 +208,42 @@ namespace OpenRA.Mods.D2.Widgets
         FrameTextLine prevText = null;
         long PauseInSeconds = 5;
         long DrawPrevFrameEveryXMs = 300;
+
+
         public void DrawWsaText(FrameTextLine ftl)
         {
             var textSize = Game.Renderer.Fonts["Original"].Measure(ftl.Text);
-             Game.Renderer.Fonts["Original"].DrawText(ftl.Text, ftl.Pos, ftl.TextColor);
+            Game.Renderer.Fonts["Original"].DrawText(ftl.Text, ftl.Pos, ftl.TextColor);
             // Game.Renderer.Fonts["Original"].DrawTextWithShadow(ftl.Text, ftl.Pos, ftl.TextColor, Color.FromArgb(150, 0, 0), Color.FromArgb(100,100, 0, 0), 2);
             //Game.Renderer.Fonts["Original"].DrawTextWithContrast(ftl.Text, ftl.Pos, ftl.TextColor, Color.FromArgb(150, 0, 0), Color.FromArgb(100, 255, 255, 255), 1);
         }
+
         public override void Draw()
         {
-            //вызовы SetPalette в Draw для UI элементов, конкурируют с RefreshPalette в World.Draw.
-            Game.Renderer.SetPalette(hardwarePalette);
+            if (anim1.CurrentSequence.Length == anim1.CurrentFrame + 1)
+            {
+                if (VideoStackList.Count == 0)
+                {
+                    Exit();
+                    return;
+                }
+                if (VideoStackList.Count > 0)
+                {
+                    Load(VideoStackList.Dequeue());
+                }
 
-            if (String.IsNullOrEmpty(cachedVideo ))
+            }
+
+            anim1.Tick();
+            Game.Renderer.SpriteRenderer.DrawSprite(anim1.Image, videoOrigin, pr, videoSize);
+          
+        }
+        public void Draw2()
+        {
+            //вызовы SetPalette в Draw для UI элементов, конкурируют с RefreshPalette в World.Draw.
+            //Game.Renderer.SetPalette(hardwarePalette); //теперь не нужно, так как обнаружен файл palettes.yaml, в котором все палитры есть и сделано через него.
+
+            if (String.IsNullOrEmpty(cachedVideo))
                 return;
             //if (video==null)
             //{
@@ -212,7 +252,7 @@ namespace OpenRA.Mods.D2.Widgets
             //Game.RunTime MilliSeconds 1s=1000ms=50ms*20times
             var deltaScale = Game.RunTime - lastDrawTime;
             CountForWaitNextFrameMs += deltaScale;
-         
+
             //if we need pause wait it
 
             if (CountForPause > PauseInSeconds * 1000)
@@ -241,7 +281,7 @@ namespace OpenRA.Mods.D2.Widgets
 
                 if (prevSprite != null)
                 {
-                  
+
                     //just draw the same frame 
                     Game.Renderer.SpriteRenderer.DrawSprite(prevSprite, videoOrigin, pr, videoSize);
 
@@ -259,7 +299,7 @@ namespace OpenRA.Mods.D2.Widgets
                 {
                     if (video.CurrentFrame >= video.Length - 1) //this code runs every DrawFrameEveryXMilliseconds when video is ended.
                     {
-                        
+
                         //on video last frame draw always last frame
                         Game.Renderer.SpriteRenderer.DrawSprite(prevSprite, videoOrigin, pr, videoSize);
                         CountForPause += deltaScale; //incerease CountForPause to enter at if (CountForPause > PauseInSeconds * 1000)
@@ -275,9 +315,9 @@ namespace OpenRA.Mods.D2.Widgets
                     //if not last frame of video, move next frame
                     video.AdvanceFrame();
                 }
-                if (image!=null && prevSprite!=null)
+                if (image != null && prevSprite != null)
                 {
-                   
+
 
                     Game.Renderer.SpriteRenderer.DrawSprite(prevSprite, videoOrigin, pr, videoSize);
                     CountForPause += deltaScale; //incerease CountForPause to enter at if (CountForPause > PauseInSeconds * 1000)
@@ -304,31 +344,31 @@ namespace OpenRA.Mods.D2.Widgets
                 {
                     if (frameSoundLine.Contains(new FrameSoundLine() { WSAfilename = cachedVideo, FrameNumber = video.CurrentFrame }))
                     {
-                        
+
                         var vocfilename = frameSoundLine.Find(x => x.WSAfilename.Contains(cachedVideo) && x.FrameNumber == video.CurrentFrame).VOCfilename;
                         if (vocfilename.Contains("ADL"))
                         {
-                            IReadOnlyFileSystem fileSystem =Game.ModData.DefaultFileSystem;
+                            IReadOnlyFileSystem fileSystem = Game.ModData.DefaultFileSystem;
 
                             if (!fileSystem.Exists(vocfilename))
                             {
                                 Log.Write("sound", "LoadSound, file does not exist: {0}", vocfilename);
-                                
+
                             }
                             DuneMusic.DuneMusic.Quit();
                             DuneMusic.DuneMusic.Init(44100, "", DuneMusic.DuneMusic.DuneMusicOplEmu.kOplEmuNuked);
-                           
+
                             using (var stream = fileSystem.Open(vocfilename))
                             {
-                                
+
                                 DuneMusic.DuneMusic.InsertMemoryFile("test", stream.ReadAllBytes());
-                                byte[] temp=new byte[28106880];
-                              
-                                UIntPtr temp3 ;
+                                byte[] temp = new byte[28106880];
+
+                                UIntPtr temp3;
                                 temp3 = (UIntPtr)1000000;
-                                temp3=DuneMusic.DuneMusic.SynthesizeAudio("test", 2, -1, temp, (UIntPtr)temp.Length);
+                                temp3 = DuneMusic.DuneMusic.SynthesizeAudio("test", 2, -1, temp, (UIntPtr)temp.Length);
                                 ISoundSource soundSource;
-                                soundSource =Game.Sound.soundEngine.AddSoundSourceFromMemory(temp, 2, 16, 44100);
+                                soundSource = Game.Sound.soundEngine.AddSoundSourceFromMemory(temp, 2, 16, 44100);
                                 ISound temp2 = Game.Sound.soundEngine.Play2D(Game.LocalTick, soundSource, false, true, WPos.Zero, 100, false);
 
                             }
@@ -345,9 +385,9 @@ namespace OpenRA.Mods.D2.Widgets
                 }
                 if (frameTextLine == null)
                 {
-                    prevText = new FrameTextLine() { Text="" };
+                    prevText = new FrameTextLine() { Text = "" };
                     DrawWsaText(prevText);
-               
+
                 }
 
                 else
@@ -355,25 +395,25 @@ namespace OpenRA.Mods.D2.Widgets
                     if (frameTextLine.Contains(new FrameTextLine() { WSAfilename = cachedVideo, FrameNumber = video.CurrentFrame }))
                     {
                         FrameTextLine ft = frameTextLine.Find(x => x.WSAfilename.Contains(cachedVideo) && x.FrameNumber == video.CurrentFrame);
-                 
+
                         DrawWsaText(ft);
                         prevText = ft;
                     }
-                   
+
                 }
             }
             var sheetBuilder = new SheetBuilder(SheetType.Indexed, 512);
-           
+
             //router for WSA  frame or CPS frame
-            Sprite videoSprite=null;
+            Sprite videoSprite = null;
             if (cachedVideo.Contains("WSA"))
             {
 
-                 videoSprite = sheetBuilder.Add(video.Frame);
+                videoSprite = sheetBuilder.Add(video.Frame);
             }
             else
             {
-               
+
                 //videoSprite = new Sprite(sheetBuilder.Current, new Rectangle(0, 0, 320, 200), TextureChannel.RGBA);
                 videoSprite = sheetBuilder.Add(imageSprite[0]);
                 //дампинг ресурсов игры в png
@@ -390,7 +430,7 @@ namespace OpenRA.Mods.D2.Widgets
 
                 //    exppal = null;
                 //}
-           
+
                 //if (exppal==null)
                 //{
                 //    LoadPalette();
@@ -400,14 +440,14 @@ namespace OpenRA.Mods.D2.Widgets
                 //{
                 //    videoSprite.Sheet.AsPng(TextureChannel.Blue, exppal).Save(cachedVideo + ".png");
                 //}
-               
+
             }
             prevSprite = videoSprite;
 
-         
+
             Game.Renderer.SpriteRenderer.DrawSprite(videoSprite, videoOrigin, pr, videoSize);
-            
-   
+
+
             CountForWaitNextFrameMs = 0;
             lastDrawTime = Game.RunTime;
         }
@@ -438,8 +478,6 @@ namespace OpenRA.Mods.D2.Widgets
 
         public void PlayThen(Action after)
         {
-            if (video == null)
-                return;
 
             onComplete = after;
 
@@ -478,5 +516,7 @@ namespace OpenRA.Mods.D2.Widgets
             Stop();
             video = null;
         }
+
+
     }
 }

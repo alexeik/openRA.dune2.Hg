@@ -69,18 +69,18 @@ namespace OpenRA.Mods.D2.Widgets.Logic
             fullscreenVideoPlayer.Visible = true;
             fsPlayer.VideoStackList = new System.Collections.Generic.Queue<string>();
          
-            fsPlayer.VideoStackList.Enqueue("WESTWOOD.WSA");
+            //fsPlayer.VideoStackList.Enqueue("WESTWOOD.WSA");
             fsPlayer.VideoStackList.Enqueue("AND.ENG");
             fsPlayer.VideoStackList.Enqueue("VIRGIN.CPS");
             //fsPlayer.VideoStackList.Enqueue("SCREEN.CPS");
-            fsPlayer.VideoStackList.Enqueue("INTRO1.WSA");
-            fsPlayer.VideoStackList.Enqueue("INTRO2.WSA");
-            fsPlayer.VideoStackList.Enqueue("INTRO3.WSA");
-            fsPlayer.VideoStackList.Enqueue("INTRO4.WSA");
+            //fsPlayer.VideoStackList.Enqueue("INTRO1.WSA");
+            //fsPlayer.VideoStackList.Enqueue("INTRO2.WSA");
+            //fsPlayer.VideoStackList.Enqueue("INTRO3.WSA");
+            //fsPlayer.VideoStackList.Enqueue("INTRO4.WSA");
             //fsPlayer.VideoStackList.Enqueue("INTRO5.WSA");
             //fsPlayer.VideoStackList.Enqueue("INTRO6.WSA");
             //fsPlayer.VideoStackList.Enqueue("INTRO7A.WSA");
-            //fsPlayer.VideoStackList.Enqueue("INTRO7B.WSA");
+            fsPlayer.VideoStackList.Enqueue("INTRO7B.WSA");
             //fsPlayer.VideoStackList.Enqueue("INTRO8A.WSA");
             //fsPlayer.VideoStackList.Enqueue("INTRO8B.WSA");
             //fsPlayer.VideoStackList.Enqueue("INTRO8C.WSA");
