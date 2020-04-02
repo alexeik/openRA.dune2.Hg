@@ -41,59 +41,78 @@ namespace OpenRA.Mods.D2.Widgets
         private Sprite vert_line_sprite;
         private Sprite vertbord_line_sprite;
 
-        public D2GameScreenWidget()
+        /// <summary>
+        /// Если использовать [ObjectCreator.UseCtor] , то можно использовать DI для инициализации аргументов конструктора.
+        /// </summary>
+        /// <param name="world"></param>
+        [ObjectCreator.UseCtor]
+        public D2GameScreenWidget(World world)
         {
-            video = new CpsD2Loader("SCREEN.CPS");
-          
-       
-            using (var stream = Game.ModData.DefaultFileSystem.Open(video.SpriteFilename))
+            //тут такая механика.
+            //используем DI и атрибут [ObjectCreator.UseCtor], тогда world будет заполнен . 
+            //после идем в коллекцию Sequences , которая собирается из всех rules\sequences, где мы в misc.yaml прописали наш screen.cps
+            //берем sprite из этих sequences и используем его Sheet, как ссылку для создания других Sprite в нашем UI.
+            //video = new CpsD2Loader("SCREEN.CPS");
+
+            SequenceProvider sp = world.Map.Rules.Sequences;
+            Sprite uisprite;
+
+            uisprite =  sp.GetSequence("screenui", "idle").GetSprite(0);
+            
+            LoadPalette();
+
+
+            /*video.TryParseSpritePlusPalette(stream, out imageSprite, out metadata, out cpspalette);
+
+            if (cpspalette != null)
             {
+                LoadPalette(cpspalette, image.SpriteFilename);
+            }
+            else
+            {
+                LoadPalette();
+            }
 
-               
-                video.TryParseSpritePlusPalette(stream, out imageSprite, out metadata, out cpspalette);
-                if (cpspalette != null)
-                {
-                    LoadPalette(cpspalette, image.SpriteFilename);
-                }
-                else
-                {
-                    LoadPalette();
-                }
 
-                var sheetBuilder = new SheetBuilder(SheetType.Indexed, 512);
-                Sprite screen_cps_sprite = null;
-                screen_cps_sprite = sheetBuilder.Add(imageSprite[0]);
-                screen_cps_sprite.Sheet.CreateBuffer();
-                screen_cps_sprite.Sheet.ReleaseBuffer();
-                //Png screen_as_png;
-                //screen_as_png = screen_cps_sprite.Sheet.AsPng(TextureChannel.Blue, hardwarePalette.GetPalette("chrome"));
 
-                stolb_sprite = new Sprite(screen_cps_sprite.Sheet, new Rectangle(241, 142, 12,39), TextureChannel.Red);
-                stolb_top_sprite= new Sprite(screen_cps_sprite.Sheet, new Rectangle(241, 136, 12, 5), TextureChannel.Red);
-                stolb_bot_sprite = new Sprite(screen_cps_sprite.Sheet, new Rectangle(241, 182, 12, 4), TextureChannel.Red);
-                stolb_shpere_sprite = new Sprite(screen_cps_sprite.Sheet, new Rectangle(241, 124, 12, 11), TextureChannel.Red);
-                stolb_line_sprite = new Sprite(screen_cps_sprite.Sheet, new Rectangle(241, 135, 12, 1), TextureChannel.Red);
+           var sheetBuilder = new SheetBuilder(SheetType.Indexed, 512);
+            Sprite screen_cps_sprite = null;
+            screen_cps_sprite = sheetBuilder.Add(imageSprite[0]);
+            screen_cps_sprite.Sheet.CreateBuffer();
+            screen_cps_sprite.Sheet.ReleaseBuffer();
+            */
+            //Png screen_as_png;
+            //screen_as_png = screen_cps_sprite.Sheet.AsPng(TextureChannel.Blue, hardwarePalette.GetPalette("chrome"));
 
-                stolb_horiz_sprite = new Sprite(screen_cps_sprite.Sheet, new Rectangle(259, 127, 55, 6), TextureChannel.Red);
-                stolb_horiz_left_sprite = new Sprite(screen_cps_sprite.Sheet, new Rectangle(254, 127, 5, 6), TextureChannel.Red);
-                stolb_horiz_right_sprite = new Sprite(screen_cps_sprite.Sheet, new Rectangle(315, 127, 5, 6), TextureChannel.Red);
+            int2 offset=new int2(uisprite.Bounds.Location.X, uisprite.Bounds.Location.Y);
+            //делаем ooffset так как теперь screen.cps берется из громадной текстуры у SequenceProvider.Поэтому добавляем смещение для спрайтов ниже.
 
-                bg_sprite = new Sprite(screen_cps_sprite.Sheet, new Rectangle(0, 0, 15, 16), TextureChannel.Red);
-                but1_sprite = new Sprite(screen_cps_sprite.Sheet, new Rectangle(16,1, 78, 15), TextureChannel.Red);
-                but2_sprite = new Sprite(screen_cps_sprite.Sheet, new Rectangle(104, 1, 78, 15), TextureChannel.Red);
-                credits_sprite = new Sprite(screen_cps_sprite.Sheet, new Rectangle(201, 1, 118, 15), TextureChannel.Red);
+                stolb_sprite = new Sprite(uisprite.Sheet, new Rectangle(241+offset.X, 142+offset.Y, 12,39), TextureChannel.Red);
+                stolb_top_sprite= new Sprite(uisprite.Sheet, new Rectangle(241 + offset.X, 136 + offset.Y, 12, 5), TextureChannel.Red);
+                stolb_bot_sprite = new Sprite(uisprite.Sheet, new Rectangle(241 + offset.X, 182 + offset.Y, 12, 4), TextureChannel.Red);
+                stolb_shpere_sprite = new Sprite(uisprite.Sheet, new Rectangle(241 + offset.X, 124 + offset.Y, 12, 11), TextureChannel.Red);
+                stolb_line_sprite = new Sprite(uisprite.Sheet, new Rectangle(241 + offset.X, 135 + offset.Y, 12, 1), TextureChannel.Red);
 
-                status_l_sprite = new Sprite(screen_cps_sprite.Sheet, new Rectangle(0, 17, 8, 22), TextureChannel.Red);
-                status_horiz_sprite = new Sprite(screen_cps_sprite.Sheet, new Rectangle(8, 17,303, 22), TextureChannel.Red);
-                status_r_sprite = new Sprite(screen_cps_sprite.Sheet, new Rectangle(312, 17, 8, 22), TextureChannel.Red);
+                stolb_horiz_sprite = new Sprite(uisprite.Sheet, new Rectangle(259 + offset.X, 127 + offset.Y, 55, 6), TextureChannel.Red);
+                stolb_horiz_left_sprite = new Sprite(uisprite.Sheet, new Rectangle(254 + offset.X, 127 + offset.Y, 5, 6), TextureChannel.Red);
+                stolb_horiz_right_sprite = new Sprite(uisprite.Sheet, new Rectangle(315 + offset.X, 127 + offset.Y, 5, 6), TextureChannel.Red);
 
-                vert_line_sprite = new Sprite(screen_cps_sprite.Sheet, new Rectangle(240, 40, 240, 123), TextureChannel.Red);
-                vertbord_line_sprite = new Sprite(screen_cps_sprite.Sheet, new Rectangle(254, 134, 1,65), TextureChannel.Red);
+                bg_sprite = new Sprite(uisprite.Sheet, new Rectangle(0 + offset.X, 0 + offset.Y, 15, 16), TextureChannel.Red);
+                but1_sprite = new Sprite(uisprite.Sheet, new Rectangle(16 + offset.X, 1 + offset.Y, 78, 15), TextureChannel.Red);
+                but2_sprite = new Sprite(uisprite.Sheet, new Rectangle(104 + offset.X, 1 + offset.Y, 78, 15), TextureChannel.Red);
+                credits_sprite = new Sprite(uisprite.Sheet, new Rectangle(201 + offset.X, 1 + offset.Y, 118, 15), TextureChannel.Red);
+
+                status_l_sprite = new Sprite(uisprite.Sheet, new Rectangle(0 + offset.X, 17 + offset.Y, 8, 22), TextureChannel.Red);
+                status_horiz_sprite = new Sprite(uisprite.Sheet, new Rectangle(8 + offset.X, 17 + offset.Y, 303, 22), TextureChannel.Red);
+                status_r_sprite = new Sprite(uisprite.Sheet, new Rectangle(312 + offset.X, 17 + offset.Y, 8, 22), TextureChannel.Red);
+
+                vert_line_sprite = new Sprite(uisprite.Sheet, new Rectangle(240 + offset.X, 40 + offset.Y, 240, 123), TextureChannel.Red);
+                vertbord_line_sprite = new Sprite(uisprite.Sheet, new Rectangle(254 + offset.X, 134 + offset.Y, 1,65), TextureChannel.Red);
 
                 int screenwidth = 0;
                 int screenH = 0;
-                screenH = Game.Settings.Graphics.WindowedSize.Y;
-                screenwidth = Game.Settings.Graphics.WindowedSize.X;
+                screenH = Game.Renderer.Resolution.Height;
+                screenwidth = Game.Renderer.Resolution.Width;
  
                 int offsetX; // 776 + 17; //75%
                 offsetX = screenwidth - 231;//
@@ -146,7 +165,10 @@ namespace OpenRA.Mods.D2.Widgets
                 luiComs.Add(uic);
                 uic = new uiCom(new Rectangle(0, 5, 8, 22), status_r_sprite, false, true);
                 luiComs.Add(uic);
-            }
+
+            //using (var stream = Game.ModData.DefaultFileSystem.Open(video.SpriteFilename))
+            //{
+            //}
 
         }
         public List<uiCom> luiComs;
@@ -182,34 +204,37 @@ namespace OpenRA.Mods.D2.Widgets
 
         void LoadPalette(ImmutablePalette cpspalette, string customname)
         {
-
-            palette = cpspalette;
-            hardwarePalette = new HardwarePalette();
-            hardwarePalette.AddPalette(customname, palette, false);
-            hardwarePalette.Initialize();
-            Game.Renderer.SetPalette(hardwarePalette);
-            var pal = hardwarePalette.GetPalette(customname);
-            pr = new PaletteReference(customname + "ref", hardwarePalette.GetPaletteIndex(customname), pal, hardwarePalette);
+            Game.worldRenderer.AddPalette("dune2widget", cpspalette, false, false);
+            pr = Game.worldRenderer.Palette("dune2widget");
+            //palette = cpspalette;
+            //hardwarePalette = new HardwarePalette();
+            //hardwarePalette.AddPalette(customname, palette, false);
+            //hardwarePalette.Initialize();
+            //Game.Renderer.SetPalette(hardwarePalette);
+            //var pal = hardwarePalette.GetPalette(customname);
+            //pr = new PaletteReference(customname + "ref", hardwarePalette.GetPaletteIndex(customname), pal, hardwarePalette);
         }
         void LoadPalette()
         {
-            using (var stream = Game.ModData.DefaultFileSystem.Open("IBM.PAL"))
-            {
-                palette = new ImmutablePalette(stream, new int[] { });
-            }
+            //using (var stream = Game.ModData.DefaultFileSystem.Open("IBM.PAL"))
+            //{
+            //    palette = new ImmutablePalette(stream, new int[] { });
+            //}
+            
+            pr = Game.worldRenderer.Palette("d2"); //d2 палитра назначена в d2\rules\palettes.yaml
 
-            hardwarePalette = new HardwarePalette();
-            hardwarePalette.AddPalette("chrome", palette, false);
-            hardwarePalette.Initialize();
-            Game.Renderer.SetPalette(hardwarePalette);
-            var pal = hardwarePalette.GetPalette("chrome");
-            pr = new PaletteReference("chromeref", hardwarePalette.GetPaletteIndex("chrome"), pal, hardwarePalette);
+            //hardwarePalette = new HardwarePalette();
+            //hardwarePalette.AddPalette("chrome", palette, false);
+            //hardwarePalette.Initialize();
+            //Game.Renderer.SetPalette(hardwarePalette);
+            //var pal = hardwarePalette.GetPalette("chrome");
+            //pr = new PaletteReference("chromeref", hardwarePalette.GetPaletteIndex("chrome"), pal, hardwarePalette);
         }
 
 
         public override void Draw()
         {
-            Game.Renderer.SetPalette(hardwarePalette);
+            //Game.Renderer.SetPalette(hardwarePalette);
             int offsetY = 0;
             int offsetX = 0;
             Rectangle temprect = new Rectangle();
