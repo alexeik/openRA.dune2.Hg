@@ -195,9 +195,10 @@ namespace OpenRA.Mods.Common.Traits
 			var fogBlend = fogSprites[0].BlendMode;
 			if (fogSprites.Any(s => s.BlendMode != fogBlend))
 				throw new InvalidDataException("Fog sprites must all use the same blend mode.");
+			
 
-			shroudLayer = new TerrainSpriteLayer(w, wr, shroudSheet, shroudBlend, wr.Palette(info.ShroudPalette), false);
-			fogLayer = new TerrainSpriteLayer(w, wr, fogSheet, fogBlend, wr.Palette(info.FogPalette), false);
+			shroudLayer = new TerrainSpriteLayer(w, wr, shroudSheet, shroudBlend, wr.Palette(info.ShroudPalette), false, "D2ShroudRenderer.shroudLayer");
+			fogLayer = new TerrainSpriteLayer(w, wr, fogSheet, fogBlend, wr.Palette(info.FogPalette), false, "D2ShroudRenderer.foglayer");
 		}
 
 		Edges GetEdges(PPos puv, Func<PPos, bool> isVisible)
@@ -239,6 +240,7 @@ namespace OpenRA.Mods.Common.Traits
 
 		public void RenderShroud(Shroud shroud, WorldRenderer wr)
 		{
+            //Console.WriteLine("both sheets are equal : " +fogLayer.Sheet.Equals(shroudLayer.Sheet));
 			if (currentShroud != shroud)
 			{
 				if (currentShroud != null)

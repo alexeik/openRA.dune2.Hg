@@ -128,20 +128,24 @@ namespace OpenRA.Mods.D2.Traits
 					var maxDensityClear = FindMaxDensityClearSides(t.Type, p);
 					if (SpriteMap.TryGetValue(maxDensityClear, out index))
 						t.Sprite = t.Type.Variants.First().Value[16 + index];
+                
 					else
-						t.Sprite = null;
+						t.Sprite = null; //ресурс закончился. ничего не рендерим
 				}
 				else if (SpriteMap.TryGetValue(clear, out index))
 					t.Sprite = t.Type.Variants.First().Value[index];
+                
 				else
-					t.Sprite = null;
+					t.Sprite = null;  //ресурс закончился. ничего не рендерим
 			}
 			else
-				t.Sprite = null;
-
-			RenderContent[p] = t;
+				t.Sprite = null;  //ресурс закончился. ничего не рендерим
+			int temp = RenderContent.Index(p);
+			RenderContent.entries[temp].Sprite= t.Sprite;
 		}
 
+		//UpdateRenderedTileInner задача этого метода, во внутренню коллекцию ResourceLayer добавить в RenderContent спрайты ресурсов.
+		// засчет того, что в t.Sprite добавляется спрайт! 
 		protected override void UpdateRenderedSprite(CPos p)
 		{
 			// Need to update neighbouring tiles too

@@ -54,15 +54,6 @@ namespace OpenRA.Mods.Common.Traits
 				var sprites = Exts.MakeArray(seq.Length, x => seq.GetSprite(x));
 				sideSprites.Add(t, sprites);
 			}
-
-			// worldRenderer.Theater.TileSprite(tile, 0); брать из Theater спрайтов, а tile это 
-			//var tile = new TerrainTile(Template.Id, (byte)(i++));
-			//var tileInfo = tileset.GetTileInfo(tile);
-
-			//// Empty tile
-			//if (tileInfo == null)
-			//	continue;
-			//этот код взят из TerrainTemplatePreviewWidget.Draw
 		}
 
 		public void WorldLoaded(World w, WorldRenderer wr)
@@ -79,11 +70,12 @@ namespace OpenRA.Mods.Common.Traits
 					+ "Try using different smudge types for smudges that use different blend modes.");
 
 			// using base TerrainRenderer to avoid using one more renderer through TerrainSpriteLayer class as it was done.
-			var terrainRenderer = w.WorldActor.TraitOrDefault<IRenderTerrain>(); //to get TerrainRenderer.cs class 
-			TerrainRenderer = terrainRenderer.GetTerrainSpriteLayerRenderer(); //get all Sprites that it has from tileset\*.yaml file
-			render = TerrainRenderer[Info.Palette];
+			//var terrainRenderer = w.WorldActor.TraitOrDefault<IRenderTerrain>(); //to get TerrainRenderer.cs class 
+			//TerrainRenderer = terrainRenderer.GetTerrainSpriteLayerRenderer(); //get all Sprites that it has from tileset\*.yaml file
+			//render = TerrainRenderer[Info.Palette];
 			// Nowadays way to accomplish task is to add one more renderer through TerrainSpriteLayer class and we get one more Batch for total terrain vertexes
-			//render = new TerrainSpriteLayer(w, wr, sheet, blendMode, wr.Palette(Info.Palette), wr.World.Type != WorldType.Editor);
+			render = new TerrainSpriteLayer(w, wr, sheet, blendMode, wr.Palette(Info.Palette), wr.World.Type != WorldType.Editor, "D2TerrainLayer");
+            MersenneTwister random=new MersenneTwister();
 
 			var tilesLayer = w.Map.Tiles;
 			for (var v = 0; v < tilesLayer.Size.Height; v++)
@@ -99,12 +91,12 @@ namespace OpenRA.Mods.Common.Traits
 						if (index != 15)
 						{
 							CPos cpos = pos.ToCPos(w.Map);
-							ushort sdf;
-							int ffd = (128 + Convert.ToInt32(index));
-							sdf = Convert.ToUInt16(ffd);
-							var t = new TerrainTile(sdf, 0);
-							Sprite sprite= wr.Theater.TileSprite(t, 0);
-							//Sprite sprite = sideSprites["rock"][index];
+							//ushort sdf;
+							//int ffd = (128 + Convert.ToInt32(index));
+							//sdf = Convert.ToUInt16(ffd);
+							//var t = new TerrainTile(sdf, 0);
+							//Sprite sprite = wr.Theater.TileSprite(t, 0);
+							Sprite sprite = sideSprites["rock"][index];
 							render.Update(cpos, sprite);
 						}
 					}
@@ -115,12 +107,12 @@ namespace OpenRA.Mods.Common.Traits
 						if (index != 15)
 						{
 							CPos cpos = pos.ToCPos(w.Map);
-							ushort sdf;
-							int ffd = (144 + Convert.ToInt32(index));
-							sdf = Convert.ToUInt16(ffd);
-							var t=new TerrainTile(sdf ,0);
-                            Sprite sprite= wr.Theater.TileSprite(t, 0);
-							//Sprite sprite = sideSprites["dune"][index];
+							//ushort sdf;
+							//int ffd = (144 + Convert.ToInt32(index)); //158
+							//sdf = Convert.ToUInt16(ffd);
+							//var t = new TerrainTile(sdf, 0);
+							//Sprite sprite = wr.Theater.TileSprite(t, 0);
+							Sprite sprite = sideSprites["dune"][index];
 							render.Update(cpos, sprite);
 						}
 					}
@@ -131,12 +123,12 @@ namespace OpenRA.Mods.Common.Traits
 						if (index != 15)
 						{
 							CPos cpos = pos.ToCPos(w.Map);
-							ushort sdf;
-							int ffd = (160 + Convert.ToInt32(index));
-							sdf = Convert.ToUInt16(ffd);
-							var t = new TerrainTile(sdf, 0);
-							Sprite sprite= wr.Theater.TileSprite(t, 0);
-							//Sprite sprite = sideSprites["rough"][index];
+							//ushort sdf;
+							//int ffd = (160 + Convert.ToInt32(index));
+							//sdf = Convert.ToUInt16(ffd);
+							//var t = new TerrainTile(sdf, 0);
+							//Sprite sprite = wr.Theater.TileSprite(t, 0);
+							Sprite sprite = sideSprites["rough"][index];
 							render.Update(cpos, sprite);
 						}
 					}

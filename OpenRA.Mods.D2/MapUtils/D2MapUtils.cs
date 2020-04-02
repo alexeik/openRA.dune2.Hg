@@ -54,6 +54,7 @@ namespace OpenRA.Mods.D2.MapUtils
 			{ ClearSides.None, 15 },
 		};
 
+		//length or every arrays below are 15 as array SpriteMap. Its all about transisitions for tiles
 		static readonly ushort[] RockSides = { 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143 };
 		static readonly ushort[] DuneSides = { 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159 };
 		static readonly ushort[] RoughSides = { 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175 };
@@ -219,7 +220,12 @@ namespace OpenRA.Mods.D2.MapUtils
 
 			return tile;
 		}
-
+		/// <summary>
+		/// Подбор тайлов углов и сторон для blend эффекта  - перехода из одних тайлов в другие.
+		/// </summary>
+		/// <param name="tiles">тайл с карты</param>
+		/// <param name="pos">его позиция</param>
+		/// <returns></returns>
 		public static ushort SmoothIndexForPos(CellLayer<TerrainTile> tiles, MPos pos)
 		{
 			var tile = tiles[pos].Type;
