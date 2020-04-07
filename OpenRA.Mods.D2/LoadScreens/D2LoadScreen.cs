@@ -151,13 +151,13 @@ namespace OpenRA.Mods.D2
 
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing && sheetBuilder != null)
-				sheetBuilder.Dispose();
+			//if (disposing && sheetBuilder != null)
+			//	sheetBuilder.Dispose();
 
-			if (disposing && hardwarePalette != null)
-				hardwarePalette.Dispose();
+			//if (disposing && hardwarePalette != null)
+			//	hardwarePalette.Dispose();
 
-			base.Dispose(disposing);
+			//base.Dispose(disposing);
 		}
 	}
 }
