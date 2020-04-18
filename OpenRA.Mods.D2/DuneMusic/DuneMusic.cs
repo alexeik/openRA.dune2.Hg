@@ -174,7 +174,7 @@ namespace DuneMusic2
     }
 }
 
-namespace DuneMusic
+namespace OpenRA.Mods.D2
 {
     public class DuneMusic
     {
