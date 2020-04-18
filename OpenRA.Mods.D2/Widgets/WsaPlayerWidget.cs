@@ -1,4 +1,4 @@
-#region Copyright & License Information
+п»ї#region Copyright & License Information
 /*
  * Copyright 2007-2019 The d2 mod Developers (see AUTHORS)
  * This file is part of OpenRA, which is free software. It is made
@@ -56,13 +56,13 @@ namespace OpenRA.Mods.D2.Widgets
         Animation anim1, anim2;
         World world;
 
-        public WsaPlayerWidget() //этот виджет, загрузиться, когда загрузиться shellmap, поэтому метод WorldLoaded заполнит нам world
+        public WsaPlayerWidget() //СЌС‚РѕС‚ РІРёРґР¶РµС‚, Р·Р°РіСЂСѓР·РёС‚СЊСЃСЏ, РєРѕРіРґР° Р·Р°РіСЂСѓР·РёС‚СЊСЃСЏ shellmap, РїРѕСЌС‚РѕРјСѓ РјРµС‚РѕРґ WorldLoaded Р·Р°РїРѕР»РЅРёС‚ РЅР°Рј world
         {
             LoadPalette();
             world = Game.worldRenderer.World;
-            anim1 = new Animation(world, "video1");
-            anim1.Play("play");
-            //  anim1 = new Animation(null, ""); // нужно иметь заполненым переменную world.Map.Rules.Sequences;
+            //anim1 = new Animation(world, "video1");
+            //anim1.Play("play");
+            //  anim1 = new Animation(null, ""); // РЅСѓР¶РЅРѕ РёРјРµС‚СЊ Р·Р°РїРѕР»РЅРµРЅС‹Рј РїРµСЂРµРјРµРЅРЅСѓСЋ world.Map.Rules.Sequences;
 
         }
 
@@ -99,11 +99,11 @@ namespace OpenRA.Mods.D2.Widgets
 
         void LoadPalette()
         {
-            pr = Game.worldRenderer.Palette("d2"); //d2 палитра назначена в d2\rules\palettes.yaml
+            pr = Game.worldRenderer.Palette("d2"); //d2 РїР°Р»РёС‚СЂР° РЅР°Р·РЅР°С‡РµРЅР° РІ d2\rules\palettes.yaml
         }
         void LoadPaletteWSA()
         {
-            pr = Game.worldRenderer.Palette("westwood"); //d2 палитра назначена в d2\rules\palettes.yaml
+            pr = Game.worldRenderer.Palette("westwood"); //d2 РїР°Р»РёС‚СЂР° РЅР°Р·РЅР°С‡РµРЅР° РІ d2\rules\palettes.yaml
         }
         void LoadPalette(ImmutablePalette cpspalette, string customname)
         {
@@ -225,7 +225,7 @@ namespace OpenRA.Mods.D2.Widgets
                 if (VideoStackList.Count == 0)
                 {
                     Exit();
-                    return;
+                   
                 }
                 if (VideoStackList.Count > 0)
                 {
@@ -240,8 +240,8 @@ namespace OpenRA.Mods.D2.Widgets
         }
         public void Draw2()
         {
-            //вызовы SetPalette в Draw для UI элементов, конкурируют с RefreshPalette в World.Draw.
-            //Game.Renderer.SetPalette(hardwarePalette); //теперь не нужно, так как обнаружен файл palettes.yaml, в котором все палитры есть и сделано через него.
+            //РІС‹Р·РѕРІС‹ SetPalette РІ Draw РґР»СЏ UI СЌР»РµРјРµРЅС‚РѕРІ, РєРѕРЅРєСѓСЂРёСЂСѓСЋС‚ СЃ RefreshPalette РІ World.Draw.
+            //Game.Renderer.SetPalette(hardwarePalette); //С‚РµРїРµСЂСЊ РЅРµ РЅСѓР¶РЅРѕ, С‚Р°Рє РєР°Рє РѕР±РЅР°СЂСѓР¶РµРЅ С„Р°Р№Р» palettes.yaml, РІ РєРѕС‚РѕСЂРѕРј РІСЃРµ РїР°Р»РёС‚СЂС‹ РµСЃС‚СЊ Рё СЃРґРµР»Р°РЅРѕ С‡РµСЂРµР· РЅРµРіРѕ.
 
             if (String.IsNullOrEmpty(cachedVideo))
                 return;
@@ -270,7 +270,7 @@ namespace OpenRA.Mods.D2.Widgets
                     }
                     //stop video 
                 }
-                //нужно остановить медиа=сцену и передать контроль дальше
+                //РЅСѓР¶РЅРѕ РѕСЃС‚Р°РЅРѕРІРёС‚СЊ РјРµРґРёР°=СЃС†РµРЅСѓ Рё РїРµСЂРµРґР°С‚СЊ РєРѕРЅС‚СЂРѕР»СЊ РґР°Р»СЊС€Рµ
                 cachedVideo = null;
                 Exit();
                 return;
@@ -355,18 +355,18 @@ namespace OpenRA.Mods.D2.Widgets
                                 Log.Write("sound", "LoadSound, file does not exist: {0}", vocfilename);
 
                             }
-                            DuneMusic.DuneMusic.Quit();
-                            DuneMusic.DuneMusic.Init(44100, "", DuneMusic.DuneMusic.DuneMusicOplEmu.kOplEmuNuked);
+                            DuneMusic.Quit();
+                            DuneMusic.Init(44100, "", DuneMusic.DuneMusicOplEmu.kOplEmuNuked);
 
                             using (var stream = fileSystem.Open(vocfilename))
                             {
 
-                                DuneMusic.DuneMusic.InsertMemoryFile("test", stream.ReadAllBytes());
+                                DuneMusic.InsertMemoryFile("test", stream.ReadAllBytes());
                                 byte[] temp = new byte[28106880];
 
                                 UIntPtr temp3;
                                 temp3 = (UIntPtr)1000000;
-                                temp3 = DuneMusic.DuneMusic.SynthesizeAudio("test", 2, -1, temp, (UIntPtr)temp.Length);
+                                temp3 = DuneMusic.SynthesizeAudio("test", 52, -1, temp, (UIntPtr)temp.Length);
                                 ISoundSource soundSource;
                                 soundSource = Game.Sound.soundEngine.AddSoundSourceFromMemory(temp, 2, 16, 44100);
                                 ISound temp2 = Game.Sound.soundEngine.Play2D(Game.LocalTick, soundSource, false, true, WPos.Zero, 100, false);
@@ -416,7 +416,7 @@ namespace OpenRA.Mods.D2.Widgets
 
                 //videoSprite = new Sprite(sheetBuilder.Current, new Rectangle(0, 0, 320, 200), TextureChannel.RGBA);
                 videoSprite = sheetBuilder.Add(imageSprite[0]);
-                //дампинг ресурсов игры в png
+                //РґР°РјРїРёРЅРі СЂРµСЃСѓСЂСЃРѕРІ РёРіСЂС‹ РІ png
                 //videoSprite.Sheet.CreateBuffer();
                 //videoSprite.Sheet.ReleaseBuffer();
                 ////videoSprite.Sheet.AsPng().Save("VIRGIN.png");
