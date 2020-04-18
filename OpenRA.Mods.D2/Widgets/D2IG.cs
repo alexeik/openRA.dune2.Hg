@@ -37,6 +37,19 @@ namespace OpenRA.Mods.D2.Widgets
             Actor ar;
             ar = Game.worldRenderer.World.Actors.Where(x => { if (x.Info.Name == "harvester") { return true; } return false; }).FirstOrDefault();
 
+            if (ImGui.Button("Dump Sequence Texture"))
+            {
+                {
+                    Game.Renderer.PixelDumpRenderer.Setup();
+                    DumpTextureChannel(TextureChannel.Red);
+                    DumpTextureChannel(TextureChannel.Blue);
+                    DumpTextureChannel(TextureChannel.Green);
+                    DumpTextureChannel(TextureChannel.Alpha);
+                }
+
+
+            }
+
             if (ar == null)
             { }
             else
@@ -57,6 +70,34 @@ namespace OpenRA.Mods.D2.Widgets
             UpdateWidgetSize();
             ImGui.End();
             base.Draw();
+        }
+
+        public void DumpTextureChannel(TextureChannel channel)
+        {
+            Game.Renderer.PixelDumpRenderer.fb.Bind();
+            Sheet seqsheet;
+            seqsheet = Game.ModData.DefaultSequences["arrakis2"].SpriteCache.SheetBuilder.Current;
+            Sprite sp = new Sprite(seqsheet, new Rectangle() { Width = seqsheet.Size.Width, Height = seqsheet.Size.Height }, channel); //чтобы прочитать все 4 канала seqsheet
+                                                                                                                                                  //нужно использовать 4 итерации, где нужно менять канал в спрайте.
+
+            Game.Renderer.PixelDumpRenderer.DrawSprite(sp, new float3(0, 0, 0));
+            Game.Renderer.PixelDumpRenderer.Flush();
+            Game.Renderer.PixelDumpRenderer.fb.Unbind();
+            //нарисовали в текстуру в другой фреймбуфер.
+
+
+            //теперь нужно запустить еще раз рендер, где эта текстура будет как аргумент у шейдера и он нарисует все пиксели в фреймбуфер главный.
+
+            Sheet sh1 = new Sheet(SheetType.BGRA, Game.Renderer.PixelDumpRenderer.fb.Texture);
+            Sprite sp2 = new Sprite(sh1, new Rectangle(0, 0, 2048, 2048), TextureChannel.Red); //тут канал не важен, он будет подавлен через SPriteType
+            sp2.SpriteType = 5;
+            Game.Renderer.PixelDumpRenderer.DrawSprite(sp2, new float3(0, 0, 0));
+
+
+            sp.SpriteType = 0;
+            Game.Renderer.PixelDumpRenderer.Flush();
+
+            Game.TakeTextureInner(Game.Renderer.PixelDumpRenderer.fb.Texture);
         }
     }
 
