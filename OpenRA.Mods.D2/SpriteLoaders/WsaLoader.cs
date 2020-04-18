@@ -17,7 +17,7 @@ using OpenRA.Primitives;
 
 namespace OpenRA.Mods.D2.SpriteLoaders
 {
-	public class WsaLoader : ISpriteLoader
+	public class WsaLoader : SpriteLoaderBase
 	{
 		int tileWidth;
 		int tileHeight;
@@ -25,6 +25,8 @@ namespace OpenRA.Mods.D2.SpriteLoaders
 		uint[] offsets;
 
 		long numTiles;
+		public static ISpriteFrame prevwsaframe;
+		string prevwsafilename;
 
 		class WsaTile : ISpriteFrame
 		{
@@ -38,7 +40,7 @@ namespace OpenRA.Mods.D2.SpriteLoaders
 			{
 				Size = size;
 				var dataLen = s.Length - s.Position;
-				Console.WriteLine("dataLen = {0}", dataLen);
+				//Console.WriteLine("dataLen = {0}", dataLen);
 				var tempData = StreamExts.ReadBytes(s, (int)dataLen);
 				byte[] srcData = new byte[size.Width * size.Height];
 
@@ -96,7 +98,16 @@ namespace OpenRA.Mods.D2.SpriteLoaders
 			for (var i = 0; i < numTiles; i++)
 			{
 				s.Position = offsets[i];
-				tiles[i] = new WsaTile(s, new Size(tileWidth, tileHeight), (i == 0) ? prev : tiles[i - 1]);
+				if ((prevwsafilename.Contains("7B") || prevwsafilename.Contains("8B") || prevwsafilename.Contains("8C")) && prevwsaframe!=null)
+				{
+					tiles[i] = new WsaTile(s, new Size(tileWidth, tileHeight), prevwsaframe);
+					prevwsaframe = null;
+				}
+				else
+				{
+					tiles[i] = new WsaTile(s, new Size(tileWidth, tileHeight), (i == 0) ? prev : tiles[i - 1]);
+				}
+				
 			}
 
 			s.Position = start;
@@ -113,10 +124,17 @@ namespace OpenRA.Mods.D2.SpriteLoaders
 			}
 
 			frames = ParseFrames(s, prev);
+			prevwsaframe = frames[frames.Length - 1];
 			return true;
 		}
 
-		public bool TryParseSprite(Stream s, out ISpriteFrame[] frames, out TypeDictionary metadata)
+		public override bool TryParseSprite(Stream s, string filename, out ISpriteFrame[] frames, out TypeDictionary metadata)
+		{
+			prevwsafilename = filename;
+			return TryParseSprite(s, out frames, out metadata);
+		}
+
+		public override bool TryParseSprite(Stream s, out ISpriteFrame[] frames, out TypeDictionary metadata)
 		{
 			return TryParseSpriteWithPrevFrame(s, null, out frames, out metadata);
 		}

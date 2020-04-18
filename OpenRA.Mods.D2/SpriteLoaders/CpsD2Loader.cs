@@ -21,7 +21,7 @@ namespace OpenRA.Mods.D2.SpriteLoaders
 {
 
 
-    public class CpsD2Loader : ISpriteLoader
+    public class CpsD2Loader : SpriteLoaderBase
 	{
 		public const int TileWidth = 320;
 		public const int TileHeight = 200;
@@ -129,7 +129,13 @@ namespace OpenRA.Mods.D2.SpriteLoaders
             var a = c.A / 255f;
             return Color.FromArgb(c.A, (byte)(c.R * a + 0.5f), (byte)(c.G * a + 0.5f), (byte)(c.B * a + 0.5f));
         }
-        public bool TryParseSprite(Stream s, out ISpriteFrame[] frames, out TypeDictionary metadata)
+
+        public override bool TryParseSprite(Stream s, string filename, out ISpriteFrame[] frames, out TypeDictionary metadata)
+        {
+            return TryParseSprite(s, out frames, out metadata);
+        }
+
+        public override bool TryParseSprite(Stream s, out ISpriteFrame[] frames, out TypeDictionary metadata)
 		{
 			metadata = null;
 			if (!IsCpsD2(s))
@@ -137,12 +143,12 @@ namespace OpenRA.Mods.D2.SpriteLoaders
 				frames = null;
 				return false;
 			}
-            if (CpsPalette!=null)
-            {
-                var palettes = new Dictionary<int, uint[]>();
-                palettes.Add(CpsPalette.colors.Length, CpsPalette.colors);
-                metadata = new TypeDictionary { new EmbeddedSpritePalette(framePalettes: palettes) };
-            }
+            //if (CpsPalette!=null)
+            //{
+            //    var palettes = new Dictionary<int, uint[]>();
+            //    palettes.Add(CpsPalette.colors.Length, CpsPalette.colors);
+            //    metadata = new TypeDictionary { new EmbeddedSpritePalette(framePalettes: palettes) };
+            //}
 
             s.Position = 0;
 			frames = ParseFrames(s);

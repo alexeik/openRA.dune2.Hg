@@ -15,7 +15,7 @@ using OpenRA.Primitives;
 
 namespace OpenRA.Mods.D2.SpriteLoaders
 {
-	public class IcnD2Loader : ISpriteLoader
+	public class IcnD2Loader : SpriteLoaderBase
 	{
 		public const int TileWidth = 16;
 		public const int TileHeight = 16;
@@ -153,7 +153,12 @@ namespace OpenRA.Mods.D2.SpriteLoaders
 			return tiles;
 		}
 
-		public bool TryParseSprite(Stream s, out ISpriteFrame[] frames, out TypeDictionary metadata)
+		public override bool TryParseSprite(Stream s, string filename, out ISpriteFrame[] frames, out TypeDictionary metadata)
+		{
+			return TryParseSprite(s, out frames, out metadata);
+		}
+
+		public override bool TryParseSprite(Stream s, out ISpriteFrame[] frames, out TypeDictionary metadata)
 		{
 			metadata = null;
 			if (!IsIcnD2(s))
