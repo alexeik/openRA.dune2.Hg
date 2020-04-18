@@ -6,6 +6,7 @@ General:
 	EditorTemplateOrder: Basic, Rock, Sand, Rough
 	IgnoreTileSpriteOffsets: True
 	HeightDebugColors: 880000
+    #MegaTexture:noise.png
 
 Terrain:
 	TerrainType@Clear:
