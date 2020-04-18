@@ -326,7 +326,7 @@ namespace OpenRA.Mods.D2.Widgets.Logic
 			{
 				currentPackage = package;
 				currentFilename = filename;
-				var prefix = "";
+				string prefix = "";
 				var fs = modData.DefaultFileSystem as OpenRA.FileSystem.FileSystem;
 
 				if (fs != null)
@@ -334,19 +334,23 @@ namespace OpenRA.Mods.D2.Widgets.Logic
 					prefix = fs.GetPrefix(package);
 					if (prefix != null)
 						prefix += "|";
+					if (prefix==null)
+					{
+						prefix = "";
+					}
 				}
 
-				if (Path.GetExtension(filename.ToLowerInvariant()) == ".wsa")
+				if (Path.GetExtension(filename.ToLowerInvariant()) == ".ws1a")
 				{
 					player = panel.Get<WsaPlayerWidget>("PLAYER");
-					player.Load(prefix + filename);
+					player.Load(prefix.ToString() + filename);
 					isVideoLoaded = true;
 					frameSlider.MaximumValue = (float)player.Video.Length - 1;
 					frameSlider.Ticks = 0;
 					return true;
 				}
 
-				currentSprites = world.Map.Rules.Sequences.SpriteCache[prefix + filename];
+				currentSprites = world.Map.Rules.Sequences.SpriteCache[prefix.ToString() + filename];
 				currentFrame = 0;
 				frameSlider.MaximumValue = (float)currentSprites.Length - 1;
 				frameSlider.Ticks = currentSprites.Length;
