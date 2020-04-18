@@ -103,3 +103,86 @@ moveflsh:
 null:
 	idle: DATA.R8
 		Start: 3304
+
+mentathoverbtn: 
+    idle: BTTN.ENG
+        Frames: 1
+optionshoverbtn: 
+    idle: BTTN.ENG
+        Frames: 3
+mentatascreen:
+    idle: MENTATA.CPS
+housestitle: 
+    idle: HERALD.ENG
+        Length: *
+screenui:
+    idle: SCREEN.CPS
+        Length: *
+title:
+    idle: TITLE.ENG
+        Length: *
+video1:
+    play: FARTR.WSA
+        Length: *
+        Tick: 700
+video2:
+    play: FHARK.WSA
+        Length: *
+        Tick: 700
+video3:
+    play: FORDOS.WSA
+        Length: *
+        Tick: 700
+        
+westwoodwsa:
+    play: WESTWOOD.WSA
+        Length: *
+        Tick: 500
+intro1wsa:
+    play: INTRO1.WSA
+        Length: *
+        Tick: 500
+intro2wsa:
+    play: INTRO2.WSA
+        Length: *
+        Tick: 500
+intro3wsa:
+    play: INTRO3.WSA
+        Length: *
+        Tick: 500
+intro4wsa:
+    play: INTRO4.WSA
+        Length: *
+        Tick: 500   
+intro5wsa:
+    play: INTRO5.WSA
+        Length: *
+        Tick: 500
+intro6wsa:
+    play: INTRO6.WSA
+        Length: *
+        Tick: 500
+intro7awsa:
+    play: INTRO7A.WSA
+        Length: *
+        Tick: 500        
+intro7bwsa:
+    play: INTRO7B.WSA
+        Length: *
+        Tick: 500    
+intro8awsa:
+    play: INTRO8A.WSA
+        Length: *
+        Tick: 500  
+intro8bwsa:
+    play: INTRO8B.WSA
+        Length: *
+        Tick: 500  
+intro8cwsa:
+    play: INTRO8C.WSA
+        Length: *
+        Tick: 500       
+cashnums:
+    nums: SHAPES.SHP
+        Length:10
+        Start:2
