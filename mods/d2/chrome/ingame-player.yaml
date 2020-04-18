@@ -3,44 +3,35 @@ Container@PLAYER_WIDGETS:
 		LogicKeyListener@CONTROLGROUP_KEYHANDLER:
 			Logic: ControlGroupLogic
 		LogicTicker@SIDEBAR_TICKER:
-		LabelWithTooltip@CASH:
-			Logic: IngameCashCounterLogic
-			X: 29
-			Y: 2
-			Width: 50
-			Height: 22
-			Font: Bold
-			Text: {0}
-			TooltipContainer: TOOLTIP_CONTAINER
-			TooltipTemplate: SIMPLE_TOOLTIP
+		
 		Container@RADAR:
 			Logic: IngameRadarDisplayLogic
 			Children:
 				LogicTicker@RADAR_TICKER:
 				ColorBlock@RADAR_FADETOBLACK:
-					X: 806
+					X: WINDOW_RIGHT-226
 					Y: 601
-					Width: 218
-					Height: 167
+					Width: 50
+					Height: 50
 				Radar@RADAR_MINIMAP:
 					WorldInteractionController: INTERACTION_CONTROLLER
 					X: 806
 					Y: 601
-					Width: 218
-					Height: 167
+					Width: 202
+					Height: 152
 					SoundUp: RadarUp
 					SoundDown: RadarDown
 					Children:
 						VqaPlayer@PLAYER:
-							X: 100
-							Y: 100
-							Width: 218
-							Height: 167
+							X: 50
+							Y: 50
+							Width: 50
+							Height: 50
 							Skippable: false
 		Container@SIDEBAR_PRODUCTION:
 			Logic: ClassicProductionLogic
 			X: WINDOW_RIGHT - 226
-			Y: 279
+			Y: 290
 			Width: 226
 			Height: 250
 			Children:
@@ -66,6 +57,7 @@ Container@PLAYER_WIDGETS:
 					ReadyText: READY
 					HoldText: ON HOLD
 					IconSize: 58, 48
+                    StretchOriginalIcons : true
 					IconMargin: 2, 0
 					IconSpriteOffset: 0, 0
 					MinimumRows: 5
@@ -78,12 +70,44 @@ Container@PLAYER_WIDGETS:
 					Y: 2
 					Width: 25
 					Height: 274
-		D2GameScreen@dune2ui:
-			X: 600
-			Y: 0
-			Width: 11
-			Height: 768
-			
+        Container@D2GameScreenUI
+            Logic:D2GameScreenLogic
+            Children:
+                D2GameScreen@dune2ui:
+                    X: 600
+                    Y: 0
+                    Width: 11
+                    Height: 768
+                Background@dune2cashimage
+                    X:WINDOW_RIGHT-174
+                    Y:8
+                    Width:118
+                    Height:15
+                    Background:dune2cash
+                Cash@d2cash
+                    Logic: D2IngameCashCounterLogic  
+                    X:WINDOW_RIGHT-174
+                    Y:8
+                    Width:118
+                    Height:15
+                Button@mentat
+                    X:WINDOW_RIGHT-474
+                    Y:8
+                    Width:78
+                    Height:15
+                    Background:dune2btnmentat
+                Button@options
+                    X:WINDOW_RIGHT-374
+                    Y:8
+                    Width:78
+                    Height:15
+                    Background:dune2btnoptions 
+                Background@mentatabkg
+                    X:300
+                    Y:300
+                    Width:640
+                    Height:400
+                    Background:mentata
 		Container@ACTOR_INFO:
 			Logic: D2IngameActorInfoDisplayLogic
 			X: WINDOW_RIGHT - 218
