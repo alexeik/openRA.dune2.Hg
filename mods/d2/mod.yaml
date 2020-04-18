@@ -10,13 +10,15 @@ PackageFormats: PakFile, D2kSoundResources
 
 Packages:
 	~^Content/d2/Unpacked
-    ~^Content/d2/Font
+    ^Content/d2/msdf/fontmsdf1: msdffolder1
+    ^Content/d2/msdf/fontmsdf2: msdffolder2
 	~^Content/d2
 	~^Content/d2k/v2
 	.
 	$d2: d2
 	$d2k: d2k
 	./mods/common: common
+    
 	~DUNE.PAK
 	~VOC.PAK
 	~ATRE.PAK
@@ -26,7 +28,7 @@ Packages:
 	~FINALE.PAK
 	~SCENARIO.PAK
 	~INTROVOC.PAK
-	#~MENTAT.PAK
+	~MENTAT.PAK
 	#~MERC.PAK
 	~ENGLISH.PAK
 	~SOUND.PAK
@@ -36,6 +38,7 @@ Packages:
 	d2k|bits/tex
 	d2k|uibits
 	d2|bits/scripts
+    d2|tilesets
 
 MapFolders:
 	d2|maps: System
@@ -185,6 +188,9 @@ Assemblies:
 	d2k|OpenRA.Mods.D2k.dll
 	d2|OpenRA.Mods.D2.dll
 
+ChromeDefaultPalette: 
+    d2
+
 ChromeLayout:
 	common|chrome/ingame.yaml
 	common|chrome/ingame-chat.yaml
@@ -275,6 +281,16 @@ ChromeMetrics:
 	common|metrics.yaml
 	d2|metrics.yaml
 
+FontsMSDFBaseFolders:
+    common|FreeSans.ttf:
+        FontName : font1
+        FontFolder : msdffolder1|font1
+    d2|dune2.otf:
+        FontName : font2
+        FontFolder : msdffolder2|font2      
+
+
+        
 Fonts:
 	Original:
 		#Font: d2|dune2.otf
@@ -285,9 +301,9 @@ Fonts:
 		Font: common|FreeSans.ttf
 		Size:15
 	Bold:
-		#Font: d2|dune2.otf
-		Font: common|FreeSans.ttf
-		Size:15
+		Font: d2|dune2.otf
+		#Font: common|FreeSans.ttf
+		Size:20
 	Title:
         Font: common|FreeSans.ttf
 		#Font: d2|dune2.otf
@@ -318,7 +334,7 @@ Missions:
 
 SupportsMapsFrom: d2
 
-SoundFormats: Voc, Aud, Wav
+SoundFormats: Voc, Aud, Wav, ADL
 
 SpriteFormats: R8, ShpD2, IcnD2, ShpTD, CpsD2, Wsa
 
