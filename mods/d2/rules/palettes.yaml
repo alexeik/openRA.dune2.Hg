@@ -13,6 +13,11 @@
 		Filename: IBM.PAL
 		ShadowIndex: 3
 		AllowModifiers: false
+    PaletteFromFile@westwood:
+		Name: westwood
+		Filename: WESTWOOD.PAL
+		ShadowIndex: 1
+		AllowModifiers: false
 	PaletteFromFile@effect:
 		Name: effect
 		Filename: IBM.PAL
