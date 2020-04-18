@@ -1,8 +1,50 @@
+d2_button: screenui
+    background: 18,3,1,10
+
+dune2circle: screenui
+    background: 241,124,12,11
+dune2stolbvert: screenui
+    background: 241,142,12,39
+dune2stolbvert90: screenui
+    background: 241,142,12,39         
+        rotate:90
+dune2stolbverttop: screenui
+    background: 241,136,12,5
+dune2stolbvertbot: screenui
+    background: 241,182,12,5
+dune2cash: screenui
+    background: 201,1,118,15
+    
+dune2title: title
+    background : 0,0,320,200
+    
+ordostitle: housestitle
+    background : 123,117,74,28
+    
+harktitle: housestitle
+    background : 219,117,74,28
+    
+atrtitle: housestitle
+    background : 25,117,74,28
+
+mentata: mentatascreen
+    background : 0,0,320,200
+        stretched: true
+    
 sidebar: chrome.png
 	background-top: 0,0,226,295
 	background-iconrow: 0,295,226,48
 	background-bottom: 0,343,226,13
-
+    
+dune2btnoptions: screenui
+    background:104,1,78,15
+dune2btnoptions-hover: optionshoverbtn
+    background:0,0,78,15        
+dune2btnmentat: screenui
+    background:16,1,78,15
+dune2btnmentat-hover: mentathoverbtn
+    background:0,0,78,15    
+    
 sidebar-button: chrome.png
 	background: 377,0,25,25
 sidebar-button-hover: chrome.png
@@ -279,7 +321,6 @@ progressbar-thumb: dialog.png
 	corner-bl: 512,127,1,1
 	corner-br: 639,127,1,1
 
-# A copy of dialog2 (normal button)
 button: dialog.png
 	background: 513,1,126,126
 	border-r: 639,1,1,126
@@ -290,7 +331,7 @@ button: dialog.png
 	corner-tr: 639,0,1,1
 	corner-bl: 512,127,1,1
 	corner-br: 639,127,1,1
-	
+    
 # 5% lighter than a normal button
 button-hover: dialog.png
 	background: 513,129,126,126
