@@ -40,7 +40,7 @@ namespace OpenRA.Mods.D2.Widgets
         private Sprite status_r_sprite;
         private Sprite vert_line_sprite;
         private Sprite vertbord_line_sprite;
-
+        private Sprite houseSprite;
         /// <summary>
         /// Если использовать [ObjectCreator.UseCtor] , то можно использовать DI для инициализации аргументов конструктора.
         /// </summary>
@@ -48,6 +48,19 @@ namespace OpenRA.Mods.D2.Widgets
         [ObjectCreator.UseCtor]
         public D2GameScreenWidget(World world)
         {
+            
+            if (world.LocalPlayer.Faction.InternalName== "atreides")
+            {
+                houseSprite= ChromeProvider.GetImage("atrtitle", "background");
+            }
+            if (world.LocalPlayer.Faction.InternalName == "ordos")
+            {
+                houseSprite = ChromeProvider.GetImage("ordostitle", "background");
+            }
+            if (world.LocalPlayer.Faction.InternalName == "harkonnen")
+            {
+                houseSprite = ChromeProvider.GetImage("harktitle", "background");
+            }
             //тут такая механика.
             //используем DI и атрибут [ObjectCreator.UseCtor], тогда world будет заполнен . 
             //после идем в коллекцию Sequences , которая собирается из всех rules\sequences, где мы в misc.yaml прописали наш screen.cps
@@ -100,7 +113,7 @@ namespace OpenRA.Mods.D2.Widgets
                 bg_sprite = new Sprite(uisprite.Sheet, new Rectangle(0 + offset.X, 0 + offset.Y, 15, 16), TextureChannel.Red);
                 but1_sprite = new Sprite(uisprite.Sheet, new Rectangle(16 + offset.X, 1 + offset.Y, 78, 15), TextureChannel.Red);
                 but2_sprite = new Sprite(uisprite.Sheet, new Rectangle(104 + offset.X, 1 + offset.Y, 78, 15), TextureChannel.Red);
-                credits_sprite = new Sprite(uisprite.Sheet, new Rectangle(201 + offset.X, 1 + offset.Y, 118, 15), TextureChannel.Red);
+                //credits_sprite = new Sprite(uisprite.Sheet, new Rectangle(201 + offset.X, 1 + offset.Y, 118, 15), TextureChannel.Red);
 
                 status_l_sprite = new Sprite(uisprite.Sheet, new Rectangle(0 + offset.X, 17 + offset.Y, 8, 22), TextureChannel.Red);
                 status_horiz_sprite = new Sprite(uisprite.Sheet, new Rectangle(8 + offset.X, 17 + offset.Y, 303, 22), TextureChannel.Red);
@@ -152,14 +165,14 @@ namespace OpenRA.Mods.D2.Widgets
 
                 uic = new uiCom(new Rectangle(0, 0, screenwidth, 30), bg_sprite, false, false);
                 luiComs.Add(uic);
-                uic = new uiCom(new Rectangle(screenwidth-474, 8, 78, 15), but1_sprite, false, false);
-                luiComs.Add(uic);
-                uic = new uiCom(new Rectangle(screenwidth-374, 8, 78, 15), but2_sprite, false, false);
-                luiComs.Add(uic);
-                uic = new uiCom(new Rectangle(screenwidth-174, 8, 118, 15), credits_sprite, false, false);
-                luiComs.Add(uic);
+            uic = new uiCom(new Rectangle(screenwidth -274, 0, 74, 28), houseSprite, false, false);
+            luiComs.Add(uic);
+            //uic = new uiCom(new Rectangle(screenwidth-374, 8, 78, 15), but2_sprite, false, false);
+            //luiComs.Add(uic);
+            //uic = new uiCom(new Rectangle(screenwidth-174, 8, 118, 15), credits_sprite, false, false);
+            //luiComs.Add(uic);
 
-                uic = new uiCom(new Rectangle(5, 5, 8, 22), status_l_sprite, false, true,true);
+            uic = new uiCom(new Rectangle(5, 5, 8, 22), status_l_sprite, false, true,true);
                 luiComs.Add(uic);
                 uic = new uiCom(new Rectangle(0, 5, screenwidth - 574, 22), status_horiz_sprite, false, true);
                 luiComs.Add(uic);
@@ -255,7 +268,8 @@ namespace OpenRA.Mods.D2.Widgets
                 {
                     temprect.Y += offsetY;
                 }
-                WidgetUtils.FillRectWithSprite(temprect, u.spr, pr);
+                u.spr.SpriteType = 3;
+                WidgetUtils.FillRectWithSprite(temprect, u.spr);
                 if (u.MoveY)
                 {
                     offsetY = offsetY + u.rect.Height + u.rect.Y;
