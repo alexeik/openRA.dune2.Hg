@@ -358,19 +358,19 @@ Container@MAINMENU:
         Background@atrtitle
             X:256
             Y:100
-            Width:72
+            Width:74
             Height:28
             Background:atrtitle
         Background@harktitle
             X:456
             Y:100
-            Width:72
+            Width:74
             Height:28
             Background:harktitle
         Background@ordostitle
             X:656
             Y:100
-            Width:72
+            Width:74
             Height:28
             Background:ordostitle            
         Background@dune2circle
@@ -389,7 +389,7 @@ Container@MAINMENU:
             X:0
             Y:16
             Width:12
-            Height:WINDOW_BOTTOM-11-5
+            Height:WINDOW_BOTTOM-11-5-16
             Background:dune2stolbvert  
         Background@dune2stolbvertbot
             X:0
