@@ -10,15 +10,14 @@ PackageFormats: PakFile, D2kSoundResources
 
 Packages:
 	~^Content/d2/Unpacked
-    ^Content/d2/msdf/fontmsdf1: msdffolder1
-    ^Content/d2/msdf/fontmsdf2: msdffolder2
+	^Content/d2/msdf/fontmsdf1: msdffolder1
+	^Content/d2/msdf/fontmsdf2: msdffolder2
 	~^Content/d2
 	~^Content/d2k/v2
 	.
 	$d2: d2
 	$d2k: d2k
 	./mods/common: common
-    
 	~DUNE.PAK
 	~VOC.PAK
 	~ATRE.PAK
@@ -38,7 +37,7 @@ Packages:
 	d2k|bits/tex
 	d2k|uibits
 	d2|bits/scripts
-    d2|tilesets
+	d2|tilesets
 
 MapFolders:
 	d2|maps: System
@@ -189,7 +188,7 @@ Assemblies:
 	d2|OpenRA.Mods.D2.dll
 
 ChromeDefaultPalette: 
-    d2
+	d2
 
 ChromeLayout:
 	common|chrome/ingame.yaml
@@ -282,50 +281,50 @@ ChromeMetrics:
 	d2|metrics.yaml
 
 FontsMSDFBaseFolders:
-    common|FreeSans.ttf:
-        FontName : font1
-        FontFolder : msdffolder1|font1
-    d2|dune2.otf:
-        FontName : font2
-        FontFolder : msdffolder2|font2      
+	common|FreeSans.ttf:
+		FontName : font1
+		FontFolder : msdffolder1|font1
+	d2|dune2.otf:
+		FontName : font2
+		FontFolder : msdffolder2|font2		
 
 
-        
+		
 Fonts:
 	Original:
 		#Font: d2|dune2.otf
-        Font: common|FreeSans.ttf
+		Font: common|FreeSans.ttf
 		Size:50
 	Regular:
 		#Font: d2|dune2.otf
 		Font: common|FreeSans.ttf
 		Size:15
 	Bold:
-		Font: d2|dune2.otf
-		#Font: common|FreeSans.ttf
+		#Font: d2|dune2.otf
+		Font: common|FreeSans.ttf
 		Size:20
 	Title:
-        Font: common|FreeSans.ttf
+		Font: common|FreeSans.ttf
 		#Font: d2|dune2.otf
 		Size:32
 	MediumBold:
-        #Font: d2|dune2.otf
+		#Font: d2|dune2.otf
 		Font: common|FreeSans.ttf
 		Size:18
 	BigBold:
-        #Font: d2|dune2.otf
+		#Font: d2|dune2.otf
 		Font: common|FreeSans.ttf
 		Size:24
 	Small:
-        #Font: d2|dune2.otf
+		#Font: d2|dune2.otf
 		Font: common|FreeSans.ttf
 		Size:12
 	Tiny:
-        #Font: d2|dune2.otf
+		#Font: d2|dune2.otf
 		Font: common|FreeSans.ttf
 		Size:14
 	TinyBold:
-        #Font: d2|dune2.otf
+		#Font: d2|dune2.otf
 		Font: common|FreeSans.ttf
 		Size:14
 
@@ -377,7 +376,7 @@ ModContent:
 	QuickDownload: quickinstall
 	Packages:
 		base: Base Game Files
-			TestFiles: ^Content/d2k/v2/BLOXBASE.R8, ^Content/d2k/v2/BLOXBAT.R8, ^Content/d2k/v2/BLOXBGBS.R8, ^Content/d2k/v2/BLOXICE.R8, ^Content/d2k/v2/BLOXTREE.R8, ^Content/d2k/v2/BLOXWAST.R8, ^Content/d2k/v2/SOUND.RS, ^Content/d2k/v2/PALETTE.BIN, ^Content/d2k/v2/FONT.BIN,  ^Content/d2k/v2/FONTCOL.FNT,  ^Content/d2k/v2/FONTCOL.FPL
+			TestFiles: ^Content/d2k/v2/BLOXBASE.R8, ^Content/d2k/v2/BLOXBAT.R8, ^Content/d2k/v2/BLOXBGBS.R8, ^Content/d2k/v2/BLOXICE.R8, ^Content/d2k/v2/BLOXTREE.R8, ^Content/d2k/v2/BLOXWAST.R8, ^Content/d2k/v2/SOUND.RS, ^Content/d2k/v2/PALETTE.BIN, ^Content/d2k/v2/FONT.BIN,	 ^Content/d2k/v2/FONTCOL.FNT,  ^Content/d2k/v2/FONTCOL.FPL
 			Sources: d2k-a, d2k-a-linux, d2k-b, d2k-b-linux, d2k-c, d2k-c-linux, d2k-d, d2k-d-linux, d2k-e, d2k-e-linux, gruntmods
 			Required: true
 			Download: basefiles
