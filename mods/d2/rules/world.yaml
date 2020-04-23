@@ -154,7 +154,7 @@ World:
 	DomainIndex:
 	WarheadDebugOverlay:
 	D2TerrainLayer:
-	BuildableTerrainLayer:
+	D2BuildableTerrainLayer:
 	D2ResourceLayer:
 	ResourceClaimLayer:
 	CustomTerrainDebugOverlay:
