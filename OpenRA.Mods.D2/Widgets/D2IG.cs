@@ -75,15 +75,15 @@ namespace OpenRA.Mods.D2.Widgets
         public void DumpTextureChannel(TextureChannel channel)
         {
             Game.Renderer.PixelDumpRenderer.fb.Bind();
-            Sheet seqsheet;
-            seqsheet = Game.ModData.DefaultSequences["arrakis2"].SpriteCache.SheetBuilder.Current;
+            Sheet2D seqsheet;
+            seqsheet = Game.ModData.DefaultSequences["arrakis2"].SpriteCache.SheetBuilder2D.Current;
             Sprite sp = new Sprite(seqsheet, new Rectangle() { Width = seqsheet.Size.Width, Height = seqsheet.Size.Height }, channel); //чтобы прочитать все 4 канала seqsheet
                                                                                                                                                   //нужно использовать 4 итерации, где нужно менять канал в спрайте.
 
             Game.Renderer.PixelDumpRenderer.DrawSprite(sp, new float3(0, 0, 0));
             Game.Renderer.PixelDumpRenderer.Flush();
             Game.Renderer.PixelDumpRenderer.fb.Unbind();
-            //нарисовали в текстуру в другой фреймбуфер.
+            //нарисовали в текстуру в свой фреймбуфер.
 
 
             //теперь нужно запустить еще раз рендер, где эта текстура будет как аргумент у шейдера и он нарисует все пиксели в фреймбуфер главный.

@@ -180,16 +180,16 @@ namespace OpenRA.Mods.Common.Traits
 
 			visibleUnderFog = puv => map.Contains(puv);
 
-			var shroudSheet = shroudSprites[0].Sheet;
-			if (shroudSprites.Any(s => s.Sheet != shroudSheet))
+			var shroudSheet = shroudSprites[0].Sheet2D;
+			if (shroudSprites.Any(s => s.Sheet2D != shroudSheet))
 				throw new InvalidDataException("Shroud sprites span multiple sheets. Try loading their sequences earlier.");
 
 			var shroudBlend = shroudSprites[0].BlendMode;
 			if (shroudSprites.Any(s => s.BlendMode != shroudBlend))
 				throw new InvalidDataException("Shroud sprites must all use the same blend mode.");
 
-			var fogSheet = fogSprites[0].Sheet;
-			if (fogSprites.Any(s => s.Sheet != fogSheet))
+			var fogSheet = fogSprites[0].Sheet2D;
+			if (fogSprites.Any(s => s.Sheet2D != fogSheet))
 				throw new InvalidDataException("Fog sprites span multiple sheets. Try loading their sequences earlier.");
 
 			var fogBlend = fogSprites[0].BlendMode;

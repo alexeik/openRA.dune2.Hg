@@ -60,8 +60,8 @@ namespace OpenRA.Mods.Common.Traits
 		{
 			/* based on SmudgeLayer.cs */
 			var first = sideSprites.First().Value.First();
-			var sheet = first.Sheet;
-			if (sideSprites.Values.Any(sprites => sprites.Any(s => s.Sheet != sheet)))
+			var sheet2D = first.Sheet2D;
+			if (sideSprites.Values.Any(sprites => sprites.Any(s => s.Sheet2D != sheet2D)))
 				throw new InvalidDataException("Resource sprites span multiple sheets. Try loading their sequences earlier.");
 
 			var blendMode = first.BlendMode;
@@ -74,7 +74,7 @@ namespace OpenRA.Mods.Common.Traits
 			//TerrainRenderer = terrainRenderer.GetTerrainSpriteLayerRenderer(); //get all Sprites that it has from tileset\*.yaml file
 			//render = TerrainRenderer[Info.Palette];
 			// Nowadays way to accomplish task is to add one more renderer through TerrainSpriteLayer class and we get one more Batch for total terrain vertexes
-			render = new TerrainSpriteLayer(w, wr, sheet, blendMode, wr.Palette(Info.Palette), wr.World.Type != WorldType.Editor, "D2TerrainLayer");
+			render = new TerrainSpriteLayer(w, wr, sheet2D, blendMode, wr.Palette(Info.Palette), wr.World.Type != WorldType.Editor, "D2TerrainLayer");
             MersenneTwister random=new MersenneTwister();
 
 			var tilesLayer = w.Map.Tiles;

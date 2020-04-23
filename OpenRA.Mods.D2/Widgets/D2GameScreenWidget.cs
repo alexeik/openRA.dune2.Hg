@@ -100,27 +100,27 @@ namespace OpenRA.Mods.D2.Widgets
             int2 offset=new int2(uisprite.Bounds.Location.X, uisprite.Bounds.Location.Y);
             //делаем ooffset так как теперь screen.cps берется из громадной текстуры у SequenceProvider.Поэтому добавляем смещение для спрайтов ниже.
 
-                stolb_sprite = new Sprite(uisprite.Sheet, new Rectangle(241+offset.X, 142+offset.Y, 12,39), TextureChannel.Red);
-                stolb_top_sprite= new Sprite(uisprite.Sheet, new Rectangle(241 + offset.X, 136 + offset.Y, 12, 5), TextureChannel.Red);
-                stolb_bot_sprite = new Sprite(uisprite.Sheet, new Rectangle(241 + offset.X, 182 + offset.Y, 12, 4), TextureChannel.Red);
-                stolb_shpere_sprite = new Sprite(uisprite.Sheet, new Rectangle(241 + offset.X, 124 + offset.Y, 12, 11), TextureChannel.Red);
-                stolb_line_sprite = new Sprite(uisprite.Sheet, new Rectangle(241 + offset.X, 135 + offset.Y, 12, 1), TextureChannel.Red);
+                stolb_sprite = new Sprite(uisprite.Sheet2D, new Rectangle(241+offset.X, 142+offset.Y, 12,39), TextureChannel.Red);
+                stolb_top_sprite= new Sprite(uisprite.Sheet2D, new Rectangle(241 + offset.X, 136 + offset.Y, 12, 5), TextureChannel.Red);
+                stolb_bot_sprite = new Sprite(uisprite.Sheet2D, new Rectangle(241 + offset.X, 182 + offset.Y, 12, 4), TextureChannel.Red);
+                stolb_shpere_sprite = new Sprite(uisprite.Sheet2D, new Rectangle(241 + offset.X, 124 + offset.Y, 12, 11), TextureChannel.Red);
+                stolb_line_sprite = new Sprite(uisprite.Sheet2D, new Rectangle(241 + offset.X, 135 + offset.Y, 12, 1), TextureChannel.Red);
 
-                stolb_horiz_sprite = new Sprite(uisprite.Sheet, new Rectangle(259 + offset.X, 127 + offset.Y, 55, 6), TextureChannel.Red);
-                stolb_horiz_left_sprite = new Sprite(uisprite.Sheet, new Rectangle(254 + offset.X, 127 + offset.Y, 5, 6), TextureChannel.Red);
-                stolb_horiz_right_sprite = new Sprite(uisprite.Sheet, new Rectangle(315 + offset.X, 127 + offset.Y, 5, 6), TextureChannel.Red);
+                stolb_horiz_sprite = new Sprite(uisprite.Sheet2D, new Rectangle(259 + offset.X, 127 + offset.Y, 55, 6), TextureChannel.Red);
+                stolb_horiz_left_sprite = new Sprite(uisprite.Sheet2D, new Rectangle(254 + offset.X, 127 + offset.Y, 5, 6), TextureChannel.Red);
+                stolb_horiz_right_sprite = new Sprite(uisprite.Sheet2D, new Rectangle(315 + offset.X, 127 + offset.Y, 5, 6), TextureChannel.Red);
 
-                bg_sprite = new Sprite(uisprite.Sheet, new Rectangle(0 + offset.X, 0 + offset.Y, 15, 16), TextureChannel.Red);
-                but1_sprite = new Sprite(uisprite.Sheet, new Rectangle(16 + offset.X, 1 + offset.Y, 78, 15), TextureChannel.Red);
-                but2_sprite = new Sprite(uisprite.Sheet, new Rectangle(104 + offset.X, 1 + offset.Y, 78, 15), TextureChannel.Red);
-                //credits_sprite = new Sprite(uisprite.Sheet, new Rectangle(201 + offset.X, 1 + offset.Y, 118, 15), TextureChannel.Red);
+                bg_sprite = new Sprite(uisprite.Sheet2D, new Rectangle(0 + offset.X, 0 + offset.Y, 15, 16), TextureChannel.Red);
+                but1_sprite = new Sprite(uisprite.Sheet2D, new Rectangle(16 + offset.X, 1 + offset.Y, 78, 15), TextureChannel.Red);
+                but2_sprite = new Sprite(uisprite.Sheet2D, new Rectangle(104 + offset.X, 1 + offset.Y, 78, 15), TextureChannel.Red);
+                //credits_sprite = new Sprite(uisprite.Sheet2D, new Rectangle(201 + offset.X, 1 + offset.Y, 118, 15), TextureChannel.Red);
 
-                status_l_sprite = new Sprite(uisprite.Sheet, new Rectangle(0 + offset.X, 17 + offset.Y, 8, 22), TextureChannel.Red);
-                status_horiz_sprite = new Sprite(uisprite.Sheet, new Rectangle(8 + offset.X, 17 + offset.Y, 303, 22), TextureChannel.Red);
-                status_r_sprite = new Sprite(uisprite.Sheet, new Rectangle(312 + offset.X, 17 + offset.Y, 8, 22), TextureChannel.Red);
+                status_l_sprite = new Sprite(uisprite.Sheet2D, new Rectangle(0 + offset.X, 17 + offset.Y, 8, 22), TextureChannel.Red);
+                status_horiz_sprite = new Sprite(uisprite.Sheet2D, new Rectangle(8 + offset.X, 17 + offset.Y, 303, 22), TextureChannel.Red);
+                status_r_sprite = new Sprite(uisprite.Sheet2D, new Rectangle(312 + offset.X, 17 + offset.Y, 8, 22), TextureChannel.Red);
 
-                vert_line_sprite = new Sprite(uisprite.Sheet, new Rectangle(240 + offset.X, 40 + offset.Y, 240, 123), TextureChannel.Red);
-                vertbord_line_sprite = new Sprite(uisprite.Sheet, new Rectangle(254 + offset.X, 134 + offset.Y, 1,65), TextureChannel.Red);
+                vert_line_sprite = new Sprite(uisprite.Sheet2D, new Rectangle(240 + offset.X, 40 + offset.Y, 240, 123), TextureChannel.Red);
+                vertbord_line_sprite = new Sprite(uisprite.Sheet2D, new Rectangle(254 + offset.X, 134 + offset.Y, 1,65), TextureChannel.Red);
 
                 int screenwidth = 0;
                 int screenH = 0;
