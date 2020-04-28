@@ -13,6 +13,8 @@ frigate:
 		Repulsable: False
 		MaximumPitch: 20
 		CruiseAltitude: 192
+        LandableTerrainTypes: Sand, Rock, Transition, Spice, SpiceSand, Dune, Concrete
+        VTOL: true
 	-AppearsOnRadar:
 	Cargo:
 		MaxWeight: 20
