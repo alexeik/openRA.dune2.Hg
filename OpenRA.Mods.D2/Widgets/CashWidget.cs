@@ -25,7 +25,7 @@ namespace OpenRA.Mods.D2.Widgets
         public Func<Color> GetColor;
 
         SequenceProvider sp;
-        DefaultSpriteSequence dsp;
+        ISpriteSequence dsp;
         Sprite[] numsprites;
         PaletteReference pr;
         Player player;
@@ -41,7 +41,7 @@ namespace OpenRA.Mods.D2.Widgets
         {
 
             sp = world.Map.Rules.Sequences;
-            dsp = (DefaultSpriteSequence)sp.GetSequence("cashnums", "nums");
+            dsp = (ISpriteSequence)sp.GetSequence("cashnums", "nums");
             numsprites = new Sprite[10];
             numsprites[0] = dsp.GetSprite(0);
             numsprites[1] = dsp.GetSprite(1);
