@@ -4,7 +4,7 @@
 	D2Building:
 		TerrainTypes: Rock
 		BuildSounds: CHUNG.WAV
-		AllowInvalidPlacement: true
+		AllowInvalidPlacement: false
 	D2PlaceBuildingPreview:
 	RequiresBuildableArea:
 		AreaTypes: building
@@ -13,9 +13,12 @@
 		Name: Concrete
 		GenericName: Structure
 	RenderSprites:
-	KillsSelf:
-		RemoveInstead: true
+	#KillsSelf:
 	D2Concrete:
+    RevealsShroud:
+        Range: 2c0
+        Type: CenterPosition
+        RevealGeneratedShroud: true
 	Buildable:
 		Queue: Building
 		Prerequisites: construction_yard
