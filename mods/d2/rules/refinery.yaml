@@ -40,17 +40,16 @@ refinery:
 		DeliveryOffset: 2,1
 		DeliveringActor: carryall.reinforce
 		Facing: 120
-	WithSpriteBody:
+    WithSpriteBody:
 	WithTilesetBody:
-		SkipFrames: 1,2,5
+
 	RenderSprites:
 		Image: refinery
 	Power:
 		Amount: -30
-	WithIdleOverlay@FLAG:
-		Sequence: idle-flag
-	WithIdleOverlay@DOCK1:
-		Sequence: idle-dock-top
-	WithIdleOverlay@DOCK2:
-		Sequence: idle-dock-bottom
+
+    WithHarvestWaitOverlay@DOCK1:
+        SequenceWaitDelivery: idle-dock-bottom
+    WithHarvestWaitOverlay@DOCK2:
+        SequenceWaitDelivery: idle-dock-top
 	ProvidesPrerequisite@buildingname:

@@ -1,19 +1,19 @@
 refinery:
-	idle: ICON.ICN
+    idle: ICON.ICN
 		Start: 332
 		Offset: -16,-8
 		ZOffset: -2047
-	idle-tileset: ICON.ICN
-		Frames: 332, 333, 334, 337, 338, 339
-		Length: 6
-		Offset: -8,0
-		ZOffset: -2047
-	idle-flag: ICON.ICN
+    idle-flag: ICON.ICN
 		Frames: 333, 335
 		Length: 2
 		Offset: 0,-8
 		ZOffset: -2047
 		Tick: 1000
+	idle-tileset: ICON.ICN
+		Frames: 332, 333, 334, 337, 338, 339
+		Length: 6
+		Offset: -8,0
+		ZOffset: -2047
 	idle-dock-top: ICON.ICN
 		Frames: 334, 336, 341
 		Length: 3
