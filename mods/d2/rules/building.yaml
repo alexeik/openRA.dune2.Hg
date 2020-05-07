@@ -17,6 +17,8 @@
 		Type: Rectangle
 			TopLeft: -512, -512
 			BottomRight: 512, 512
+    Replacement:
+        ReplaceableTypes:slab            
 	D2Building:
 		Dimensions: 2,2
 		Footprint: xx xx
