@@ -45,12 +45,28 @@ starport:
 		BlockedAudio: NoRoom
 		BuildDurationModifier: 212
 	WithTilesetBody:
-		SkipFrames: 0
+		SkipFrames: 0,3,4,6,7
 	RenderSprites:
 		Image: starport
 		PlayerPalette: player
 	WithIdleOverlay@FLAG:
 		Sequence: idle-flag
+	WithIdleOverlay@DOCK1:
+		Sequence: idle-dock-1     
+	WithIdleOverlay@DOCK2:
+		Sequence: idle-dock-2
+   	WithIdleOverlay@DOCK3:
+		Sequence: idle-dock-3
+	WithIdleOverlay@DOCK4:
+		Sequence: idle-dock-4
+    WithDeliveryOverlay@del1
+        Sequence: delivery-dock-1
+    WithDeliveryOverlay@del2
+        Sequence: delivery-dock-2
+    WithDeliveryOverlay@del3
+        Sequence: delivery-dock-3        
+    WithDeliveryOverlay@del4
+        Sequence: delivery-dock-4        
 	ProvidesPrerequisite@atreides:
 		Prerequisite: starport.atreides
 		Factions: atreides

@@ -13,7 +13,7 @@ starport:
 		Length: 2
 		Offset: -16,-16
 		ZOffset: -2047
-		Tick: 1000
+		Tick: 500
 	active: DATA.R8
 		Start: 4723
 		Length: 23
@@ -24,4 +24,51 @@ starport:
 	icon: SHAPES.SHP
 		Start: 63
 		Offset: 0,0
-
+    idle-dock-1: ICON.ICN
+		Frames: 314, 317, 324
+		Length: 3
+		Offset: -16,0
+		ZOffset: -2047
+		Tick: 500
+    idle-dock-2: ICON.ICN
+		Frames: 315, 318, 325
+		Length: 3
+		Offset: 0,0
+		ZOffset: -2047
+		Tick: 500
+    idle-dock-3: ICON.ICN
+		Frames: 319, 322, 328
+		Length: 3
+		Offset: -16,16
+		ZOffset: -2047
+		Tick: 500        
+    idle-dock-4: ICON.ICN
+		Frames: 320, 323, 329
+		Length: 3
+		Offset: 0,16
+		ZOffset: -2047
+		Tick: 500          
+    delivery-dock-1: ICON.ICN
+		Frames: 326
+		Length: 1
+		Offset: -16,0
+		ZOffset: -2040
+        Tick: 500 
+    delivery-dock-2: ICON.ICN
+		Frames: 327
+		Length: 1
+		Offset: 0,0
+		ZOffset: -2040	 
+        Tick: 500         
+    delivery-dock-3: ICON.ICN
+		Frames: 330
+		Length: 1
+		Offset: -16,16
+		ZOffset: -2040	  
+        Tick: 500 
+    delivery-dock-4: ICON.ICN
+		Frames: 331
+		Length: 1
+		Offset: 0,16
+		ZOffset: -2040	
+        Tick: 500 
