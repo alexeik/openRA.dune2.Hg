@@ -23,6 +23,7 @@ namespace OpenRA.Mods.D2.Widgets
         ImmutablePalette palette;
         HardwarePalette hardwarePalette;
         PaletteReference pr;
+        private PaletteReference prbase;
         Sprite stolb_sprite;
         Sprite stolb_top_sprite;
         private Sprite stolb_bot_sprite;
@@ -131,52 +132,52 @@ namespace OpenRA.Mods.D2.Widgets
                 offsetX = screenwidth - 231;//
   
                 luiComs = new List<uiCom>();
-                uiCom uic = new uiCom(new Rectangle(offsetX,31,12,11), stolb_shpere_sprite);
+                uiCom uic = new uiCom(new Rectangle(offsetX,31,12,11), stolb_shpere_sprite , pr);
                 luiComs.Add(uic);
-                uic = new uiCom(new Rectangle(offsetX, 0, 12, 1), stolb_line_sprite); //12
+                uic = new uiCom(new Rectangle(offsetX, 0, 12, 1), stolb_line_sprite, pr); //12
                 luiComs.Add(uic);
-                uic = new uiCom(new Rectangle(offsetX, 0, 12, 5), stolb_top_sprite); //17
+                uic = new uiCom(new Rectangle(offsetX, 0, 12, 5), stolb_top_sprite, pr); //17
                 luiComs.Add(uic);
-                uic = new uiCom(new Rectangle(offsetX, 0, 12, 538), stolb_sprite); //555
+                uic = new uiCom(new Rectangle(offsetX, 0, 12, 538), stolb_sprite, pr); //555
                 luiComs.Add(uic);
-                uic = new uiCom(new Rectangle(offsetX, 0, 12, 5), stolb_bot_sprite); //560
+                uic = new uiCom(new Rectangle(offsetX, 0, 12, 5), stolb_bot_sprite, pr); //560
                 luiComs.Add(uic);
-                uic = new uiCom(new Rectangle(offsetX, 0, 12, 1), stolb_line_sprite); //561 
+                uic = new uiCom(new Rectangle(offsetX, 0, 12, 1), stolb_line_sprite, pr); //561 
                 luiComs.Add(uic);
-                uic = new uiCom(new Rectangle(offsetX, 0, 12, 11), stolb_shpere_sprite); //572
+                uic = new uiCom(new Rectangle(offsetX, 0, 12, 11), stolb_shpere_sprite, pr); //572
                 luiComs.Add(uic);
-                uic = new uiCom(new Rectangle(offsetX, 0, 12, 5), stolb_top_sprite); //577
+                uic = new uiCom(new Rectangle(offsetX, 0, 12, 5), stolb_top_sprite, pr); //577
                 luiComs.Add(uic);
-                uic = new uiCom(new Rectangle(offsetX, 0, 12,screenH-47-577), stolb_sprite); 
+                uic = new uiCom(new Rectangle(offsetX, 0, 12,screenH-47-577), stolb_sprite, pr); 
                 luiComs.Add(uic);
-                uic = new uiCom(new Rectangle(offsetX, 0, 12, 5), stolb_bot_sprite); //17
+                uic = new uiCom(new Rectangle(offsetX, 0, 12, 5), stolb_bot_sprite, pr); //17
                 luiComs.Add(uic);
-                uic = new uiCom(new Rectangle(offsetX, 0, 12, 1), stolb_line_sprite); //12
+                uic = new uiCom(new Rectangle(offsetX, 0, 12, 1), stolb_line_sprite, pr); //12
                 luiComs.Add(uic);
-                uic = new uiCom(new Rectangle(offsetX, 0, 12, 11), stolb_shpere_sprite);
-                luiComs.Add(uic);
-
-                uic = new uiCom(new Rectangle(offsetX+12, 595, 5, 6), stolb_horiz_left_sprite, false,true);
-                luiComs.Add(uic);
-                uic = new uiCom(new Rectangle(0, 595, 233, 6), stolb_horiz_sprite, false, true);
-                luiComs.Add(uic);
-                uic = new uiCom(new Rectangle(0, 595, 5, 6), stolb_horiz_right_sprite, false, true);
+                uic = new uiCom(new Rectangle(offsetX, 0, 12, 11), stolb_shpere_sprite, pr);
                 luiComs.Add(uic);
 
-                uic = new uiCom(new Rectangle(0, 0, screenwidth, 30), bg_sprite, false, false);
+                uic = new uiCom(new Rectangle(offsetX+12, 595, 5, 6),  stolb_horiz_left_sprite, pr, false,true);
                 luiComs.Add(uic);
-            uic = new uiCom(new Rectangle(screenwidth -274, 0, 74, 28), houseSprite, false, false);
+                uic = new uiCom(new Rectangle(0, 595, 233, 6), stolb_horiz_sprite, pr, false, true);
+                luiComs.Add(uic);
+                uic = new uiCom(new Rectangle(0, 595, 5, 6),  stolb_horiz_right_sprite, pr, false, true);
+                luiComs.Add(uic);
+
+                uic = new uiCom(new Rectangle(0, 0, screenwidth, 30), bg_sprite, prbase, false, false);
+                luiComs.Add(uic);
+            uic = new uiCom(new Rectangle(screenwidth -274, 0, 74, 28), houseSprite, pr, false, false);
             luiComs.Add(uic);
             //uic = new uiCom(new Rectangle(screenwidth-374, 8, 78, 15), but2_sprite, false, false);
             //luiComs.Add(uic);
             //uic = new uiCom(new Rectangle(screenwidth-174, 8, 118, 15), credits_sprite, false, false);
             //luiComs.Add(uic);
 
-            uic = new uiCom(new Rectangle(5, 5, 8, 22), status_l_sprite, false, true,true);
+            uic = new uiCom(new Rectangle(5, 5, 8, 22), status_l_sprite, prbase, false, true,true);
                 luiComs.Add(uic);
-                uic = new uiCom(new Rectangle(0, 5, screenwidth - 574, 22), status_horiz_sprite, false, true);
+                uic = new uiCom(new Rectangle(0, 5, screenwidth - 574, 22),  status_horiz_sprite, prbase, false, true);
                 luiComs.Add(uic);
-                uic = new uiCom(new Rectangle(0, 5, 8, 22), status_r_sprite, false, true);
+                uic = new uiCom(new Rectangle(0, 5, 8, 22), status_r_sprite, prbase, false, true);
                 luiComs.Add(uic);
 
             //using (var stream = Game.ModData.DefaultFileSystem.Open(video.SpriteFilename))
@@ -187,26 +188,30 @@ namespace OpenRA.Mods.D2.Widgets
         public List<uiCom> luiComs;
         public class uiCom
         {
-            public uiCom(Rectangle rect,Sprite spr)
+            public uiCom(Rectangle rect,Sprite spr, PaletteReference pr)
             {
                 this.rect = rect;
                 this.spr = spr;
+                this.pr = pr;
             }
-            public uiCom(Rectangle rect, Sprite spr,bool moveY,bool moveX)
+            public uiCom(Rectangle rect, Sprite spr, PaletteReference pr, bool moveY,bool moveX)
             {
                 this.rect = rect;
                 this.spr = spr;
                 this.MoveY= moveY;
                 this.MoveX = moveX;
+                this.pr = pr;
             }
-            public uiCom(Rectangle rect, Sprite spr, bool moveY, bool moveX,bool resetX)
+            public uiCom(Rectangle rect, Sprite spr,PaletteReference pr, bool moveY, bool moveX,bool resetX)
             {
                 this.rect = rect;
                 this.spr = spr;
                 this.MoveY = moveY;
                 this.MoveX = moveX;
                 this.ResetOffsetX = resetX;
+                this.pr = pr;
             }
+            public PaletteReference pr;
             public Rectangle rect;
             public Sprite spr;
             public bool MoveY=true;
@@ -234,8 +239,8 @@ namespace OpenRA.Mods.D2.Widgets
             //    palette = new ImmutablePalette(stream, new int[] { });
             //}
             
-            pr = Game.worldRenderer.Palette("d2"); //d2 палитра назначена в d2\rules\palettes.yaml
-
+            pr = Game.worldRenderer.Palette("player" + Game.worldRenderer.World.LocalPlayer.InternalName); //d2 палитра назначена в d2\rules\palettes.yaml
+            prbase = Game.worldRenderer.Palette("d2");
             //hardwarePalette = new HardwarePalette();
             //hardwarePalette.AddPalette("chrome", palette, false);
             //hardwarePalette.Initialize();
@@ -269,7 +274,7 @@ namespace OpenRA.Mods.D2.Widgets
                     temprect.Y += offsetY;
                 }
                 u.spr.SpriteType = 3;
-                WidgetUtils.FillRectWithSprite(temprect, u.spr);
+                WidgetUtils.FillRectWithSprite(temprect, u.spr, pr);
                 if (u.MoveY)
                 {
                     offsetY = offsetY + u.rect.Height + u.rect.Y;
