@@ -31,3 +31,6 @@ Metrics:
 	ClickSound: ClickSound
 	ChatMessageColor: FFFFFF
 	SystemMessageColor: FFFF00
+    UPnPEnabledColor:FFFFFF
+    UPnPNotSupportedColor:FFFFFF
+    UPnPDisabledColor:FFFFFF
