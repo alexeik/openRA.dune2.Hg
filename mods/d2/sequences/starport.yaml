@@ -14,13 +14,6 @@ starport:
 		Offset: -16,-16
 		ZOffset: -2047
 		Tick: 500
-	active: DATA.R8
-		Start: 4723
-		Length: 23
-		ZOffset: -1c511
-		Offset: -48,48
-		BlendMode: Additive
-		Tick: 200
 	icon: SHAPES.SHP
 		Start: 63
 		Offset: 0,0
