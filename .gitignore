@@ -25,3 +25,6 @@ StyleCopViolations.xml
 *nvuser1
 /mods/d2/OpenRA.Game*
 *imgui.ini
+/*DotSettings.user
+/mods/d2/tilesets/*.png
+/packaging/windows/*.exe
