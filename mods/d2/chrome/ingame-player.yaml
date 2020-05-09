@@ -10,13 +10,13 @@ Container@PLAYER_WIDGETS:
 				LogicTicker@RADAR_TICKER:
 				ColorBlock@RADAR_FADETOBLACK:
 					X: WINDOW_RIGHT-226
-					Y: 601
+					Y: WINDOW_BOTTOM-47
 					Width: 50
 					Height: 50
 				Radar@RADAR_MINIMAP:
 					WorldInteractionController: INTERACTION_CONTROLLER
-					X: 806
-					Y: 601
+					X: WINDOW_RIGHT-226
+					Y: WINDOW_BOTTOM-152
 					Width: 202
 					Height: 152
 					SoundUp: RadarUp
@@ -71,6 +71,7 @@ Container@PLAYER_WIDGETS:
 					Width: 25
 					Height: 274
         Container@D2GameScreenUI
+            ClickThrough: false
             Logic:D2GameScreenLogic
             Children:
                 D2GameScreen@dune2ui:
@@ -90,6 +91,21 @@ Container@PLAYER_WIDGETS:
                     Y:8
                     Width:118
                     Height:15
+                WorldButton@REPAIR_BUTTON:
+                    Logic: RepairOrderButtonLogic, AddFactionSuffixLogic
+                    X: WINDOW_RIGHT-50
+                    Width: 28
+                    Height: 26
+                    Background: dune2btnmentat
+                    Key: Repair
+                    TooltipText: Repair
+                    TooltipContainer: TOOLTIP_CONTAINER
+                    VisualHeight: 0
+                    Children:
+                        Image@ICON:
+                            X: 6
+                            Y: 5
+                            ImageCollection: order-repair
                 Button@mentat
                     X:WINDOW_RIGHT-474
                     Y:8
