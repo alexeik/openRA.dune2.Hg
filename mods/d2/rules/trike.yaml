@@ -24,7 +24,6 @@ trike:
 	D2RevealsShroud:
 		Range: 2c0
 		MovingRange: 1c768
-	WithMuzzleOverlay:
 	Armament@damage:
 		Weapon: HMG
 		LocalOffset: -416,0,0

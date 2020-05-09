@@ -35,7 +35,6 @@ devastator:
 		TurnSpeed: 5
 		RealignDelay: 0
 	WithSpriteTurret:
-	WithMuzzleOverlay:
 		IgnoreOffset: true
 	Explodes:
 		Weapon: UnitExplodeLarge

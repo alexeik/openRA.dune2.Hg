@@ -11,12 +11,6 @@ gun_turret:
 		Start: 356
 		Facings: -8
 		Offset: 0,0
-	muzzle: DATA.R8
-		Start: 3775
-		Tick: 60
-		Facings: -32
-		Offset: 0,2
-		BlendMode: Additive
 	icon: SHAPES.SHP
 		Start: 67
 		Offset: 0,0

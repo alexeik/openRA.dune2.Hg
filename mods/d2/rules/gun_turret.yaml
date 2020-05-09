@@ -27,7 +27,6 @@ gun_turret:
 		Range: 2c0
 	BodyOrientation:
 		QuantizedFacings: 8
-	WithMuzzleOverlay:
 	Turreted:
 		TurnSpeed: 6
 		InitialFacing: 128

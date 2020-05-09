@@ -46,8 +46,3 @@ explosion:
 		Start: 2
 		Length: 6
 		Tick: 120
-	corpse: DATA.R8
-		ZOffset: -511
-		Start: 430
-		Length: 12
-		Tick: 1600

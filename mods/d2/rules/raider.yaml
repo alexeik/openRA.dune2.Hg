@@ -22,7 +22,6 @@ raider:
 	D2RevealsShroud:
 		Range: 2c0
 		MovingRange: 1c768
-	WithMuzzleOverlay:
 	Armament@damage:
 		Weapon: HMG
 		LocalOffset: 170,0,0

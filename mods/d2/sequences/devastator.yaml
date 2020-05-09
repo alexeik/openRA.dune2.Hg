@@ -48,10 +48,6 @@ devastator:
 				FlipX: true
 				Offset: 2,-3
 		Facings: -8
-	muzzle: DATA.R8
-		Start: 3418
-		Length: 3
-		BlendMode: Additive
 	icon: SHAPES.SHP
 		Start: 75
 		Offset: 0,0

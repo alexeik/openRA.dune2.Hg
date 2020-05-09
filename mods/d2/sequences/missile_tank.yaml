@@ -22,10 +22,6 @@ missile_tank:
 		Frames: 0, 1, 2, 3, 4, 7, 6, 5
 		Facings: -8
 		Offset: 0,-4
-	muzzle: DATA.R8
-		Start: 3418
-		Length: 3
-		BlendMode: Additive
 	icon: SHAPES.SHP
 		Start: 73
 		Offset: 0,0

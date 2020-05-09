@@ -32,7 +32,6 @@ combat_tank:
 		LocalOffset: 256,0,0
 		MuzzleSequence: muzzle
 	AttackTurreted:
-	WithMuzzleOverlay:
 	WithSpriteTurret:
 	AutoTarget:
 	Explodes:
