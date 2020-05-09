@@ -677,3 +677,6 @@ scrollheader-selected: dialog.png
 
 dropdown: dialog.png
     separator: 512,1,1,19
+order-repair: buttons.png
+    repair: 0,28,34,27
+    repair-active: 0,28,34,27
