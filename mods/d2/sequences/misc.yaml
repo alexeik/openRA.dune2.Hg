@@ -1,18 +1,16 @@
 pips:
-	groups: DATA.R8
-		Start: 17
-		Length: 10
-	pickup-indicator: DATA.R8
-		Start: 112
+	groups: SHAPES.SHP
+		Start: 24
+	pickup-indicator: SHAPES.SHP
+		Start: 24
 	tag-primary: transparent.shp
 		Offset: 0, 2
-	pip-empty: DATA.R8
-		Start: 15
-	pip-green: DATA.R8
-		Start: 16
-	tag-upgraded: DATA.R8
-		Start: 110
-		Offset: -8,-8
+	pip-empty: SHAPES.SHP
+		Start: 20
+	pip-green: SHAPES.SHP
+		Start: 24
+	tag-upgraded: SHAPES.SHP
+		Start: 22
 
 clock:
 	idle: clock.shp
@@ -29,12 +27,6 @@ poweroff:
 		Tick: 160
 		ZOffset: 2047
 
-editor-overlay:
-	Defaults: DATA.R8
-		Offset: -16,-16
-	copy:
-	paste:
-		Start: 1
 
 rallypoint:
 	flag: flagfly.shp
@@ -44,23 +36,16 @@ rallypoint:
 	circles: fpls.shp
 		Length: *
 		ZOffset: 2047
-
+        
+moveflsh:
+	idle: UNITS1.SHP
+		Start: 10
+        
 beacon:
-	arrow: MOUSE.R8
-		Start: 148
-		Offset: -24,-24
-		ZOffset: 2535
 	circles: fpls.shp
 		Length: *
 		ZOffset: 2047
 
-allyrepair:
-	repair: DATA.R8
-		Frames: 3, 39
-		Length: 2
-		Tick: 300
-		Offset: -11,-10
-		ZOffset: 2047
 
 mpspawn:
 	idle: mpspawn.shp
@@ -78,21 +63,7 @@ wormspawner:
 	idle: wormspawner.shp
 		Length: *
 
-sietch:
-	idle: DATA.R8
-		Start: 2998
-		Offset: -32,32
 
-doubleblast:
-	idle: DATA.R8
-		Start: 3279
-		Facings: -16
-		BlendMode: Additive
-		ZOffset: 511
-
-moveflsh:
-	idle: DATA.R8
-		Start: 3304
 #	idle: DATA.R8
 #		Start: 3621
 #		Length: 5
@@ -100,9 +71,6 @@ moveflsh:
 #		BlendMode: Multiply
 #		ZOffset: 2047
 
-null:
-	idle: DATA.R8
-		Start: 3304
 
 mentathoverbtn: 
     idle: BTTN.ENG
@@ -184,5 +152,6 @@ intro8cwsa:
         Tick: 500       
 cashnums:
     nums: SHAPES.SHP
+        Background : 10,9,8,7
         Length:10
         Start:2
