@@ -6,12 +6,12 @@ ModCredits:
 	ModTabTitle: d2 mod
 	ModCreditsFile: d2|AUTHORS
 
-PackageFormats: PakFile, D2kSoundResources
+PackageFormats: PakFile
 
 Packages:
 	~^Content/d2/Unpacked
-	^Content/d2/msdf/fontmsdf1: msdffolder1
-	^Content/d2/msdf/fontmsdf2: msdffolder2
+	./mods/d2/msdf/fontmsdf1: msdffolder1
+	./mods/d2/msdf/fontmsdf2: msdffolder2
 	~^Content/d2
 	~^Content/d2k/v2
 	.
@@ -184,7 +184,6 @@ Chrome:
 
 Assemblies:
 	common|OpenRA.Mods.Common.dll
-	d2k|OpenRA.Mods.D2k.dll
 	d2|OpenRA.Mods.D2.dll
 
 ChromeDefaultPalette: 
@@ -294,7 +293,7 @@ Fonts:
 	Original:
 		#Font: d2|dune2.otf
 		Font: common|FreeSans.ttf
-		Size:50
+		Size:42
 	Regular:
 		#Font: d2|dune2.otf
 		Font: common|FreeSans.ttf
@@ -335,9 +334,9 @@ SupportsMapsFrom: d2
 
 SoundFormats: Voc, Aud, Wav, ADL
 
-SpriteFormats: R8, ShpD2, IcnD2, ShpTD, CpsD2, Wsa
+SpriteFormats:  ShpD2, IcnD2, ShpTD, CpsD2, Wsa
 
-SpriteSequenceFormat: DefaultSpriteSequence
+SpriteSequenceFormat: DefaultSpriteSequence2
 
 ModelSequenceFormat: PlaceholderModelSequence
 
@@ -380,11 +379,6 @@ ModContent:
 			Sources: d2k-a, d2k-a-linux, d2k-b, d2k-b-linux, d2k-c, d2k-c-linux, d2k-d, d2k-d-linux, d2k-e, d2k-e-linux, gruntmods
 			Required: true
 			Download: basefiles
-		patch: 1.06 Patch Content
-			TestFiles: ^Content/d2k/v2/DATA.R8, ^Content/d2k/v2/BLOXXMAS.R8
-			Sources: gruntmods
-			Required: true
-			Download: patch106
 		music: Game Music
 			TestFiles: ^Content/d2k/v2/Music/AMBUSH.AUD
 			Sources: d2k-a, d2k-a-linux, d2k-b, d2k-b-linux, d2k-c, d2k-c-linux, d2k-d, d2k-d-linux, d2k-e, d2k-e-linux, gruntmods
