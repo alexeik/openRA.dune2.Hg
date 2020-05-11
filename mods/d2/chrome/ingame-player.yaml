@@ -23,10 +23,10 @@ Container@PLAYER_WIDGETS:
 					SoundDown: RadarDown
 					Children:
 						VqaPlayer@PLAYER:
-							X: 50
-							Y: 50
-							Width: 50
-							Height: 50
+							X: 10
+							Y: 10
+							Width: PARENT_RIGHT - 20
+							Height: PARENT_BOTTOM - 20
 							Skippable: false
 		Container@SIDEBAR_PRODUCTION:
 			Logic: ClassicProductionLogic
