@@ -334,7 +334,7 @@ SupportsMapsFrom: d2
 
 SoundFormats: Voc, Aud, Wav, ADL
 
-SpriteFormats:  ShpD2, IcnD2, ShpTD, CpsD2, Wsa
+SpriteFormats:  ShpD2, IcnD2, ShpTD, CpsD2, Wsa, Png
 
 SpriteSequenceFormat: DefaultSpriteSequence2
 
