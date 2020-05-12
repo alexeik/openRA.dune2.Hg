@@ -130,8 +130,17 @@ namespace OpenRA.Mods.D2.SpriteLoaders
 
 		public override bool TryParseSprite(Stream s, string filename, out ISpriteFrame[] frames, out TypeDictionary metadata)
 		{
-			prevwsafilename = filename;
-			return TryParseSprite(s, out frames, out metadata);
+			if (filename.Contains("WSA"))
+			{
+				prevwsafilename = filename;
+				return TryParseSprite(s, out frames, out metadata);
+			}
+			else
+			{
+				frames = null;
+				metadata = null;
+				return false;
+			}
 		}
 
 		public override bool TryParseSprite(Stream s, out ISpriteFrame[] frames, out TypeDictionary metadata)
