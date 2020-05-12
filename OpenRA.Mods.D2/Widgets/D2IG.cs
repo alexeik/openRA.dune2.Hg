@@ -76,7 +76,8 @@ namespace OpenRA.Mods.D2.Widgets
         {
             Game.Renderer.PixelDumpRenderer.fb.Bind();
             Sheet2D seqsheet;
-            seqsheet = Game.ModData.DefaultSequences["arrakis2"].SpriteCache.SheetBuilder2D.Current;
+            //seqsheet = Game.ModData.DefaultSequences["arrakis2"].SpriteCache.SheetBuilder2D.Current;
+            seqsheet = Game.SheetBuilder2D.Current;
             Sprite sp = new Sprite(seqsheet, new Rectangle() { Width = seqsheet.Size.Width, Height = seqsheet.Size.Height }, channel); //чтобы прочитать все 4 канала seqsheet
                                                                                                                                        //нужно использовать 4 итерации, где нужно менять канал в спрайте.
             //так как sp.SpriteType не задан, то будет запущено DrawMode =0 , что отрисует только пиксели из палитры.
