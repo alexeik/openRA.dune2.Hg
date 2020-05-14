@@ -107,7 +107,8 @@ Rules:
 	d2|rules/siege_tank.yaml
 	d2|rules/sonic_tank.yaml
 	d2|rules/spicebloom.yaml
-
+    d2|rules/asteroid.yaml
+    
 Sequences:
 	d2|sequences/palace.yaml
 	d2|sequences/misc.yaml

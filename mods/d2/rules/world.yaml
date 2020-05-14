@@ -151,6 +151,12 @@ World:
 		ProductionPaletteWidget: PRODUCTION_PALETTE
 	ActorSpawnManager:
 		Actors: sandworm
+        Maximum: 5
+	ActorSpawnManager@w1:
+		Actors: asteroid    
+        RemoveActorBeforeSpawn: true
+        SpawnInterval: 500
+        Maximum: 2
 	DomainIndex:
 	WarheadDebugOverlay:
 	D2TerrainLayer:
