@@ -55,7 +55,7 @@ namespace OpenRA.Mods.D2.Traits
 			WormInfo = info;
 			mobile = self.Trait<Mobile>();
 			attackTrait = self.Trait<AttackBase>();
-			manager = self.World.WorldActor.Trait<ActorSpawnManager>();
+			//manager = self.World.WorldActor.Trait<ActorSpawnManager>();
 		}
 
 		public override void DoAction(Actor self, CPos targetCell)
@@ -141,7 +141,7 @@ namespace OpenRA.Mods.D2.Traits
 			if (disposed)
 				return;
 
-			manager.DecreaseActorCount();
+			//manager.DecreaseActorCount();
 			disposed = true;
 		}
 	}
