@@ -94,8 +94,8 @@ Container@PLAYER_WIDGETS:
                 WorldButton@REPAIR_BUTTON:
                     Logic: RepairOrderButtonLogic, AddFactionSuffixLogic
                     X: WINDOW_RIGHT-50
-                    Width: 28
-                    Height: 26
+                    Width: 27
+                    Height: 34
                     Background: dune2btnmentat
                     Key: Repair
                     TooltipText: Repair
