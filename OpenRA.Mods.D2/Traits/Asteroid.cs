@@ -464,12 +464,16 @@ namespace OpenRA.Mods.Common.D2.Traits
 			else if (!Info.CanHover && !atLandAltitude)
 				self.QueueActivity(new D2.Activities.FlyCircle(self, -1, Info.IdleTurnSpeed > -1 ? Info.IdleTurnSpeed : TurnSpeed));
 			else if (atLandAltitude && !CanLand(self.Location) && ReservedActor == null)
-				self.QueueActivity(new TakeOff(self));
+				self.QueueActivity(new D2.Activities.TakeOff(self));
 			else if (Info.CanHover && Info.IdleTurnSpeed > 0)
 			{
 				// Temporary HACK for the AutoCarryall special case (needs CanHover, but also FlyCircle on idle).
 				// Will go away soon (in a separate PR) with the arrival of ActionsWhenIdle.
-				self.QueueActivity(new D2.Activities.FlyCircle(self, -1, Info.IdleTurnSpeed > -1 ? Info.IdleTurnSpeed : TurnSpeed));
+				//self.QueueActivity(new D2.Activities.FlyCircle(self, -1, Info.IdleTurnSpeed > -1 ? Info.IdleTurnSpeed : TurnSpeed));
+
+				//WPos? pos1;
+				//pos1 =self.World.Map.CenterOfCell(new CPos(100, 72));
+				self.QueueActivity(new D2.Activities.Fly(self, Target.FromCell(self.World,new CPos(100,72))));
 			}
 		}
 
@@ -580,7 +584,7 @@ namespace OpenRA.Mods.Common.D2.Traits
 		public Activity MoveTo(CPos cell, int nearEnough)
 		{
 			if (!Info.CanHover)
-				return new Fly(self, Target.FromCell(self.World, cell));
+				return new D2.Activities.Fly(self, Target.FromCell(self.World, cell));
 
 			return new HeliFly(self, Target.FromCell(self.World, cell));
 		}
@@ -588,7 +592,7 @@ namespace OpenRA.Mods.Common.D2.Traits
 		public Activity MoveTo(CPos cell, Actor ignoreActor)
 		{
 			if (!Info.CanHover)
-				return new Fly(self, Target.FromCell(self.World, cell));
+				return new D2.Activities.Fly(self, Target.FromCell(self.World, cell));
 
 			return new HeliFly(self, Target.FromCell(self.World, cell));
 		}
@@ -597,7 +601,7 @@ namespace OpenRA.Mods.Common.D2.Traits
 			WPos? initialTargetPosition = null, Color? targetLineColor = null)
 		{
 			if (!Info.CanHover)
-				return new Fly(self, target, WDist.Zero, range, initialTargetPosition, targetLineColor);
+				return new D2.Activities.Fly(self, target, WDist.Zero, range, initialTargetPosition, targetLineColor);
 
 			return new HeliFly(self, target, WDist.Zero, range, initialTargetPosition, targetLineColor);
 		}
@@ -606,7 +610,7 @@ namespace OpenRA.Mods.Common.D2.Traits
 			WPos? initialTargetPosition = null, Color? targetLineColor = null)
 		{
 			if (!Info.CanHover)
-				return new Fly(self, target, minRange, maxRange,
+				return new D2.Activities.Fly(self, target, minRange, maxRange,
 					initialTargetPosition, targetLineColor);
 
 			return new HeliFly(self, target, minRange, maxRange,
@@ -627,7 +631,7 @@ namespace OpenRA.Mods.Common.D2.Traits
 		public Activity MoveIntoWorld(Actor self, CPos cell, SubCell subCell = SubCell.Any)
 		{
 			if (!Info.CanHover)
-				return new Fly(self, Target.FromCell(self.World, cell));
+				return new D2.Activities.Fly(self, Target.FromCell(self.World, cell));
 
 			return new HeliFly(self, Target.FromCell(self.World, cell, subCell));
 		}
@@ -636,7 +640,7 @@ namespace OpenRA.Mods.Common.D2.Traits
 			WPos? initialTargetPosition = null, Color? targetLineColor = null)
 		{
 			if (!Info.CanHover)
-				return new Fly(self, target, WDist.FromCells(3), WDist.FromCells(5),
+				return new D2.Activities.Fly(self, target, WDist.FromCells(3), WDist.FromCells(5),
 					initialTargetPosition, targetLineColor);
 
 			return ActivityUtils.SequenceActivities(self,
