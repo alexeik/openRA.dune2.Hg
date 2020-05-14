@@ -152,6 +152,13 @@ intro8cwsa:
         Tick: 500       
 cashnums:
     nums: SHAPES.SHP
-        Background : 10,9,8,7
         Length:10
         Start:2
+        
+editor-overlay:
+	Defaults: R_Buttons.png
+		Offset: -16,-16
+        Background : 48,57,46,36
+	copy:
+	paste:
+		Start: 0        
