@@ -157,6 +157,9 @@ World:
         RemoveActorBeforeSpawn: true
         SpawnInterval: 500
         Maximum: 2
+        NeedsActorSpawner:false
+        LocationInit: 50,70
+        Altitude: 1098
 	DomainIndex:
 	WarheadDebugOverlay:
 	D2TerrainLayer:

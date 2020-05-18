@@ -7,7 +7,7 @@ asteroid:
 	Armor:
 		Type: light
 	Asteroid:
-		CruiseAltitude: 192
+		CruiseAltitude: 1092
 		CruisingCondition: cruising
 		InitialFacing: 0
 		Speed: 144 # 112 * ~1.3 for balance reasons
@@ -19,6 +19,7 @@ asteroid:
 		CanHover: True
 		VTOL: true
 		IdleTurnSpeed: 2
+        
 	Targetable@GROUND:
 		TargetTypes: Ground, Vehicle
 		RequiresCondition: !airborne
@@ -31,13 +32,13 @@ asteroid:
 		OwnerType: InternalName
 		EffectiveOwnerFromOwner: true
 	RenderSprites:
-		Image: carryall
-	SelfHealing:
-		Step: 5
-		Delay: 3
-		HealIfBelow: 50
-
-
+		Image: asteroid
+        Palette: asteroidpal
+    FallsToEarthAsteroid:
+        Explosion:BloomExplosion
+        Spins: False
+        Velocity:43
+    
 asteroid.husk:
 	Inherits: ^AircraftHusk
 	Tooltip:

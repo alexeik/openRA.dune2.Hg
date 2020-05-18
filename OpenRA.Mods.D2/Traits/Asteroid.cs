@@ -454,6 +454,13 @@ namespace OpenRA.Mods.Common.D2.Traits
 
 			}
 
+			if (self.Location== new CPos(70, 70))
+			{
+				FallsToEarth i2;
+				i2=self.Trait<FallsToEarth>();
+				
+				self.QueueActivity(new D2.Activities.FallToEarthAsteroid(self,i2.info));
+			}
 			if (!atLandAltitude && Info.LandWhenIdle)
 			{
 				if (Info.VTOL && Info.TurnToLand)
@@ -473,7 +480,7 @@ namespace OpenRA.Mods.Common.D2.Traits
 
 				//WPos? pos1;
 				//pos1 =self.World.Map.CenterOfCell(new CPos(100, 72));
-				self.QueueActivity(new D2.Activities.Fly(self, Target.FromCell(self.World,new CPos(100,72))));
+				self.QueueActivity(new D2.Activities.Fly(self, Target.FromCell(self.World,new CPos(70,70))));
 			}
 		}
 

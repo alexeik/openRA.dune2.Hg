@@ -1,4 +1,8 @@
 ^Palettes:
+    PaletteFromEmbeddedSpritePalette@asteroidpal:
+		Name: asteroidpal
+		Image: asteroid
+		Sequence: idle
 	PaletteFromFile:
 		Name: terrain
 		Filename: IBM.PAL

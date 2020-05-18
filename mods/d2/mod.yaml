@@ -110,6 +110,7 @@ Rules:
     d2|rules/asteroid.yaml
     
 Sequences:
+    d2|sequences/asteroid.yaml
 	d2|sequences/palace.yaml
 	d2|sequences/misc.yaml
 	d2|sequences/overlay.yaml
