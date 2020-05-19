@@ -1,8 +1,4 @@
 ^Palettes:
-    PaletteFromEmbeddedSpritePalette@asteroidpal:
-		Name: asteroidpal
-		Image: asteroid
-		Sequence: idle
 	PaletteFromFile:
 		Name: terrain
 		Filename: IBM.PAL
@@ -89,3 +85,7 @@
 		BasePalette: player
 	D2WindtrapPaletteEffect@wind:
 		PaletteName: wind
+    PaletteFromEmbeddedSpritePalette@asteroidpal:
+		Name: asteroidpal
+		Image: asteroid
+		Sequence: idle
