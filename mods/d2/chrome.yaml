@@ -30,7 +30,19 @@ atrtitle: housestitle
 mentata: mentatascreen
     background : 0,0,320,200
         stretched: true
-    
+        
+dunemap: dunemapcps
+    background : 0,0,320,200
+        stretched: true
+        
+dunergn: dunergncps
+    background : 0,0,320,200
+        stretched: true
+
+dunergnclk: dunergnclkcps
+    background : 0,0,320,200
+        stretched: true
+        
 sidebar: chrome.png
 	background-top: 0,0,226,295
 	background-iconrow: 0,295,226,48

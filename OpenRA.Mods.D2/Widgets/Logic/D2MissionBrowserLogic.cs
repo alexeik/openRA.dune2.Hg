@@ -68,14 +68,14 @@ namespace OpenRA.Mods.D2.Widgets.Logic
 
 			widget.Get("MISSION_INFO").IsVisible = () => selectedMap != null;
 
-			var previewWidget = widget.Get<MapPreviewWidget>("MISSION_PREVIEW");
-			previewWidget.Preview = () => selectedMap;
-			previewWidget.IsVisible = () => playingVideo == PlayingVideo.None;
+			//var previewWidget = widget.Get<MapPreviewWidget>("MISSION_PREVIEW");
+			//previewWidget.Preview = () => selectedMap;
+			//previewWidget.IsVisible = () => playingVideo == PlayingVideo.None;
 
 			videoPlayer = widget.Get<WsaPlayerWidget>("MISSION_VIDEO");
 			widget.Get("MISSION_BIN").IsVisible = () => playingVideo != PlayingVideo.None;
 			fullscreenVideoPlayer = Ui.LoadWidget<BackgroundWidget>("FULLSCREEN_PLAYER", Ui.Root, new WidgetArgs { { "world", world } });
-
+			
 			descriptionPanel = widget.Get<ScrollPanelWidget>("MISSION_DESCRIPTION_PANEL");
 
 			description = descriptionPanel.Get<LabelWidget>("MISSION_DESCRIPTION");

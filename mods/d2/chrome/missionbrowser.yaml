@@ -73,21 +73,19 @@ Background@MISSIONBROWSER_PANEL:
 			Children:
 				Background@MISSION_BG:
 					Width: PARENT_RIGHT
-					Height: 327
+					Height: 327+73
 					Background: dialog3
 					Children:
-						MapPreview@MISSION_PREVIEW:
-							X: 1
-							Y: 1
-							Width: PARENT_RIGHT - 2
-							Height: PARENT_BOTTOM - 2
-							IgnoreMouseOver: True
-							IgnoreMouseInput: True
-							ShowSpawnPoints: False
+                        Campaign@dunemap
+                            X:1
+                            Y:1
+                            Width:640
+                            Height:400
+                           
 				ScrollPanel@MISSION_DESCRIPTION_PANEL:
-					Y: 337
+					Y: 337+73
 					Width: PARENT_RIGHT
-					Height: 146
+					Height: 146-73
 					Children:
 						Label@MISSION_DESCRIPTION:
 							X: 4
