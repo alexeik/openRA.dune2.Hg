@@ -83,23 +83,24 @@ namespace OpenRA.Mods.D2.Widgets
             //так как sp.SpriteType не задан, то будет запущено DrawMode =0 , что отрисует только пиксели из палитры.
             //Нужно запустить и в режиме RGBA - сделать...
             Game.Renderer.PixelDumpRenderer.DrawSprite(sp, new float3(0, 0, 0));
-            Game.Renderer.PixelDumpRenderer.Flush();
+            Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
             Game.Renderer.PixelDumpRenderer.fb.Unbind();
             //нарисовали в текстуру в свой фреймбуфер.
 
 
             //теперь нужно запустить еще раз рендер, где эта текстура будет как аргумент у шейдера и он нарисует все пиксели в фреймбуфер главный.
 
-            Sheet sh1 = new Sheet(SheetType.BGRA, Game.Renderer.PixelDumpRenderer.fb.Texture);
+            Sheet sh1 = new Sheet(SheetType.BGRA, Game.Renderer.PixelDumpRenderer.fb.Texture[0]); //тут ставим текстуру от FB1 в аргумент шейдера Texture0
             Sprite sp2 = new Sprite(sh1, new Rectangle(0, 0, 2048, 2048), TextureChannel.Red); //тут канал не важен, он будет подавлен через SPriteType
+            //Создаем связку спрайт+текстура, чтобы передать текстуру в шейдер. и потом через SpriteType вызываем нужный код в шейдере.
             sp2.SpriteType = 5;
-            Game.Renderer.PixelDumpRenderer.DrawSprite(sp2, new float3(0, 0, 0));
+            Game.Renderer.PixelDumpRenderer.DrawSprite(sp2, new float3(0, 0, 0)); //рисуем каждый пиксель из Texture0 в текстуру FB0 по алгоритму DrawMode=9
 
-
+            
             sp.SpriteType = 0;
             Game.Renderer.PixelDumpRenderer.Flush();
 
-            Game.TakeTextureInner(Game.Renderer.PixelDumpRenderer.fb.Texture);
+            Game.TakeTextureInner(Game.Renderer.PixelDumpRenderer.fb.Texture[0]);
         }
     }
 
