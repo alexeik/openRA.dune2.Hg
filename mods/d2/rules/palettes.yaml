@@ -2,11 +2,9 @@
 	PaletteFromFile:
 		Name: terrain
 		Filename: IBM.PAL
-		ShadowIndex: 1
 	PaletteFromFile@d2:
 		Name: d2
 		Filename: IBM.PAL
-		ShadowIndex: 1
 		CursorPalette: true
 	PaletteFromFile@chrome:
 		Name: chrome
@@ -31,6 +29,7 @@
 	PaletteFromFile@shroud:
 		Name: shroud
 		Filename: IBM.PAL
+        AllowModifiers: false
 	PaletteFromFile@fog:
 		Name: fog
 		Filename: IBM.PAL
