@@ -94,6 +94,9 @@ namespace OpenRA.Mods.D2.Widgets.Logic
 			stopInfoVideoButton.IsVisible = () => playingVideo == PlayingVideo.Info;
 			stopInfoVideoButton.OnClick = () => StopVideo(videoPlayer);
 
+			CampaignWidget= widget.Get<CampaignWidget>("campaigndune");
+			CampaignWidget.OnHouseChooseDelegate = OnHouseChoose;
+			CampaignWidget.OnMapRegionChooseDelegate = OnMapRegionChoose;
 			var allPreviews = new List<MapPreview>();
 			missionList.RemoveChildren();
 
@@ -311,6 +314,8 @@ namespace OpenRA.Mods.D2.Widgets.Logic
 
 		float cachedSoundVolume;
 		float cachedMusicVolume;
+		private CampaignWidget CampaignWidget;
+
 		void MuteSounds()
 		{
 			cachedSoundVolume = Game.Sound.SoundVolume;
@@ -382,7 +387,7 @@ namespace OpenRA.Mods.D2.Widgets.Logic
 			orders.Add(Order.Command("state {0}".F(Session.ClientState.Ready)));
 
 			var missionData = selectedMap.Rules.Actors["world"].TraitInfoOrDefault<MissionDataInfo>();
-			if (missionData != null && missionData.StartVideo != null && modData.DefaultFileSystem.Exists(missionData.StartVideo))
+			if (1==2 && missionData != null && missionData.StartVideo != null && modData.DefaultFileSystem.Exists(missionData.StartVideo))
 			{
 				var fsPlayer = fullscreenVideoPlayer.Get<WsaPlayerWidget>("PLAYER");
 				fullscreenVideoPlayer.Visible = true;
@@ -393,6 +398,70 @@ namespace OpenRA.Mods.D2.Widgets.Logic
 			}
 			else
 				Game.CreateAndStartLocalServer(selectedMap.Uid, orders);
+		}
+
+		public void OnHouseChoose(int r, int g, int b)
+		{
+			string housename="Uknown";
+			if (r==255 && g==255 & b==255)
+			{
+				housename = "Harkonnen";
+			}
+			if (r == 255 && g == 255 & b == 255)
+			{
+				housename = "Atreides";
+			}
+			if (r == 255 && g == 255 & b == 255)
+			{
+				housename = "Ordos";
+			}
+			//String.Format("House:{0} code:{1} {2} {3}", "Harkonen", r.ToString(), g.ToString(), b.ToString());
+			description.Text += Environment.NewLine + String.Format("House:{0}", housename);
+			var height = descriptionFont.Measure(description.Text).Y;
+			Game.RunAfterTick(() =>
+			{
+				
+					
+					description.Bounds.Height = height;
+					descriptionPanel.Layout.AdjustChildren();
+				descriptionPanel.ScrollToBottom();
+
+			});
+
+		}
+		public void OnMapRegionChoose(int r, int g, int b)
+		{
+			string mapcode = "Uknown";
+			if (r == 170 && g == 0 & b == 170)
+			{
+				mapcode = "Map0";
+			}
+			if (r == 170 && g == 85 & b == 0)
+			{
+				mapcode = "Map1";
+			}
+			if (r == 85 && g == 85 & b == 85)
+			{
+				mapcode = "Map2";
+			}
+			if (r == 186 && g == 190 & b == 150)
+			{
+				mapcode = "Map3";
+			}
+
+			description.Text += Environment.NewLine + String.Format("Map:{0} ", mapcode);
+			var height = descriptionFont.Measure(description.Text).Y;
+			description.Bounds.Height = height;
+			descriptionPanel.Layout.AdjustChildren();
+			descriptionPanel.ScrollToBottom();
+			//Game.RunAfterTick(() =>
+			//{
+
+
+			//	description.Bounds.Height = height;
+			//	descriptionPanel.Layout.AdjustChildren();
+
+			//});
 		}
 
 		class DropDownOption

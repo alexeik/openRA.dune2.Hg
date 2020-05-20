@@ -45,6 +45,17 @@ namespace OpenRA.Mods.D2.Widgets
         private Sprite houseSprite;
         private Sprite dunergnSprite;
         private Sprite dunergnclickSprite;
+        private Sprite housesSprite;
+        private Sprite housesmaskSprite;
+        private SequenceProvider sp;
+        private ITexture textemp;
+        Sheet sh1;
+        Sprite sp1;
+
+        Sheet sh2;
+        Sprite sp2;
+        public Action<int, int, int> OnHouseChooseDelegate;
+        public Action<int, int, int> OnMapRegionChooseDelegate;
         /// <summary>
         /// Если использовать [ObjectCreator.UseCtor] , то можно использовать DI для инициализации аргументов конструктора.
         /// </summary>
@@ -54,24 +65,38 @@ namespace OpenRA.Mods.D2.Widgets
         {
             dunergnSprite = ChromeProvider.GetImage("dunergn", "background");
             dunergnclickSprite = ChromeProvider.GetImage("dunergnclk", "background");
-           
+            housesSprite = ChromeProvider.GetImage("housestitle", "background");
+            housesmaskSprite = ChromeProvider.GetImage("heraldmask", "background");
 
             //тут такая механика.
             //используем DI и атрибут [ObjectCreator.UseCtor], тогда world будет заполнен . 
             //после идем в коллекцию Sequences , которая собирается из всех rules\sequences, где мы в misc.yaml прописали наш screen.cps
             //берем sprite из этих sequences и используем его Sheet, как ссылку для создания других Sprite в нашем UI.
             //video = new CpsD2Loader("SCREEN.CPS");
-
+            sp = world.Map.Rules.Sequences;
             LoadPalette();
+
+            //OnHouseChooseDelegate = OnHouseChoose;
+            //OnMapRegionChooseDelegate = OnMapRegionChoose;
         }
         public override void Initialize(WidgetArgs args)
         {
             base.Initialize(args);
             if (Game.Renderer.PixelDumpRenderer.fbcreated == false)
             {
-                Game.Renderer.PixelDumpRenderer.Setup(new Size(1024, 512));
+                Game.Renderer.PixelDumpRenderer.Setup(new Size(1024, 768)); //widget должен быть , тогда в пределах 1024 на 512 пикселей
            
                 PrepTextures();
+            }
+            else
+            {
+                //переинициализация этих переменных на N-1 раз
+                sh1 = new Sheet(SheetType.BGRA, Game.Renderer.PixelDumpRenderer.fb.Texture[0]);
+                sp1 = new Sprite(sh1, new Rectangle(0, 0, RenderBounds.Width, RenderBounds.Height), TextureChannel.RGBA);
+                sh2 = new Sheet(SheetType.BGRA, Game.Renderer.PixelDumpRenderer.fb.Texture[3]);
+                sp2 = new Sprite(sh2, new Rectangle(0, 0, RenderBounds.Width, RenderBounds.Height), TextureChannel.RGBA);
+                textemp = Game.Renderer.PixelDumpRenderer.fb.Texture[4]; //ссылка на текстуру, куда будут уходить данные
+                                                                         // об выбранных масках
             }
         }
         void LoadPalette(ImmutablePalette cpspalette, string customname)
@@ -82,67 +107,141 @@ namespace OpenRA.Mods.D2.Widgets
         void LoadPalette()
         {
             //pr = Game.worldRenderer.Palette("player" + Game.worldRenderer.World.LocalPlayer.InternalName); //d2 палитра назначена в d2\rules\palettes.yaml
-            prbase = Game.worldRenderer.Palette("d2");
+            prbase = Game.worldRenderer.Palette("shroud");
+            //используем shroud так как у нее нету SHadowIndex в palettes.yaml, этот ShadowIndex затирает указанный индекс в палитре черным цветом и 
+            //я получал не верные цвета.
         }
+        /// <summary>
+        /// КОнвертирует все 1 байтовые пиксели в 4 байтовые, чтобы работать с этими картинками в шейдере в drawmode=10
+        /// </summary>
         public void PrepTextures()
         {
+            
             Game.Renderer.Flush();
             Game.Renderer.PixelDumpRenderer.fb.Bind();
-            //Sheet seqsheet;
-            //seqsheet = Game.ModData.DefaultSequences["arrakis2"].SpriteCache.SheetBuilder2D.Current;
-            //seqsheet = Game.SheetBuilder2D.Current;
-            //Sprite sp = new Sprite(seqsheet, RenderBounds, TextureChannel.Red); //чтобы прочитать все 4 канала seqsheet
-            //                                                                                                                           //нужно использовать 4 итерации, где нужно менять канал в спрайте.
 
-            //Game.Renderer.PixelDumpRenderer.shader.SetTexture("Texture2D0", dunergnSprite.Sheet2D.texture);
-            //Game.Renderer.PixelDumpRenderer.shader.SetTexture("Texture2D1", dunergnclickSprite.Sheet2D.texture);
-            //Game.Renderer.PixelDumpRenderer.DrawSprite(dunergnSprite, new float3(0, 0, 0));
-            Game.Renderer.PixelDumpRenderer.DrawSprite(dunergnclickSprite, new float3(0, 0, 0), new float3(RenderBounds.Width, RenderBounds.Height, 0));
-            //Game.Renderer.PixelDumpRenderer.SetMouseLocation(MouseLocationInWidget);
+            Game.Renderer.PixelDumpRenderer.DrawSprite(dunergnclickSprite, new float3(0, 0, 0), new float3(RenderBounds.Width, RenderBounds.Height, 0),prbase);
 
             Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
             Game.Renderer.PixelDumpRenderer.fb.Unbind();
 
             Game.Renderer.PixelDumpRenderer.fb.Bind(true, Game.Renderer.PixelDumpRenderer.fb.size);
-            Game.Renderer.PixelDumpRenderer.DrawSprite(dunergnSprite, new float3(0, 0, 0), new float3(RenderBounds.Width, RenderBounds.Height, 0));
+            Game.Renderer.PixelDumpRenderer.DrawSprite(dunergnSprite, new float3(0, 0, 0), new float3(RenderBounds.Width, RenderBounds.Height, 0), prbase);
             Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
             Game.Renderer.PixelDumpRenderer.fb.Unbind();
 
-        }
+            Game.Renderer.PixelDumpRenderer.fb.Bind(true, Game.Renderer.PixelDumpRenderer.fb.size);
+            Game.Renderer.PixelDumpRenderer.DrawSprite(housesSprite, new float3(0, 0, 0), new float3(RenderBounds.Width, RenderBounds.Height, 0), prbase);
+            Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
+            Game.Renderer.PixelDumpRenderer.fb.Unbind();
 
+            Game.Renderer.PixelDumpRenderer.fb.Bind(true, Game.Renderer.PixelDumpRenderer.fb.size);
+            Game.Renderer.PixelDumpRenderer.DrawSprite(housesmaskSprite, new float3(0, 0, 0), new float3(RenderBounds.Width, RenderBounds.Height, 0), prbase);
+            Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
+            Game.Renderer.PixelDumpRenderer.fb.Unbind();
+
+            //переходим в размеры текстур как у игры! 
+            Game.Renderer.PixelDumpRenderer.fb.Bind(true,new Size(1024,768)); 
+            Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
+            Game.Renderer.PixelDumpRenderer.fb.Unbind();
+
+            textemp = Game.Renderer.PixelDumpRenderer.fb.Texture[4]; //ссылка на текстуру, куда будут уходить данные
+                                                                     // об выбранных масках
+
+            sh1 = new Sheet(SheetType.BGRA, Game.Renderer.PixelDumpRenderer.fb.Texture[0]);
+            sp1 = new Sprite(sh1, new Rectangle(0, 0, RenderBounds.Width, RenderBounds.Height), TextureChannel.RGBA);
+            sh2 = new Sheet(SheetType.BGRA, Game.Renderer.PixelDumpRenderer.fb.Texture[3]);
+            sp2 = new Sprite(sh2, new Rectangle(0, 0, RenderBounds.Width, RenderBounds.Height), TextureChannel.RGBA);
+
+        }
+        public void DrawHouses()
+        {
+            Game.Renderer.SpriteRenderer.Flush();
+
+            //делаем спрайт по текстуре 1, в которой оригинал
+
+            float normX, normY;
+            //соблюдаем размерность между источником текстур SeqProv и фреймбуфером.
+            normX = -1 * (float)MouseLocationInWidget.X / 1024; //2048 на 2048 это размер текстуры в которой хранятся пиксели от фреймбуфера
+            normY = 1 + (float)MouseLocationInWidget.Y / 768;
+
+            Game.Renderer.SpriteRenderer.SetMouseLocation(new float2(normX, normY));
+            Game.Renderer.SpriteRenderer.SetAlphaFlag(true);
+            Game.Renderer.SpriteRenderer.SetAlphaInit(60,0,0,0);
+            Game.Renderer.SpriteRenderer.SetAlphaConstantRegion(255,255,85,255);
+
+            //передаем вторым аргументом текстуру, где маска
+            Game.Renderer.SpriteRenderer.shader.SetTexture("Texture1", Game.Renderer.PixelDumpRenderer.fb.Texture[2]); //rgnclck
+            sp2.SpriteType = 6;
+            WidgetUtils.FillRectWithSprite(RenderBounds, sp2, prbase); //dunergn
+            //Game.Renderer.SpriteRenderer.Flush(); //записать кадр во фреймбуфер 
+        }
+        public bool SwitchToMap = false;
+        public void DrawMap()
+        {
+            float normX, normY;
+            //соблюдаем размерность между источником текстур SeqProv и фреймбуфером.
+            normX = -1 * (float)MouseLocationInWidget.X / 1024; //2048 на 2048 это размер текстуры в которой хранятся пиксели от фреймбуфера
+            normY = 1 + (float)MouseLocationInWidget.Y / 768;
+            Game.Renderer.SpriteRenderer.SetAlphaFlag(false);
+            Game.Renderer.SpriteRenderer.SetAlphaConstantRegion(-1, 255, 85, 255);
+            Game.Renderer.SpriteRenderer.SetMouseLocation(new float2(normX, normY));
+
+            //передаем вторым аргументом текстуру, где регионы для мышки
+            Game.Renderer.SpriteRenderer.shader.SetTexture("Texture1", Game.Renderer.PixelDumpRenderer.fb.Texture[1]); //rgnclck
+            sp1.SpriteType = 6;
+            WidgetUtils.FillRectWithSprite(RenderBounds, sp1, prbase); //dunergn
+           // Game.Renderer.SpriteRenderer.Flush(); //записать кадр во фреймбуфер 
+        }
         public override void Draw()
         {
+            if (SwitchToMap)
+            {
+                DrawMap();
+            }
+            else
+            {
+                DrawHouses();
+            }
            
-            //Game.Renderer.SetPalette(hardwarePalette);
-            int offsetY = 0;
-            int offsetX = 0;
-            Rectangle temprect = new Rectangle();
-            Rectangle mouserect = GetEventBounds();
-            //Console.WriteLine("mouse loc:" + MouseLocationInWidget);
-            //dunergnclickSprite.SpriteType = 0; //fill rect with palette image
-
+            //return;
+            //Game.Renderer.SpriteRenderer.SetFrameBufferMaskMode(false);
+            //DrawMap();
 
             Game.Renderer.SpriteRenderer.Flush();
 
             //делаем спрайт по текстуре 1, в которой карта с регионами
-            Sheet sh1 = new Sheet(SheetType.BGRA, Game.Renderer.PixelDumpRenderer.fb.Texture[0]);
-            Sprite sp2 = new Sprite(sh1, new Rectangle(0, 0, RenderBounds.Width, RenderBounds.Height), TextureChannel.RGBA);
-            float normX, normY;
-            //соблюдаем размерность между источником текстур SeqProv и фреймбуфером.
-            normX = -1* (float)MouseLocationInWidget.X / 1024; //2048 на 2048 это размер текстуры в которой хранятся пиксели от фреймбуфера
-            normY = 1+(float)MouseLocationInWidget.Y / 512;
+           
           
-            Game.Renderer.SpriteRenderer.SetMouseLocation(new float2(normX, normY));
-            
-            //передаем вторым аргументом текстуру, где регионы для мышки
-            Game.Renderer.SpriteRenderer.shader.SetTexture("Texture1", Game.Renderer.PixelDumpRenderer.fb.Texture[1]); //rgnclck
-            sp2.SpriteType = 6;
-            WidgetUtils.FillRectWithSprite(RenderBounds, sp2, prbase); //dunergn
-            Game.Renderer.SpriteRenderer.Flush(); //записать кадр во фреймбуфер 
+           
 
-            if (HasMouseFocus)
+            if (Clicked)
             {
-                ReadPixelUnderMouse();
+                Game.Renderer.PixelDumpRenderer.fb.ReBind((ITextureInternal)textemp);
+                Game.Renderer.SpriteRenderer.SetFrameBufferMaskMode(true);
+                if (SwitchToMap)
+                {
+                    DrawMap();
+                }
+                else
+                {
+                    DrawHouses();
+                }
+                Game.Renderer.SpriteRenderer.Flush();
+                //Game.Renderer.PixelDumpRenderer.Flush();
+                byte[] answer= ReadPixelUnderMouse();
+                if (SwitchToMap)
+                {
+                    OnMapRegionChooseDelegate(answer[2], answer[1], answer[0]);
+                }
+                else
+                {
+                    OnHouseChooseDelegate(answer[2], answer[1], answer[0]);
+                }
+                Game.Renderer.SpriteRenderer.SetFrameBufferMaskMode(false);
+                Game.Renderer.PixelDumpRenderer.fb.Unbind();
+                SwitchToMap = true;
+                Clicked = false;
             }
             else
 
@@ -152,7 +251,8 @@ namespace OpenRA.Mods.D2.Widgets
             }
 
         }
-        public void ReadPixelUnderMouse()
+
+        public byte[] ReadPixelUnderMouse()
         {
             Size s = Game.Renderer.Resolution;
             s = new Size(1, 1);
@@ -165,17 +265,20 @@ namespace OpenRA.Mods.D2.Widgets
                         OpenGL.GL_BGRA, OpenGL.GL_UNSIGNED_BYTE, (IntPtr)pRaw);
             }
             Console.WriteLine(raw[2].ToString() + "." + raw[1].ToString() + "." + raw[0].ToString());
+            return raw;
+            
         }
 
         public bool Depressed;
         int2 MouseLocationInWidget;
-
+        public bool Clicked;
         public override bool HandleMouseInput(MouseInput mi)
         {
             if (RenderBounds.Contains(mi.Location))
             {
                 MouseLocationInWidget = RenderOrigin - mi.Location;
             }
+            Clicked = false;
             if (mi.Button != MouseButton.Left)
                 return false;
 
@@ -186,6 +289,7 @@ namespace OpenRA.Mods.D2.Widgets
                 // Only fire the onMouseUp event if we successfully lost focus, and were pressed
                 // if (Depressed )
                 // OnMouseUp(mi);
+                Clicked = true;
                 return YieldMouseFocus(mi);
             }
 

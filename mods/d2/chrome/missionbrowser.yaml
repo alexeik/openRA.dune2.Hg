@@ -76,7 +76,7 @@ Background@MISSIONBROWSER_PANEL:
 					Height: 327+73
 					Background: dialog3
 					Children:
-                        Campaign@dunemap
+                        Campaign@campaigndune
                             X:1
                             Y:1
                             Width:640

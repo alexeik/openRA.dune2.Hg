@@ -34,6 +34,12 @@ mentata: mentatascreen
 dunemap: dunemapcps
     background : 0,0,320,200
         stretched: true
+housestitle: housestitle
+    background : 0,0,320,200
+        stretched: true
+heraldmask: heraldmask
+    background : 0,0,320,200
+        stretched: true
         
 dunergn: dunergncps
     background : 0,0,320,200

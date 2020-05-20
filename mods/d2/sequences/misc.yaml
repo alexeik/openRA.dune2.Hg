@@ -71,6 +71,10 @@ wormspawner:
 #		BlendMode: Multiply
 #		ZOffset: 2047
 
+heraldmask:
+    idle: heraldmask.png
+        Background:0,0,320,200
+        
 dunemapcps:
     idle: DUNEMAP.CPS
         Length: *
