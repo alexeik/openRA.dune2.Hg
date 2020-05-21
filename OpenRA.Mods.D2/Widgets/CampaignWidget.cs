@@ -172,7 +172,7 @@ namespace OpenRA.Mods.D2.Widgets
 
             //передаем вторым аргументом текстуру, где маска
             Game.Renderer.SpriteRenderer.shader.SetTexture("Texture1", Game.Renderer.PixelDumpRenderer.fb.Texture[2]); //rgnclck
-            sp2.SpriteType = 6;
+            sp2.SpriteType = 7;
             WidgetUtils.FillRectWithSprite(RenderBounds, sp2, prbase); //dunergn
             //Game.Renderer.SpriteRenderer.Flush(); //записать кадр во фреймбуфер 
         }
