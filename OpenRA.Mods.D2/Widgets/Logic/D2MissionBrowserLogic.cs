@@ -403,7 +403,7 @@ namespace OpenRA.Mods.D2.Widgets.Logic
 		public void OnHouseChoose(int r, int g, int b)
 		{
 			string housename="Uknown";
-			if (r==255 && g==255 & b==255)
+			if (r==166 && g==0 & b==0)
 			{
 				housename = "Harkonnen";
 			}
@@ -411,7 +411,7 @@ namespace OpenRA.Mods.D2.Widgets.Logic
 			{
 				housename = "Atreides";
 			}
-			if (r == 255 && g == 255 & b == 255)
+			if (r == 0 && g == 170 & b == 0)
 			{
 				housename = "Ordos";
 			}

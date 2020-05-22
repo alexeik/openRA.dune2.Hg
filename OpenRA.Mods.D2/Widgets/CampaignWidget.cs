@@ -78,7 +78,15 @@ namespace OpenRA.Mods.D2.Widgets
 
             //OnHouseChooseDelegate = OnHouseChoose;
             //OnMapRegionChooseDelegate = OnMapRegionChoose;
+            //Layer1KeyColors = new float[255];
+            Layer1KeyColors =new float[12]{ 0, 170f/255, 0, 1, 170f / 255, 0, 170f / 255, 1,  0, 170f/255, 170f /255,1};
+            Layer2KeyColors = new float[12]{ 186f/255, 190f/255, 150f/255, 1, 174f / 255, 174f/255, 138f/ 255, 1, 158f/255,158f/255,121f/255,1};
+            Layer3KeyColors = new float[12] { 255f / 255, 85f / 255, 85f / 255, 1, 0f / 255, 0f / 255, 0f / 255, 1, 203f / 255, 207f / 255, 162f / 255, 1 };
+            Layer1Color = new float[4] { 153f/255, 0f, 0f, 1f };
+            Layer2Color = new float[4] { 24f/255, 125f/255, 24f/255, 1f };
+            Layer3Color = new float[4] { 40f/255, 60f/255, 153f/255, 1f };
         }
+
         public override void Initialize(WidgetArgs args)
         {
             base.Initialize(args);
@@ -177,16 +185,29 @@ namespace OpenRA.Mods.D2.Widgets
             //Game.Renderer.SpriteRenderer.Flush(); //записать кадр во фреймбуфер 
         }
         public bool SwitchToMap = false;
+        public float[] Layer1KeyColors;
+        private float[] Layer2KeyColors;
+        private float[] Layer3KeyColors;
+        private float[] Layer1Color;
+        private float[] Layer2Color;
+        private float[] Layer3Color;
+
         public void DrawMap()
         {
             float normX, normY;
             //соблюдаем размерность между источником текстур SeqProv и фреймбуфером.
             normX = -1 * (float)MouseLocationInWidget.X / 1024; //2048 на 2048 это размер текстуры в которой хранятся пиксели от фреймбуфера
             normY = 1 + (float)MouseLocationInWidget.Y / 768;
-            Game.Renderer.SpriteRenderer.SetAlphaFlag(false);
-            Game.Renderer.SpriteRenderer.SetAlphaConstantRegion(-1, 255, 85, 255);
+            //Game.Renderer.SpriteRenderer.SetAlphaFlag(false);
+           // Game.Renderer.SpriteRenderer.SetAlphaConstantRegion(-1, 255, 85, 255);
             Game.Renderer.SpriteRenderer.SetMouseLocation(new float2(normX, normY));
-
+            //Game.Renderer.SpriteRenderer.SetLayer1KeyColor(0,170,0,255);
+            Game.Renderer.SpriteRenderer.shader.SetVec("Layer1KeyColor", Layer1KeyColors, 4, Layer1KeyColors.Length/4);
+            Game.Renderer.SpriteRenderer.shader.SetVec("Layer1Color", Layer1Color, 4);
+            Game.Renderer.SpriteRenderer.shader.SetVec("Layer2KeyColor", Layer2KeyColors, 4, Layer2KeyColors.Length / 4);
+            Game.Renderer.SpriteRenderer.shader.SetVec("Layer2Color", Layer2Color, 4);
+            Game.Renderer.SpriteRenderer.shader.SetVec("Layer3KeyColor", Layer3KeyColors, 4, Layer3KeyColors.Length / 4);
+            Game.Renderer.SpriteRenderer.shader.SetVec("Layer3Color", Layer3Color, 4);
             //передаем вторым аргументом текстуру, где регионы для мышки
             Game.Renderer.SpriteRenderer.shader.SetTexture("Texture1", Game.Renderer.PixelDumpRenderer.fb.Texture[1]); //rgnclck
             sp1.SpriteType = 6;
@@ -264,7 +285,7 @@ namespace OpenRA.Mods.D2.Widgets
                     OpenGL.glReadPixels(RenderOrigin.X  - 1 * MouseLocationInWidget.X , Game.Renderer.Resolution.Height - RenderOrigin.Y + 1 * MouseLocationInWidget.Y , s.Width, s.Height,
                         OpenGL.GL_BGRA, OpenGL.GL_UNSIGNED_BYTE, (IntPtr)pRaw);
             }
-            Console.WriteLine(raw[2].ToString() + "." + raw[1].ToString() + "." + raw[0].ToString());
+            Console.WriteLine(raw[2].ToString() + "." + raw[1].ToString() + "." + raw[0].ToString() + raw[3].ToString());
             return raw;
             
         }
