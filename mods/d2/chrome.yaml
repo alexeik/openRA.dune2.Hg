@@ -27,6 +27,15 @@ harktitle: housestitle
 atrtitle: housestitle
     background : 25,117,74,28
 
+ordossign: housessign
+    background : 122,137,53,54
+    
+harksign: housessign
+    background : 10,137,53,54  
+    
+atrsign: housessign
+    background : 66,137,53,54  
+        
 mentata: mentatascreen
     background : 0,0,320,200
         stretched: true
@@ -44,7 +53,14 @@ heraldmask: heraldmask
 dunergn: dunergncps
     background : 0,0,320,200
         stretched: true
-
+maproom: maproomcps
+    background : 0,0,320,200
+        stretched: true
+        
+maproommask: maproommaskcps
+    background : 0,0,320,200
+        stretched: true        
+        
 dunergnclk: dunergnclkcps
     background : 0,0,320,200
         stretched: true
