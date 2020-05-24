@@ -71,6 +71,18 @@ wormspawner:
 #		BlendMode: Multiply
 #		ZOffset: 2047
 
+housessign: 
+    idle: FAME.CPS
+        Length: * 
+        
+maproommaskcps:
+    idle: mapmachmask.png
+        Background:0,0,320,200
+        
+maproomcps:
+    idle: MAPMACH.CPS
+        Background:0,0,320,200
+        
 heraldmask:
     idle: heraldmask.png
         Background:0,0,320,200
