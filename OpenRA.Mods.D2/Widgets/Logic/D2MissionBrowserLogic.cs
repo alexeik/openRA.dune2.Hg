@@ -400,21 +400,10 @@ namespace OpenRA.Mods.D2.Widgets.Logic
 				Game.CreateAndStartLocalServer(selectedMap.Uid, orders);
 		}
 
-		public void OnHouseChoose(int r, int g, int b)
+		public void OnHouseChoose(string housename)
 		{
-			string housename="Uknown";
-			if (r==166 && g==0 & b==0)
-			{
-				housename = "Harkonnen";
-			}
-			if (r == 255 && g == 255 & b == 255)
-			{
-				housename = "Atreides";
-			}
-			if (r == 0 && g == 170 & b == 0)
-			{
-				housename = "Ordos";
-			}
+			
+			
 			//String.Format("House:{0} code:{1} {2} {3}", "Harkonen", r.ToString(), g.ToString(), b.ToString());
 			description.Text += Environment.NewLine + String.Format("House:{0}", housename);
 			var height = descriptionFont.Measure(description.Text).Y;

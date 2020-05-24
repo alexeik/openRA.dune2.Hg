@@ -6,6 +6,7 @@ using OpenRA.Mods.D2.FileFormats;
 using OpenRA.Mods.D2.SpriteLoaders;
 using OpenRA.Platforms.Default;
 using OpenRA.Primitives;
+using OpenRA.Traits;
 using OpenRA.Widgets;
 using System;
 using System.Collections.Generic;
@@ -59,8 +60,11 @@ namespace OpenRA.Mods.D2.Widgets
         Sprite sp2;
         private Sheet sh3;
         private Sprite sp3;
-        public Action<int, int, int> OnHouseChooseDelegate;
+        public Action<string> OnHouseChooseDelegate;
         public Action<int, int, int> OnMapRegionChooseDelegate;
+        public Action<string> DrawText;
+        List<FactionInfo> selectableFactions;
+        FactionInfo CurrentFaction;
         /// <summary>
         /// Если использовать [ObjectCreator.UseCtor] , то можно использовать DI для инициализации аргументов конструктора.
         /// </summary>
@@ -80,6 +84,10 @@ namespace OpenRA.Mods.D2.Widgets
             //берем sprite из этих sequences и используем его Sheet, как ссылку для создания других Sprite в нашем UI.
             //video = new CpsD2Loader("SCREEN.CPS");
             sp = world.Map.Rules.Sequences;
+            selectableFactions = world.Map.Rules.Actors["world"].TraitInfos<FactionInfo>()
+                 .Where(f => f.Selectable == true)
+                 .ToList();
+
             LoadPalette();
 
             //OnHouseChooseDelegate = OnHouseChoose;
@@ -284,6 +292,8 @@ namespace OpenRA.Mods.D2.Widgets
             Game.Renderer.PixelDumpRenderer.DrawSprite(maproomSprite, new float3(0, 0, 0), new float3(320, 200, 0), prbase);
             Game.Renderer.PixelDumpRenderer.DrawSprite(ChromeProvider.GetImage("atrsign", "background"), new float3(2, 145, 0), new float3(53, 54, 0), prbase);
             Game.Renderer.PixelDumpRenderer.DrawSprite(ChromeProvider.GetImage("atrsign", "background"), new float3(266, 145, 0), new float3(53, 54, 0), prbase);
+            Game.Renderer.RgbaColorRenderer.FillRect(new float3(7, 24, 0), new float3(304 + 8, 119 + 24, 0), Color.Black); //пишет в SPriteRenderer
+            Game.Renderer.SpriteRenderer.Flush();
             Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
 
             Game.Renderer.PixelDumpRenderer.fb.Unbind();
@@ -324,6 +334,8 @@ namespace OpenRA.Mods.D2.Widgets
             Game.Renderer.PixelDumpRenderer.DrawSprite(maproomSprite, new float3(0, 0, 0), new float3(320, 200, 0), prbase);
             Game.Renderer.PixelDumpRenderer.DrawSprite(ChromeProvider.GetImage("ordossign", "background"), new float3(2, 145, 0), new float3(53, 54, 0), prbase);
             Game.Renderer.PixelDumpRenderer.DrawSprite(ChromeProvider.GetImage("ordossign", "background"), new float3(266, 145, 0), new float3(53, 54, 0), prbase);
+            Game.Renderer.RgbaColorRenderer.FillRect(new float3(7, 24, 0), new float3(304 + 8, 119 + 24, 0), Color.Black); //пишет в SPriteRenderer
+            Game.Renderer.SpriteRenderer.Flush();
             Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
 
             Game.Renderer.PixelDumpRenderer.fb.Unbind();
@@ -383,9 +395,19 @@ namespace OpenRA.Mods.D2.Widgets
         {
             //PatchHarkMapChamber();
             //    return;
-           
-            WidgetUtils.FillRectWithSprite(RenderBounds, mapchamhark, prbase); //отрисуем спрайт комнаты для карты
-                                                                        //а после запускаем патч
+            if (CurrentFaction.Name == "Harkonnen")
+            {
+                WidgetUtils.FillRectWithSprite(RenderBounds, mapchamhark, prbase); //отрисуем спрайт комнаты для карты
+            }
+            if (CurrentFaction.Name == "Atreides")
+            {
+                WidgetUtils.FillRectWithSprite(RenderBounds, mapchamatr, prbase); //отрисуем спрайт комнаты для карты
+            }
+            if (CurrentFaction.Name == "Ordos")
+            {
+                WidgetUtils.FillRectWithSprite(RenderBounds, mapchamord, prbase); //отрисуем спрайт комнаты для карты
+            }
+            //а после запускаем патч
             Game.Renderer.SpriteRenderer.shader.SetTexture("Texture1", maproomMaskT); //dunergn
             //Game.Renderer.SpriteRenderer.shader.SetTexture("Texture2", maproomT); //dunergn
             Game.Renderer.Flush(); //нужен, так как текстура используется внешняя и на один раз, ниже она уже замениться другой dunergnT
@@ -456,16 +478,35 @@ namespace OpenRA.Mods.D2.Widgets
                 {
                     DrawHouses();
                 }
+
                 Game.Renderer.SpriteRenderer.Flush();
                 //Game.Renderer.PixelDumpRenderer.Flush();
                 byte[] answer = ReadPixelUnderMouse();
+                int r, g, b;
+                r = answer[2];
+                g = answer[1];
+                b = answer[0];
                 if (SwitchToMap)
                 {
                     OnMapRegionChooseDelegate(answer[2], answer[1], answer[0]);
                 }
                 else
                 {
-                    OnHouseChooseDelegate(answer[2], answer[1], answer[0]);
+                    if (r == 166 && g == 0 & b == 0)
+                    {
+                        CurrentFaction =selectableFactions.Where(f => f.Name == "Harkonnen").First();
+                    }
+                    if (r == 255 && g == 255 & b == 255)
+                    {
+                        CurrentFaction = selectableFactions.Where(f => f.Name == "Atreides").First(); 
+                    }
+                    if (r == 0 && g == 170 & b == 0)
+                    {
+                        CurrentFaction = selectableFactions.Where(f => f.Name == "Ordos").First();
+                      
+                    }
+
+                    OnHouseChooseDelegate(CurrentFaction.Name);
                 }
                 Game.Renderer.SpriteRenderer.SetFrameBufferMaskMode(false);
                 Game.Renderer.PixelDumpRenderer.fb.Unbind();
