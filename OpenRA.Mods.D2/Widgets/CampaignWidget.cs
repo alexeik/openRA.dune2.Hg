@@ -1,4 +1,5 @@
-﻿using OpenRA.FileFormats;
+﻿using OpenRA;
+using OpenRA.FileFormats;
 using OpenRA.Graphics;
 using OpenRA.Mods.Common.Widgets;
 using OpenRA.Mods.D2.FileFormats;
@@ -47,6 +48,8 @@ namespace OpenRA.Mods.D2.Widgets
         private Sprite dunergnclickSprite;
         private Sprite housesSprite;
         private Sprite housesmaskSprite;
+        private Sprite maproomSprite;
+        private Sprite maproommaskSprite;
         private SequenceProvider sp;
         private ITexture textemp;
         Sheet sh1;
@@ -54,6 +57,8 @@ namespace OpenRA.Mods.D2.Widgets
 
         Sheet sh2;
         Sprite sp2;
+        private Sheet sh3;
+        private Sprite sp3;
         public Action<int, int, int> OnHouseChooseDelegate;
         public Action<int, int, int> OnMapRegionChooseDelegate;
         /// <summary>
@@ -67,7 +72,8 @@ namespace OpenRA.Mods.D2.Widgets
             dunergnclickSprite = ChromeProvider.GetImage("dunergnclk", "background");
             housesSprite = ChromeProvider.GetImage("housestitle", "background");
             housesmaskSprite = ChromeProvider.GetImage("heraldmask", "background");
-
+            maproomSprite = ChromeProvider.GetImage("maproom", "background");
+            maproommaskSprite = ChromeProvider.GetImage("maproommask", "background");
             //тут такая механика.
             //используем DI и атрибут [ObjectCreator.UseCtor], тогда world будет заполнен . 
             //после идем в коллекцию Sequences , которая собирается из всех rules\sequences, где мы в misc.yaml прописали наш screen.cps
@@ -79,12 +85,12 @@ namespace OpenRA.Mods.D2.Widgets
             //OnHouseChooseDelegate = OnHouseChoose;
             //OnMapRegionChooseDelegate = OnMapRegionChoose;
             //Layer1KeyColors = new float[255];
-            Layer1KeyColors =new float[12]{ 0, 170f/255, 0, 1, 170f / 255, 0, 170f / 255, 1,  0, 170f/255, 170f /255,1};
-            Layer2KeyColors = new float[12]{ 186f/255, 190f/255, 150f/255, 1, 174f / 255, 174f/255, 138f/ 255, 1, 158f/255,158f/255,121f/255,1};
+            Layer1KeyColors = new float[12] { 0, 170f / 255, 0, 1, 170f / 255, 0, 170f / 255, 1, 0, 170f / 255, 170f / 255, 1 };
+            Layer2KeyColors = new float[12] { 186f / 255, 190f / 255, 150f / 255, 1, 174f / 255, 174f / 255, 138f / 255, 1, 158f / 255, 158f / 255, 121f / 255, 1 };
             Layer3KeyColors = new float[12] { 255f / 255, 85f / 255, 85f / 255, 1, 0f / 255, 0f / 255, 0f / 255, 1, 203f / 255, 207f / 255, 162f / 255, 1 };
-            Layer1Color = new float[4] { 153f/255, 0f, 0f, 1f };
-            Layer2Color = new float[4] { 24f/255, 125f/255, 24f/255, 1f };
-            Layer3Color = new float[4] { 40f/255, 60f/255, 153f/255, 1f };
+            Layer1Color = new float[4] { 153f / 255, 0f, 0f, 1f };
+            Layer2Color = new float[4] { 24f / 255, 125f / 255, 24f / 255, 1f };
+            Layer3Color = new float[4] { 40f / 255, 60f / 255, 153f / 255, 1f };
         }
 
         public override void Initialize(WidgetArgs args)
@@ -92,19 +98,25 @@ namespace OpenRA.Mods.D2.Widgets
             base.Initialize(args);
             if (Game.Renderer.PixelDumpRenderer.fbcreated == false)
             {
-                Game.Renderer.PixelDumpRenderer.Setup(new Size(1024, 768)); //widget должен быть , тогда в пределах 1024 на 512 пикселей
-           
+                Game.Renderer.PixelDumpRenderer.Setup(new Size(1024, 768)); //widget должен быть в пределах 1024 на 512 пикселей
+
                 PrepTextures();
             }
             else
             {
-                //переинициализация этих переменных на N-1 раз
+                //переинициализация этих переменных происходит только  на 2+N раз
+                housesT = Game.Renderer.PixelDumpRenderer.fb.Texture[2];
+                dunergnT = Game.Renderer.PixelDumpRenderer.fb.Texture[1];
                 sh1 = new Sheet(SheetType.BGRA, Game.Renderer.PixelDumpRenderer.fb.Texture[0]);
                 sp1 = new Sprite(sh1, new Rectangle(0, 0, RenderBounds.Width, RenderBounds.Height), TextureChannel.RGBA);
                 sh2 = new Sheet(SheetType.BGRA, Game.Renderer.PixelDumpRenderer.fb.Texture[3]);
                 sp2 = new Sprite(sh2, new Rectangle(0, 0, RenderBounds.Width, RenderBounds.Height), TextureChannel.RGBA);
                 textemp = Game.Renderer.PixelDumpRenderer.fb.Texture[4]; //ссылка на текстуру, куда будут уходить данные
                                                                          // об выбранных масках
+
+                mapchamord = ChromeProvider.GetImage("patched", "mapchamord");
+                mapchamhark = ChromeProvider.GetImage("patched", "mapchamhark");
+                mapchamatr = ChromeProvider.GetImage("patched", "mapchamatr");
             }
         }
         void LoadPalette(ImmutablePalette cpspalette, string customname)
@@ -119,48 +131,227 @@ namespace OpenRA.Mods.D2.Widgets
             //используем shroud так как у нее нету SHadowIndex в palettes.yaml, этот ShadowIndex затирает указанный индекс в палитре черным цветом и 
             //я получал не верные цвета.
         }
+
+        private ITexture rgnclickT;
+        private ITexture dunergnT;
+        private ITexture housesT;
+        private ITexture housesMaskT;
+        private ITexture maproomHarkSizedT;
+        public bool SwitchToMap = false;
+        public float[] Layer1KeyColors;
+        private float[] Layer2KeyColors;
+        private float[] Layer3KeyColors;
+        private float[] Layer1Color;
+        private float[] Layer2Color;
+        private float[] Layer3Color;
+        private Sprite mapchamhark, mapchamatr, mapchamord;
+
         /// <summary>
         /// КОнвертирует все 1 байтовые пиксели в 4 байтовые, чтобы работать с этими картинками в шейдере в drawmode=10
         /// </summary>
         public void PrepTextures()
         {
-            
-            Game.Renderer.Flush();
-            Game.Renderer.PixelDumpRenderer.fb.Bind();
 
-            Game.Renderer.PixelDumpRenderer.DrawSprite(dunergnclickSprite, new float3(0, 0, 0), new float3(RenderBounds.Width, RenderBounds.Height, 0),prbase);
+            Game.Renderer.Flush();
+            rgnclickT = Game.Renderer.PixelDumpRenderer.fb.Bind(true);
+
+            Game.Renderer.PixelDumpRenderer.DrawSprite(dunergnclickSprite, new float3(0, 0, 0), new float3(RenderBounds.Width, RenderBounds.Height, 0), prbase);
 
             Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
             Game.Renderer.PixelDumpRenderer.fb.Unbind();
 
-            Game.Renderer.PixelDumpRenderer.fb.Bind(true, Game.Renderer.PixelDumpRenderer.fb.size);
+            dunergnT = Game.Renderer.PixelDumpRenderer.fb.Bind(true, Game.Renderer.PixelDumpRenderer.fb.size);
             Game.Renderer.PixelDumpRenderer.DrawSprite(dunergnSprite, new float3(0, 0, 0), new float3(RenderBounds.Width, RenderBounds.Height, 0), prbase);
             Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
             Game.Renderer.PixelDumpRenderer.fb.Unbind();
 
-            Game.Renderer.PixelDumpRenderer.fb.Bind(true, Game.Renderer.PixelDumpRenderer.fb.size);
+            housesT = Game.Renderer.PixelDumpRenderer.fb.Bind(true, Game.Renderer.PixelDumpRenderer.fb.size);
             Game.Renderer.PixelDumpRenderer.DrawSprite(housesSprite, new float3(0, 0, 0), new float3(RenderBounds.Width, RenderBounds.Height, 0), prbase);
             Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
             Game.Renderer.PixelDumpRenderer.fb.Unbind();
 
-            Game.Renderer.PixelDumpRenderer.fb.Bind(true, Game.Renderer.PixelDumpRenderer.fb.size);
+            housesMaskT = Game.Renderer.PixelDumpRenderer.fb.Bind(true, Game.Renderer.PixelDumpRenderer.fb.size);
             Game.Renderer.PixelDumpRenderer.DrawSprite(housesmaskSprite, new float3(0, 0, 0), new float3(RenderBounds.Width, RenderBounds.Height, 0), prbase);
             Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
             Game.Renderer.PixelDumpRenderer.fb.Unbind();
 
             //переходим в размеры текстур как у игры! 
-            Game.Renderer.PixelDumpRenderer.fb.Bind(true,new Size(1024,768)); 
+            textemp = Game.Renderer.PixelDumpRenderer.fb.Bind(true, new Size(1024, 768));
             Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
             Game.Renderer.PixelDumpRenderer.fb.Unbind();
 
-            textemp = Game.Renderer.PixelDumpRenderer.fb.Texture[4]; //ссылка на текстуру, куда будут уходить данные
-                                                                     // об выбранных масках
+            // textemp ссылка на текстуру, куда будут уходить данные об выбранных масках
 
-            sh1 = new Sheet(SheetType.BGRA, Game.Renderer.PixelDumpRenderer.fb.Texture[0]);
+
+
+
+
+
+            maproomMaskT = Game.Renderer.PixelDumpRenderer.fb.Bind(true, Game.Renderer.PixelDumpRenderer.fb.size);
+            Game.Renderer.PixelDumpRenderer.DrawSprite(maproommaskSprite, new float3(0, 0, 0), new float3(RenderBounds.Width, RenderBounds.Height, 0), prbase);
+            Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
+            Game.Renderer.PixelDumpRenderer.fb.Unbind();
+
+
+
+            sh1 = new Sheet(SheetType.BGRA, rgnclickT);
             sp1 = new Sprite(sh1, new Rectangle(0, 0, RenderBounds.Width, RenderBounds.Height), TextureChannel.RGBA);
-            sh2 = new Sheet(SheetType.BGRA, Game.Renderer.PixelDumpRenderer.fb.Texture[3]);
+            sh2 = new Sheet(SheetType.BGRA, housesMaskT);
             sp2 = new Sprite(sh2, new Rectangle(0, 0, RenderBounds.Width, RenderBounds.Height), TextureChannel.RGBA);
 
+            maproomHarkT = Game.Renderer.PixelDumpRenderer.fb.Bind(true, Game.Renderer.PixelDumpRenderer.fb.size); //патчим оригинальную текстуру знаками дома
+
+            mapchamhark = ChromeProvider.GetImage("patched", "mapchamhark");
+            if (mapchamhark == null)
+            {
+                PatchHarkMapChamber();
+            }
+            mapchamhark = ChromeProvider.GetImage("patched", "mapchamhark");
+
+            mapchamatr = ChromeProvider.GetImage("patched", "mapchamatr");
+            if (mapchamatr == null)
+            {
+                PatchAtrMapChamber();
+            }
+            mapchamatr = ChromeProvider.GetImage("patched", "mapchamatr");
+            mapchamord = ChromeProvider.GetImage("patched", "mapchamord");
+            if (mapchamord == null)
+            {
+                PatchOrdosMapChamber();
+            }
+            mapchamord = ChromeProvider.GetImage("patched", "mapchamord");
+
+
+
+
+        }
+        Rectangle FlipRectangle(Rectangle rect, bool flipX, bool flipY)
+        {
+            var left = flipX ? rect.Right : rect.Left;
+            var top = flipY ? rect.Bottom : rect.Top;
+            var right = flipX ? rect.Left : rect.Right;
+            var bottom = flipY ? rect.Top : rect.Bottom;
+
+            return Rectangle.FromLTRB(left, top, right, bottom);
+        }
+
+        public void PatchHarkMapChamber()
+        {
+            //maproomHarkSizedT = Game.Renderer.PixelDumpRenderer.fb.Bind(true, Game.Renderer.PixelDumpRenderer.fb.size);
+            //Game.Renderer.PixelDumpRenderer.fb.Unbind();
+            //hark map
+            Game.Renderer.PixelDumpRenderer.fb.ReBind((ITextureInternal)maproomHarkT);
+            //maproomSprite.FlipY = 1;
+            Game.Renderer.PixelDumpRenderer.DrawSprite(maproomSprite, new float3(0, 0, 0), new float3(320, 200, 0), prbase);
+            Game.Renderer.PixelDumpRenderer.DrawSprite(ChromeProvider.GetImage("harksign", "background"), new float3(2, 145, 0), new float3(53, 54, 0), prbase);
+            Game.Renderer.PixelDumpRenderer.DrawSprite(ChromeProvider.GetImage("harksign", "background"), new float3(266, 145, 0), new float3(53, 54, 0), prbase);
+            Game.Renderer.RgbaColorRenderer.FillRect(new float3(7, 24, 0), new float3(304 + 8, 119 + 24, 0), Color.Black); //пишет в SPriteRenderer
+            Game.Renderer.SpriteRenderer.Flush();
+            Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
+            Game.Renderer.PixelDumpRenderer.fb.Unbind();
+
+            //FlipRectangle(s.Bounds, flipX, flipY)
+
+            sh3 = new Sheet(SheetType.BGRA, maproomHarkT); //делаем спрайт по патченной текстуре.
+            sp3 = new Sprite(sh3, new Rectangle(0, 0, 320, 200), TextureChannel.RGBA); //указываем оригинальный размер спрайта, чтобы потом он адаптировался под разные рразрешения
+
+            ChromeProvider.AddSprite("patched", "mapchamhark", Game.SheetBuilder2D.AddSprite(sp3));
+
+            //var d = new Dictionary<string, Sprite>();
+            //d.Add("mapchamhark", Game.SheetBuilder2D.AddSprite(sp3));
+            //ChromeProvider.cachedSprites.Add("patched", d);
+            //Game.Renderer.PixelDumpRenderer.fb.ReBind((ITextureInternal)maproomHarkSizedT); //печатаем спрайт нужного размера в другую текстур и делаем с нее спрайт.
+            //sp3.SpriteType = 8;
+            //sp3.Stretched = true;
+            //Game.Renderer.PixelDumpRenderer.DrawSprite(sp3, new float3(0, 0, 0), new float3(RenderBounds.Width, RenderBounds.Height, 0), prbase);
+            //Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
+            //Game.Renderer.PixelDumpRenderer.fb.Unbind();
+
+            //sp3.Sheet.Dispose();
+
+            //sh3 = new Sheet(SheetType.BGRA, maproomHarkSizedT);
+            //sp3 = new Sprite(sh3, new Rectangle(0, 0, RenderBounds.Width, RenderBounds.Height), TextureChannel.RGBA);
+            //sp3.SpriteType = 8;//режим растягивания спрайт по вертексам
+
+        }
+        public void PatchAtrMapChamber()
+        {
+
+            maproomAtrSizedT = Game.Renderer.PixelDumpRenderer.fb.Bind(true, Game.Renderer.PixelDumpRenderer.fb.size);
+            Game.Renderer.PixelDumpRenderer.fb.Unbind();
+            //atr map
+            maproomAtrT = Game.Renderer.PixelDumpRenderer.fb.Bind(true, Game.Renderer.PixelDumpRenderer.fb.size); //патчим оригинальную текстуру знаками дома
+            Game.Renderer.PixelDumpRenderer.DrawSprite(maproomSprite, new float3(0, 0, 0), new float3(320, 200, 0), prbase);
+            Game.Renderer.PixelDumpRenderer.DrawSprite(ChromeProvider.GetImage("atrsign", "background"), new float3(2, 145, 0), new float3(53, 54, 0), prbase);
+            Game.Renderer.PixelDumpRenderer.DrawSprite(ChromeProvider.GetImage("atrsign", "background"), new float3(266, 145, 0), new float3(53, 54, 0), prbase);
+            Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
+
+            Game.Renderer.PixelDumpRenderer.fb.Unbind();
+
+            sh4 = new Sheet(SheetType.BGRA, maproomAtrT); //делаем спрайт по патченной текстуре.
+            sp4 = new Sprite(sh4, new Rectangle(0, 0, 320, 200), TextureChannel.RGBA); //указываем оригинальный размер спрайта, чтобы потом он адаптировался под разные рразрешения
+
+            ChromeProvider.AddSprite("patched", "mapchamatr", Game.SheetBuilder2D.AddSprite(sp4));
+
+            //var d = new Dictionary<string, Sprite>();
+            //d.Add("mapchamatr", Game.SheetBuilder2D.AddSprite(sp4));
+            //ChromeProvider.cachedSprites.Add("patched", d);
+
+            //sh4 = new Sheet(SheetType.BGRA, maproomAtrT); //делаем спрайт по патченной текстуре.
+            //sp4 = new Sprite(sh4, new Rectangle(0, 0, 320, 200), TextureChannel.RGBA); //указываем оригинальный размер спрайта, чтобы потом он адаптировался под разные рразрешения
+            //                                                                           //---
+            //Game.Renderer.PixelDumpRenderer.fb.ReBind((ITextureInternal)maproomAtrSizedT); //печатаем спрайт нужного размера в другую текстур и делаем с нее спрайт.
+            //sp4.SpriteType = 8;
+            //sp4.Stretched = true;
+            //Game.Renderer.PixelDumpRenderer.DrawSprite(sp4, new float3(0, 0, 0), new float3(RenderBounds.Width, RenderBounds.Height, 0), prbase);
+            //Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
+            //Game.Renderer.PixelDumpRenderer.fb.Unbind();
+
+            //sp4.Sheet.Dispose();
+
+            //sh4 = new Sheet(SheetType.BGRA, maproomAtrSizedT);
+            //sp4 = new Sprite(sh4, new Rectangle(0, 0, RenderBounds.Width, RenderBounds.Height), TextureChannel.RGBA);
+            //sp4.SpriteType = 8;//режим растягивания спрайт по вертексам
+
+
+        }
+        public void PatchOrdosMapChamber()
+        {
+            maproomOrdosSizedT = Game.Renderer.PixelDumpRenderer.fb.Bind(true, Game.Renderer.PixelDumpRenderer.fb.size);
+            Game.Renderer.PixelDumpRenderer.fb.Unbind();
+            //atr map
+            maproomOrdosT = Game.Renderer.PixelDumpRenderer.fb.Bind(true, Game.Renderer.PixelDumpRenderer.fb.size); //патчим оригинальную текстуру знаками дома
+            Game.Renderer.PixelDumpRenderer.DrawSprite(maproomSprite, new float3(0, 0, 0), new float3(320, 200, 0), prbase);
+            Game.Renderer.PixelDumpRenderer.DrawSprite(ChromeProvider.GetImage("ordossign", "background"), new float3(2, 145, 0), new float3(53, 54, 0), prbase);
+            Game.Renderer.PixelDumpRenderer.DrawSprite(ChromeProvider.GetImage("ordossign", "background"), new float3(266, 145, 0), new float3(53, 54, 0), prbase);
+            Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
+
+            Game.Renderer.PixelDumpRenderer.fb.Unbind();
+
+            sh5 = new Sheet(SheetType.BGRA, maproomOrdosT); //делаем спрайт по патченной текстуре.
+            sp5 = new Sprite(sh5, new Rectangle(0, 0, 320, 200), TextureChannel.RGBA); //указываем оригинальный размер спрайта, чтобы потом он адаптировался под разные рразрешения
+
+            ChromeProvider.AddSprite("patched", "mapchamord", Game.SheetBuilder2D.AddSprite(sp5));
+
+            //var d = new Dictionary<string, Sprite>();
+            //d.Add("mapchamord", Game.SheetBuilder2D.AddSprite(sp5));
+            //ChromeProvider.cachedSprites.Add("patched", d);
+
+            //sh5 = new Sheet(SheetType.BGRA, maproomOrdosT); //делаем спрайт по патченной текстуре.
+            //sp5 = new Sprite(sh5, new Rectangle(0, 0, 320, 200), TextureChannel.RGBA); //указываем оригинальный размер спрайта, чтобы потом он адаптировался под разные рразрешения
+            //                                                                           //---
+            //Game.Renderer.PixelDumpRenderer.fb.ReBind((ITextureInternal)maproomOrdosSizedT); //печатаем спрайт нужного размера в другую текстур и делаем с нее спрайт.
+            //sp5.SpriteType = 8;
+            //sp5.Stretched = true;
+            //Game.Renderer.PixelDumpRenderer.DrawSprite(sp5, new float3(0, 0, 0), new float3(RenderBounds.Width, RenderBounds.Height, 0), prbase);
+            //Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
+            //Game.Renderer.PixelDumpRenderer.fb.Unbind();
+
+            //sp5.Sheet.Dispose();
+
+            //sh5 = new Sheet(SheetType.BGRA, maproomOrdosSizedT);
+            //sp5 = new Sprite(sh5, new Rectangle(0, 0, RenderBounds.Width, RenderBounds.Height), TextureChannel.RGBA);
+            //sp5.SpriteType = 8;//режим растягивания спрайт по вертексам
         }
         public void DrawHouses()
         {
@@ -175,47 +366,64 @@ namespace OpenRA.Mods.D2.Widgets
 
             Game.Renderer.SpriteRenderer.SetMouseLocation(new float2(normX, normY));
             Game.Renderer.SpriteRenderer.SetAlphaFlag(true);
-            Game.Renderer.SpriteRenderer.SetAlphaInit(60,0,0,0);
-            Game.Renderer.SpriteRenderer.SetAlphaConstantRegion(255,255,85,255);
+            Game.Renderer.SpriteRenderer.SetAlphaInit(60, 0, 0, 0);
+            Game.Renderer.SpriteRenderer.SetAlphaConstantRegion(255, 255, 85, 255);
+
+            //оригинал выбора домов
+            Game.Renderer.SpriteRenderer.shader.SetTexture("Texture1", housesT);
+            sp2.SpriteType = 7;
 
             //передаем вторым аргументом текстуру, где маска
-            Game.Renderer.SpriteRenderer.shader.SetTexture("Texture1", Game.Renderer.PixelDumpRenderer.fb.Texture[2]); //rgnclck
-            sp2.SpriteType = 7;
-            WidgetUtils.FillRectWithSprite(RenderBounds, sp2, prbase); //dunergn
+            WidgetUtils.FillRectWithSprite(RenderBounds, sp2, prbase);
             //Game.Renderer.SpriteRenderer.Flush(); //записать кадр во фреймбуфер 
         }
-        public bool SwitchToMap = false;
-        public float[] Layer1KeyColors;
-        private float[] Layer2KeyColors;
-        private float[] Layer3KeyColors;
-        private float[] Layer1Color;
-        private float[] Layer2Color;
-        private float[] Layer3Color;
+
 
         public void DrawMap()
         {
+            //PatchHarkMapChamber();
+            //    return;
+           
+            WidgetUtils.FillRectWithSprite(RenderBounds, mapchamhark, prbase); //отрисуем спрайт комнаты для карты
+                                                                        //а после запускаем патч
+            Game.Renderer.SpriteRenderer.shader.SetTexture("Texture1", maproomMaskT); //dunergn
+            //Game.Renderer.SpriteRenderer.shader.SetTexture("Texture2", maproomT); //dunergn
+            Game.Renderer.Flush(); //нужен, так как текстура используется внешняя и на один раз, ниже она уже замениться другой dunergnT
+
             float normX, normY;
             //соблюдаем размерность между источником текстур SeqProv и фреймбуфером.
             normX = -1 * (float)MouseLocationInWidget.X / 1024; //2048 на 2048 это размер текстуры в которой хранятся пиксели от фреймбуфера
             normY = 1 + (float)MouseLocationInWidget.Y / 768;
             //Game.Renderer.SpriteRenderer.SetAlphaFlag(false);
-           // Game.Renderer.SpriteRenderer.SetAlphaConstantRegion(-1, 255, 85, 255);
+            // Game.Renderer.SpriteRenderer.SetAlphaConstantRegion(-1, 255, 85, 255);
             Game.Renderer.SpriteRenderer.SetMouseLocation(new float2(normX, normY));
             //Game.Renderer.SpriteRenderer.SetLayer1KeyColor(0,170,0,255);
-            Game.Renderer.SpriteRenderer.shader.SetVec("Layer1KeyColor", Layer1KeyColors, 4, Layer1KeyColors.Length/4);
+            Game.Renderer.SpriteRenderer.shader.SetVec("Layer1KeyColor", Layer1KeyColors, 4, Layer1KeyColors.Length / 4);
             Game.Renderer.SpriteRenderer.shader.SetVec("Layer1Color", Layer1Color, 4);
             Game.Renderer.SpriteRenderer.shader.SetVec("Layer2KeyColor", Layer2KeyColors, 4, Layer2KeyColors.Length / 4);
             Game.Renderer.SpriteRenderer.shader.SetVec("Layer2Color", Layer2Color, 4);
             Game.Renderer.SpriteRenderer.shader.SetVec("Layer3KeyColor", Layer3KeyColors, 4, Layer3KeyColors.Length / 4);
             Game.Renderer.SpriteRenderer.shader.SetVec("Layer3Color", Layer3Color, 4);
+
+            //оригинальная карта
+            Game.Renderer.SpriteRenderer.shader.SetTexture("Texture1", dunergnT); //dunergn
+
             //передаем вторым аргументом текстуру, где регионы для мышки
-            Game.Renderer.SpriteRenderer.shader.SetTexture("Texture1", Game.Renderer.PixelDumpRenderer.fb.Texture[1]); //rgnclck
             sp1.SpriteType = 6;
-            WidgetUtils.FillRectWithSprite(RenderBounds, sp1, prbase); //dunergn
-           // Game.Renderer.SpriteRenderer.Flush(); //записать кадр во фреймбуфер 
+            WidgetUtils.FillRectWithSprite(RenderBounds, sp1, prbase); //rgnclck //это такой способ установить в Texture0 sp1 с маской регионов
+
+            // Game.Renderer.SpriteRenderer.Flush(); //записать кадр во фреймбуфер 
         }
         public override void Draw()
         {
+            //Game.Renderer.PixelDumpRenderer.fb.ReBind((ITextureInternal)maproomT);
+            //sp3.SpriteType = 2;
+            //sp3.Stretched = true;
+            //Game.Renderer.PixelDumpRenderer.DrawSprite(sp3, new float3(0, 0, 0), new float3(RenderBounds.Width, RenderBounds.Height, 0), prbase);
+            //Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
+            //Game.Renderer.PixelDumpRenderer.fb.Unbind();
+
+            //return;
             if (SwitchToMap)
             {
                 DrawMap();
@@ -224,7 +432,7 @@ namespace OpenRA.Mods.D2.Widgets
             {
                 DrawHouses();
             }
-           
+
             //return;
             //Game.Renderer.SpriteRenderer.SetFrameBufferMaskMode(false);
             //DrawMap();
@@ -232,9 +440,9 @@ namespace OpenRA.Mods.D2.Widgets
             Game.Renderer.SpriteRenderer.Flush();
 
             //делаем спрайт по текстуре 1, в которой карта с регионами
-           
-          
-           
+
+
+
 
             if (Clicked)
             {
@@ -250,7 +458,7 @@ namespace OpenRA.Mods.D2.Widgets
                 }
                 Game.Renderer.SpriteRenderer.Flush();
                 //Game.Renderer.PixelDumpRenderer.Flush();
-                byte[] answer= ReadPixelUnderMouse();
+                byte[] answer = ReadPixelUnderMouse();
                 if (SwitchToMap)
                 {
                     OnMapRegionChooseDelegate(answer[2], answer[1], answer[0]);
@@ -282,17 +490,29 @@ namespace OpenRA.Mods.D2.Widgets
             unsafe
             {
                 fixed (byte* pRaw = raw)
-                    OpenGL.glReadPixels(RenderOrigin.X  - 1 * MouseLocationInWidget.X , Game.Renderer.Resolution.Height - RenderOrigin.Y + 1 * MouseLocationInWidget.Y , s.Width, s.Height,
+                    OpenGL.glReadPixels(RenderOrigin.X - 1 * MouseLocationInWidget.X, Game.Renderer.Resolution.Height - RenderOrigin.Y + 1 * MouseLocationInWidget.Y, s.Width, s.Height,
                         OpenGL.GL_BGRA, OpenGL.GL_UNSIGNED_BYTE, (IntPtr)pRaw);
             }
             Console.WriteLine(raw[2].ToString() + "." + raw[1].ToString() + "." + raw[0].ToString() + raw[3].ToString());
             return raw;
-            
+
         }
 
         public bool Depressed;
         int2 MouseLocationInWidget;
         public bool Clicked;
+        private ITexture maproomMaskT;
+        private ITexture maproomHarkT;
+        private Sprite mapharkSprite;
+        private ITexture maproomAtrSizedT;
+        private ITexture maproomAtrT;
+        private Sheet sh4;
+        private Sprite sp4;
+        private ITexture maproomOrdosSizedT;
+        private ITexture maproomOrdosT;
+        private Sheet sh5;
+        private Sprite sp5;
+
         public override bool HandleMouseInput(MouseInput mi)
         {
             if (RenderBounds.Contains(mi.Location))
