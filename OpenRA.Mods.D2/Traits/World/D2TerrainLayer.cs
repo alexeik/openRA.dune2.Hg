@@ -61,8 +61,9 @@ namespace OpenRA.Mods.Common.Traits
 			/* based on SmudgeLayer.cs */
 			var first = sideSprites.First().Value.First();
 			var sheet2D = first.Sheet2D;
-			if (sideSprites.Values.Any(sprites => sprites.Any(s => s.Sheet2D != sheet2D)))
-				throw new InvalidDataException("Resource sprites span multiple sheets. Try loading their sequences earlier.");
+			//this check can be removed
+			//if (sideSprites.Values.Any(sprites => sprites.Any(s => s.Sheet2D != sheet2D)))
+			//	throw new InvalidDataException("Resource sprites span multiple sheets. Try loading their sequences earlier.");
 
 			var blendMode = first.BlendMode;
 			if (sideSprites.Values.Any(sprites => sprites.Any(s => s.BlendMode != blendMode)))
