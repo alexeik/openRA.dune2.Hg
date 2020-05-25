@@ -163,6 +163,11 @@ namespace OpenRA.Mods.D2.Widgets.Logic
 				Ui.CloseWindow();
 				onExit();
 			};
+			widget.Get<ButtonWidget>("StartCampaign").OnClick = () =>
+			{
+				CampaignWidget.SwitchToMap = false;
+			};
+
 		}
 
 		void OnGameStart()

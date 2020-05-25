@@ -65,6 +65,7 @@ namespace OpenRA.Mods.D2.Widgets
         public Action<string> DrawText;
         List<FactionInfo> selectableFactions;
         FactionInfo CurrentFaction;
+        public byte[] lastanswer;
         /// <summary>
         /// Если использовать [ObjectCreator.UseCtor] , то можно использовать DI для инициализации аргументов конструктора.
         /// </summary>
@@ -459,13 +460,16 @@ namespace OpenRA.Mods.D2.Widgets
             //Game.Renderer.SpriteRenderer.SetFrameBufferMaskMode(false);
             //DrawMap();
 
-            Game.Renderer.SpriteRenderer.Flush();
+           // Game.Renderer.SpriteRenderer.Flush();
 
             //делаем спрайт по текстуре 1, в которой карта с регионами
 
+        }
 
 
-
+        public override void TickOuter()
+        {
+            
             if (Clicked)
             {
                 Game.Renderer.PixelDumpRenderer.fb.ReBind((ITextureInternal)textemp);
@@ -481,47 +485,43 @@ namespace OpenRA.Mods.D2.Widgets
 
                 Game.Renderer.SpriteRenderer.Flush();
                 //Game.Renderer.PixelDumpRenderer.Flush();
-                byte[] answer = ReadPixelUnderMouse();
+                lastanswer = ReadPixelUnderMouse();
+
+                Game.Renderer.SpriteRenderer.SetFrameBufferMaskMode(false);
+                Game.Renderer.PixelDumpRenderer.fb.Unbind();
+
+
                 int r, g, b;
-                r = answer[2];
-                g = answer[1];
-                b = answer[0];
+                r = lastanswer[2];
+                g = lastanswer[1];
+                b = lastanswer[0];
                 if (SwitchToMap)
                 {
-                    OnMapRegionChooseDelegate(answer[2], answer[1], answer[0]);
+                    OnMapRegionChooseDelegate(lastanswer[2], lastanswer[1], lastanswer[0]);
                 }
                 else
                 {
                     if (r == 166 && g == 0 & b == 0)
                     {
-                        CurrentFaction =selectableFactions.Where(f => f.Name == "Harkonnen").First();
+                        CurrentFaction = selectableFactions.Where(f => f.Name == "Harkonnen").First();
                     }
                     if (r == 255 && g == 255 & b == 255)
                     {
-                        CurrentFaction = selectableFactions.Where(f => f.Name == "Atreides").First(); 
+                        CurrentFaction = selectableFactions.Where(f => f.Name == "Atreides").First();
                     }
                     if (r == 0 && g == 170 & b == 0)
                     {
                         CurrentFaction = selectableFactions.Where(f => f.Name == "Ordos").First();
-                      
+
                     }
 
                     OnHouseChooseDelegate(CurrentFaction.Name);
                 }
-                Game.Renderer.SpriteRenderer.SetFrameBufferMaskMode(false);
-                Game.Renderer.PixelDumpRenderer.fb.Unbind();
                 SwitchToMap = true;
                 Clicked = false;
-            }
-            else
 
-            {
-                //WidgetUtils.FillRectWithSprite(RenderBounds, dunergnSprite, prbase);
-                //return;
             }
-
         }
-
         public byte[] ReadPixelUnderMouse()
         {
             Size s = Game.Renderer.Resolution;

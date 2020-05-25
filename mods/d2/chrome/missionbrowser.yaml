@@ -65,6 +65,13 @@ Background@MISSIONBROWSER_PANEL:
 			Width: 120
 			Height: 25
 			Font: Regular
+        Button@StartCampaign:
+			X: 220
+			Y: PARENT_BOTTOM - 45
+			Width: 120
+			Height: 25
+			Font: Regular
+            Text: Start Campaign
 		Container@MISSION_INFO:
 			X: 220
 			Y: 50
