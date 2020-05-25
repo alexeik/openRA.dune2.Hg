@@ -101,9 +101,9 @@ namespace OpenRA.Mods.D2.Widgets.Logic
 			missionList.RemoveChildren();
 
 			// Add a group for each campaign
-			if (modData.Manifest.Missions.Any())
+			if (modData.Manifest.CampaignDB.Any())
 			{
-				var yaml = MiniYaml.Merge(modData.Manifest.Missions.Select(
+				var yaml = MiniYaml.Merge(modData.Manifest.CampaignDB.Select(
 					m => MiniYaml.FromStream(modData.DefaultFileSystem.Open(m), m)));
 
 				foreach (var kv in yaml)

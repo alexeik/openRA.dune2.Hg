@@ -84,8 +84,8 @@ Background@MISSIONBROWSER_PANEL:
 					Background: dialog3
 					Children:
                         Campaign@campaigndune
-                            X:1
-                            Y:1
+                            X:0
+                            Y:0
                             Width:640
                             Height:400
                            

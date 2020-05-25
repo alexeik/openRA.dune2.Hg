@@ -329,8 +329,8 @@ Fonts:
 		Font: common|FreeSans.ttf
 		Size:14
 
-Missions:
-	d2|missions.yaml
+CampaignDB:
+	d2|CampaignDB.yaml
 
 SupportsMapsFrom: d2
 
