@@ -34,17 +34,16 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\engine\OpenRA.Game\OpenRA.Game.csproj">
-      <Private>false</Private>
+      <Private>true</Private>
       <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
     </ProjectReference>
     <ProjectReference Include="..\engine\OpenRA.Mods.Common\OpenRA.Mods.Common.csproj">
-      <Private>false</Private>
+      <Private>true</Private>
       <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
       <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
     </ProjectReference>
     <ProjectReference Include="..\engine\OpenRA.Platforms.Default\OpenRA.Platforms.Default.csproj">
-      <Private>false</Private>
+      <Private>true</Private>
       <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
       <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
     </ProjectReference>
