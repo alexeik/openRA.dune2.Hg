@@ -27,23 +27,8 @@ namespace OpenRA.Mods.D2.Widgets
         HardwarePalette hardwarePalette;
         PaletteReference pr;
         private PaletteReference prbase;
-        Sprite stolb_sprite;
-        Sprite stolb_top_sprite;
-        private Sprite stolb_bot_sprite;
-        private Sprite stolb_shpere_sprite;
-        private Sprite stolb_line_sprite;
-        private Sprite stolb_horiz_sprite;
-        private Sprite stolb_horiz_left_sprite;
-        private Sprite stolb_horiz_right_sprite;
-        private Sprite bg_sprite;
-        private Sprite but1_sprite;
-        private Sprite but2_sprite;
-        private Sprite credits_sprite;
-        private Sprite status_l_sprite;
-        private Sprite status_horiz_sprite;
-        private Sprite status_r_sprite;
-        private Sprite vert_line_sprite;
-        private Sprite vertbord_line_sprite;
+
+   
         private Sprite houseSprite;
         private Sprite dunergnSprite;
         private Sprite dunergnclickSprite;
@@ -62,17 +47,24 @@ namespace OpenRA.Mods.D2.Widgets
         private Sprite sp3;
         public Action<string> OnHouseChooseDelegate;
         public Action<int, int, int> OnMapRegionChooseDelegate;
-        public Action<string> DrawText;
+        public Action<string> DrawTextDelegate;
+        public Action<int> BindLevelDelegate;
+        public Action UpLevelDelegate;
+        public Action DownLevelDelegate;
+        public int CurrentLevel;
+
         List<FactionInfo> selectableFactions;
         FactionInfo CurrentFaction;
         public byte[] lastanswer;
+        private ModData modData;
         /// <summary>
         /// Если использовать [ObjectCreator.UseCtor] , то можно использовать DI для инициализации аргументов конструктора.
         /// </summary>
         /// <param name="world"></param>
         [ObjectCreator.UseCtor]
-        public CampaignWidget(World world)
+        public CampaignWidget(World world, ModData modData)
         {
+            this.modData = modData;
             dunergnSprite = ChromeProvider.GetImage("dunergn", "background");
             dunergnclickSprite = ChromeProvider.GetImage("dunergnclk", "background");
             housesSprite = ChromeProvider.GetImage("housestitle", "background");
@@ -94,14 +86,214 @@ namespace OpenRA.Mods.D2.Widgets
             //OnHouseChooseDelegate = OnHouseChoose;
             //OnMapRegionChooseDelegate = OnMapRegionChoose;
             //Layer1KeyColors = new float[255];
-            Layer1KeyColors = new float[12] { 0, 170f / 255, 0, 1, 170f / 255, 0, 170f / 255, 1, 0, 170f / 255, 170f / 255, 1 };
-            Layer2KeyColors = new float[12] { 186f / 255, 190f / 255, 150f / 255, 1, 174f / 255, 174f / 255, 138f / 255, 1, 158f / 255, 158f / 255, 121f / 255, 1 };
-            Layer3KeyColors = new float[12] { 255f / 255, 85f / 255, 85f / 255, 1, 0f / 255, 0f / 255, 0f / 255, 1, 203f / 255, 207f / 255, 162f / 255, 1 };
-            Layer1Color = new float[4] { 153f / 255, 0f, 0f, 1f };
-            Layer2Color = new float[4] { 24f / 255, 125f / 255, 24f / 255, 1f };
-            Layer3Color = new float[4] { 40f / 255, 60f / 255, 153f / 255, 1f };
-        }
+            Layer1KeyColors = new float[12];
+            Layer2KeyColors = new float[12];
+            Layer3KeyColors = new float[12];
+            Layer4PickKeyColors = new float[12];
+            //Layer1Color = new float[4] { 153f / 255, 0f, 0f, 1f };
+            //Layer2Color = new float[4] { 24f / 255, 125f / 255, 24f / 255, 1f };
+            //Layer3Color = new float[4] { 40f / 255, 60f / 255, 153f / 255, 1f };
 
+            LoadData();
+
+            float3 cc1 = cd.Players[0].RegionColor;
+            Layer1Color = new float[4] { cc1.X / 255, cc1.Y / 255, cc1.Z / 255, 1 };
+            cc1 = cd.Players[1].RegionColor;
+            Layer2Color = new float[4] { cc1.X / 255, cc1.Y / 255, cc1.Z / 255, 1 };
+            cc1 = cd.Players[2].RegionColor;
+            Layer3Color = new float[4] { cc1.X / 255, cc1.Y / 255, cc1.Z / 255, 1 };
+
+
+            //BindLevelOnMap(1);
+
+            BindLevelDelegate = BindLevelOnMap;
+            UpLevelDelegate = UpLevel;
+            DownLevelDelegate = DownLevel;
+
+        }
+        public void UpLevel()
+        {
+            if (CurrentLevel+1>=1 && CurrentLevel+1 <= cd.Levels.Count)
+            {
+                CurrentLevel += 1;
+                BindLevelOnMap(CurrentLevel);
+            }
+        }
+        public void DownLevel()
+        {
+            if (CurrentLevel-1 >= 1 && CurrentLevel-1 <= cd.Levels.Count)
+            {
+                CurrentLevel -= 1;
+                BindLevelOnMap(CurrentLevel);
+            }
+        }
+        public void BindLevelOnMap(int Level)
+        {
+            CurrentLevel = Level;
+            Level -= 1;
+            DrawTextDelegate(String.Format("Level switched to {0}", CurrentLevel));
+
+            Layer1KeyColors = new float[12];
+            Layer2KeyColors = new float[12];
+            Layer3KeyColors = new float[12];
+            Layer4PickKeyColors = new float[12];
+            int k = 0;
+
+            Dictionary<float3, string> pr = cd.Levels[Level].PickRegions;
+            foreach (var r in pr)
+            {
+                for (int i = 0; i < 1; i++, k += 4)
+                {
+                    Layer4PickKeyColors[k] = r.Key.X / 255;
+                    Layer4PickKeyColors[k + 1] = r.Key.Y / 255;
+                    Layer4PickKeyColors[k + 2] = r.Key.Z / 255;
+                    Layer4PickKeyColors[k + 3] = 1;
+                }
+            }
+
+
+
+
+
+            List<ReignRegion> rr = cd.Levels[Level].PlayersRegions[0].ReignRegions;
+            k = 0;
+            foreach (ReignRegion r in rr)
+            {
+                for (int i = 0; i < 1; i++, k += 4)
+                {
+                    Layer1KeyColors[k] = r.Color.X / 255;
+                    Layer1KeyColors[k + 1] = r.Color.Y / 255;
+                    Layer1KeyColors[k + 2] = r.Color.Z / 255;
+                    Layer1KeyColors[k + 3] = 1;
+                }
+            }
+
+
+            rr = cd.Levels[Level].PlayersRegions[1].ReignRegions;
+            k = 0;
+            foreach (ReignRegion r in rr)
+            {
+                for (int i = 0; i < 1; i++, k += 4)
+                {
+                    Layer2KeyColors[k] = r.Color.X / 255;
+                    Layer2KeyColors[k + 1] = r.Color.Y / 255;
+                    Layer2KeyColors[k + 2] = r.Color.Z / 255;
+                    Layer2KeyColors[k + 3] = 1;
+                }
+            }
+            rr = cd.Levels[Level].PlayersRegions[2].ReignRegions;
+            k = 0;
+            foreach (ReignRegion r in rr)
+            {
+                for (int i = 0; i < 1; i++, k += 4)
+                {
+                    Layer3KeyColors[k] = r.Color.X / 255;
+                    Layer3KeyColors[k + 1] = r.Color.Y / 255;
+                    Layer3KeyColors[k + 2] = r.Color.Z / 255;
+                    Layer3KeyColors[k + 3] = 1;
+                }
+            }
+        }
+        public CampaignData cd;
+
+        public void LoadData()
+        {
+            cd = new CampaignData();
+
+            List<MiniYamlNode> topnode;
+            topnode = MiniYaml.Merge(modData.Manifest.CampaignDB.Select(
+                y => MiniYaml.FromStream(modData.DefaultFileSystem.Open(y), y)));
+            foreach (MiniYamlNode n in topnode)
+            {
+                foreach (MiniYamlNode j in n.Value.Nodes)
+                {
+                    if (j.Key == "CampaignName")
+                    {
+                        cd.CampaignName = j.Value.Value;
+                    }
+                    if (j.Key == "CampaignDesc")
+                    {
+                        cd.CampaignDesc = j.Value.Value;
+                    }
+                    if (j.Key == "CampaignForFractionCode")
+                    {
+                        cd.CampaignForFractionCode = FieldLoader.GetValue<float3>("CampaignForFractionCode", j.Value.Value);
+
+                    }
+                    if (j.Key == "Players")
+                    {
+                        cd.Players = new List<CampaignPlayers>();
+                        foreach (MiniYamlNode k in j.Value.Nodes)
+                        {
+                            if (selectableFactions.Select(a => a.InternalName == k.Key).Any())
+                            {
+                                CampaignPlayers item = new CampaignPlayers();
+                                cd.Players.Add(item);
+                                item.Color = FieldLoader.GetValue<float3>("CampaignPlayersColor", k.Value.Value);
+                                item.Name = k.Key;
+                                item.RegionColor = FieldLoader.GetValue<float3>("CampaignPlayersRegionColor", k.Value.Nodes[0].Value.Value);
+                            }
+                        }
+
+                    }
+                    if (j.Key == "Levels")
+                    {
+                        cd.Levels = new List<CampaignLevel>();
+                        foreach (MiniYamlNode k in j.Value.Nodes)
+                        {
+                            CampaignLevel cl = new CampaignLevel();
+                            cd.Levels.Add(cl);
+                            cl.Num = FieldLoader.GetValue<int>("CampaignLevelNum", k.Key);
+
+                            foreach (MiniYamlNode h in k.Value.Nodes)
+                            {
+                                if (h.Key == "PlayersRegions")
+                                {
+                                    cl.PlayersRegions = new List<LevelPlayers>();
+
+                                    foreach (MiniYamlNode f in h.Value.Nodes) //player faction name
+                                    {
+                                        if (selectableFactions.Select(a => a.InternalName == f.Key).Any())
+                                        {
+                                            foreach (MiniYamlNode v in f.Value.Nodes) //list of reign regions
+                                            {
+                                                if (v.Key == "ReignRegions")
+                                                {
+                                                    LevelPlayers lp = new LevelPlayers();
+                                                    lp.Name = f.Key;
+                                                    cl.PlayersRegions.Add(lp);
+
+                                                    foreach (MiniYamlNode d in v.Value.Nodes)
+                                                    {
+
+                                                        lp.ReignRegions.Add(new ReignRegion() { Color = FieldLoader.GetValue<float3>("ReignRegions", d.Key) });
+
+                                                    }
+
+
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                if (h.Key == "PickRegions")
+                                {
+                                    foreach (MiniYamlNode d in h.Value.Nodes)
+                                    {
+                                        float3 regcolor;
+                                        regcolor = FieldLoader.GetValue<float3>("ReignRegions", d.Key);
+                                        cl.PickRegions.Add(regcolor, d.Value.Value);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+            // = MiniYaml.FromString(modData.Manifest.CampaignDB.ToString());
+
+        }
         public override void Initialize(WidgetArgs args)
         {
             base.Initialize(args);
@@ -150,9 +342,12 @@ namespace OpenRA.Mods.D2.Widgets
         public float[] Layer1KeyColors;
         private float[] Layer2KeyColors;
         private float[] Layer3KeyColors;
+        private float[] Layer4PickKeyColors;
         private float[] Layer1Color;
         private float[] Layer2Color;
         private float[] Layer3Color;
+        private int EffectCycleInSteps=60;
+        private bool EffectBackward;
         private Sprite mapchamhark, mapchamatr, mapchamord;
 
         /// <summary>
@@ -421,13 +616,37 @@ namespace OpenRA.Mods.D2.Widgets
             // Game.Renderer.SpriteRenderer.SetAlphaConstantRegion(-1, 255, 85, 255);
             Game.Renderer.SpriteRenderer.SetMouseLocation(new float2(normX, normY));
             //Game.Renderer.SpriteRenderer.SetLayer1KeyColor(0,170,0,255);
-            Game.Renderer.SpriteRenderer.shader.SetVec("Layer1KeyColor", Layer1KeyColors, 4, Layer1KeyColors.Length / 4);
+            Game.Renderer.SpriteRenderer.shader.SetVec("Layer1KeyColors", Layer1KeyColors, 4, Layer1KeyColors.Length / 4);
             Game.Renderer.SpriteRenderer.shader.SetVec("Layer1Color", Layer1Color, 4);
-            Game.Renderer.SpriteRenderer.shader.SetVec("Layer2KeyColor", Layer2KeyColors, 4, Layer2KeyColors.Length / 4);
+            Game.Renderer.SpriteRenderer.shader.SetVec("Layer2KeyColors", Layer2KeyColors, 4, Layer2KeyColors.Length / 4);
             Game.Renderer.SpriteRenderer.shader.SetVec("Layer2Color", Layer2Color, 4);
-            Game.Renderer.SpriteRenderer.shader.SetVec("Layer3KeyColor", Layer3KeyColors, 4, Layer3KeyColors.Length / 4);
+            Game.Renderer.SpriteRenderer.shader.SetVec("Layer3KeyColors", Layer3KeyColors, 4, Layer3KeyColors.Length / 4);
             Game.Renderer.SpriteRenderer.shader.SetVec("Layer3Color", Layer3Color, 4);
+            Game.Renderer.SpriteRenderer.shader.SetVec("Layer4PickKeyColors", Layer4PickKeyColors, 4, Layer4PickKeyColors.Length / 4);
 
+            if (newframe)
+            {
+                if (EffectBackward)
+                {
+                    EffectCycleInSteps = EffectCycleInSteps + AnimationStep;
+                }
+                else
+                {
+                    EffectCycleInSteps = EffectCycleInSteps - AnimationStep;
+                }
+                newframe = false;
+            }
+            Game.Renderer.SpriteRenderer.shader.SetVec("iTime", EffectCycleInSteps);
+            if (EffectCycleInSteps <= 0)
+            {
+               
+                EffectBackward = true;
+            }
+            if ( EffectCycleInSteps >= 255)
+            {
+
+                EffectBackward = false;
+            }
             //оригинальная карта
             Game.Renderer.SpriteRenderer.shader.SetTexture("Texture1", dunergnT); //dunergn
 
@@ -460,16 +679,16 @@ namespace OpenRA.Mods.D2.Widgets
             //Game.Renderer.SpriteRenderer.SetFrameBufferMaskMode(false);
             //DrawMap();
 
-           // Game.Renderer.SpriteRenderer.Flush();
+            // Game.Renderer.SpriteRenderer.Flush();
 
             //делаем спрайт по текстуре 1, в которой карта с регионами
 
         }
 
-
+        public int AnimationStep = 5;
         public override void TickOuter()
         {
-            
+            newframe = true;
             if (Clicked)
             {
                 Game.Renderer.PixelDumpRenderer.fb.ReBind((ITextureInternal)textemp);
@@ -491,27 +710,28 @@ namespace OpenRA.Mods.D2.Widgets
                 Game.Renderer.PixelDumpRenderer.fb.Unbind();
 
 
-                int r, g, b;
-                r = lastanswer[2];
-                g = lastanswer[1];
-                b = lastanswer[0];
+                //int r, g, b;
+                //r = lastanswer[2];
+                //g = lastanswer[1];
+                //b = lastanswer[0];
+                float3 feedbackcolor = new float3(lastanswer[2], lastanswer[1], lastanswer[0]);
                 if (SwitchToMap)
                 {
                     OnMapRegionChooseDelegate(lastanswer[2], lastanswer[1], lastanswer[0]);
                 }
                 else
                 {
-                    if (r == 166 && g == 0 & b == 0)
+                    if (cd.Players[0].Color == feedbackcolor)
                     {
-                        CurrentFaction = selectableFactions.Where(f => f.Name == "Harkonnen").First();
+                        CurrentFaction = selectableFactions.Where(f => f.InternalName == cd.Players[0].Name).First();
                     }
-                    if (r == 255 && g == 255 & b == 255)
+                    if (cd.Players[1].Color == feedbackcolor)
                     {
-                        CurrentFaction = selectableFactions.Where(f => f.Name == "Atreides").First();
+                        CurrentFaction = selectableFactions.Where(f => f.InternalName == cd.Players[1].Name).First();
                     }
-                    if (r == 0 && g == 170 & b == 0)
+                    if (cd.Players[2].Color == feedbackcolor)
                     {
-                        CurrentFaction = selectableFactions.Where(f => f.Name == "Ordos").First();
+                        CurrentFaction = selectableFactions.Where(f => f.InternalName == cd.Players[2].Name).First();
 
                     }
 
@@ -553,6 +773,7 @@ namespace OpenRA.Mods.D2.Widgets
         private ITexture maproomOrdosT;
         private Sheet sh5;
         private Sprite sp5;
+        private bool newframe;
 
         public override bool HandleMouseInput(MouseInput mi)
         {

@@ -72,6 +72,20 @@ Background@MISSIONBROWSER_PANEL:
 			Height: 25
 			Font: Regular
             Text: Start Campaign
+        Button@CampaignPrevLevel:
+			X: 350
+			Y: PARENT_BOTTOM - 45
+			Width: 120
+			Height: 25
+			Font: Regular
+            Text: Prev Level
+        Button@CampaignNextLevel:
+			X: 470
+			Y: PARENT_BOTTOM - 45
+			Width: 120
+			Height: 25
+			Font: Regular
+            Text: Next Level
 		Container@MISSION_INFO:
 			X: 220
 			Y: 50

@@ -1,3 +1,71 @@
-Atreides Campaign:
-	./mods/d2/maps/scena001
-	./mods/d2/maps/scena002
+CampaignHead :
+    CampaignName: Atreides
+    CampaignDesc: Campaign Description
+    CampaignForFractionCode:255,255,255
+    CampaignForFractionName:atreides
+    Command:
+        Name: Begin
+        Args: 1
+    Players:
+        atreides:255,255,255
+            RegionColor:153,0,0
+        ordos:0,170,0
+            RegionColor:24,125,24
+        harkonnen:166,0,0
+            RegionColor:40,60,153
+    Levels: 22
+        1:
+            PlayersRegions:
+                atreides:
+                    ReignRegions:
+                        0,170,0
+                        170,0,170
+                        0,170,170
+                ordos:
+                    ReignRegions:
+                        186,190,150
+                        174,174,138
+                        158,158,121
+                harkonnen:
+                    ReignRegions:
+                        255,85,85
+                        0,0,0
+                        203,207,162
+            LevelDescription: LevelDescription
+            PickRegions:
+                170,85,0:scena001
+                170,170,170:scena002
+                170,0,0:scena003
+            Brief:
+                Texts:
+                    Text:1
+                        Kill everyone
+                Background:mentata
+        2:
+            PlayersRegions:
+                atreides:
+                    ReignRegions:
+                        0,170,0
+                        170,0,170
+                        0,170,170
+                ordos:
+                    ReignRegions:
+                        186,190,150
+                        174,174,138
+                        158,158,121
+                harkonnen:
+                    ReignRegions:
+                        255,85,85
+                        0,0,0
+                        203,207,162
+            LevelDescription: LevelDescription
+            PickRegions:
+                142,142,109:scena001
+                125,125,97:scena002
+                101,101,77:scena003
+            Brief:
+                Texts:
+                    Text:1
+                        Kill everyone
+                Background:mentata
+

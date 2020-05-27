@@ -97,6 +97,8 @@ namespace OpenRA.Mods.D2.Widgets.Logic
 			CampaignWidget= widget.Get<CampaignWidget>("campaigndune");
 			CampaignWidget.OnHouseChooseDelegate = OnHouseChoose;
 			CampaignWidget.OnMapRegionChooseDelegate = OnMapRegionChoose;
+			CampaignWidget.DrawTextDelegate = OnShowUserHelp;
+
 			var allPreviews = new List<MapPreview>();
 			missionList.RemoveChildren();
 
@@ -167,7 +169,15 @@ namespace OpenRA.Mods.D2.Widgets.Logic
 			{
 				CampaignWidget.SwitchToMap = false;
 			};
-
+			widget.Get<ButtonWidget>("CampaignNextLevel").OnClick = () =>
+			{
+				CampaignWidget.UpLevelDelegate();
+			};
+			widget.Get<ButtonWidget>("CampaignPrevLevel").OnClick = () =>
+			{
+				CampaignWidget.DownLevelDelegate();
+			};
+			CampaignWidget.BindLevelOnMap(1);
 		}
 
 		void OnGameStart()
@@ -457,7 +467,20 @@ namespace OpenRA.Mods.D2.Widgets.Logic
 
 			//});
 		}
+		public void OnShowUserHelp(string text)
+		{
+			description.Text += Environment.NewLine + text;
+			var height = descriptionFont.Measure(description.Text).Y;
+			Game.RunAfterTick(() =>
+			{
 
+
+				description.Bounds.Height = height;
+				descriptionPanel.Layout.AdjustChildren();
+				descriptionPanel.ScrollToBottom();
+
+			});
+		}
 		class DropDownOption
 		{
 			public string Title;
