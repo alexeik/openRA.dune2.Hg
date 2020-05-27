@@ -133,13 +133,14 @@ namespace OpenRA.Mods.D2.Widgets
             Level -= 1;
             DrawTextDelegate(String.Format("Level switched to {0}", CurrentLevel));
 
-            Layer1KeyColors = new float[12];
-            Layer2KeyColors = new float[12];
-            Layer3KeyColors = new float[12];
-            Layer4PickKeyColors = new float[12];
+            Layer2KeyColors = new float[10 * 4];
+            Layer1KeyColors = new float[10 * 4];
+            Layer4PickKeyColors = new float[10 * 4];
+            Layer3KeyColors = new float[10 * 4];
             int k = 0;
 
             Dictionary<float3, string> pr = cd.Levels[Level].PickRegions;
+           
             foreach (var r in pr)
             {
                 for (int i = 0; i < 1; i++, k += 4)
@@ -157,6 +158,7 @@ namespace OpenRA.Mods.D2.Widgets
 
             List<ReignRegion> rr = cd.Levels[Level].PlayersRegions[0].ReignRegions;
             k = 0;
+            
             foreach (ReignRegion r in rr)
             {
                 for (int i = 0; i < 1; i++, k += 4)
@@ -171,6 +173,7 @@ namespace OpenRA.Mods.D2.Widgets
 
             rr = cd.Levels[Level].PlayersRegions[1].ReignRegions;
             k = 0;
+           
             foreach (ReignRegion r in rr)
             {
                 for (int i = 0; i < 1; i++, k += 4)
@@ -183,6 +186,7 @@ namespace OpenRA.Mods.D2.Widgets
             }
             rr = cd.Levels[Level].PlayersRegions[2].ReignRegions;
             k = 0;
+            
             foreach (ReignRegion r in rr)
             {
                 for (int i = 0; i < 1; i++, k += 4)
