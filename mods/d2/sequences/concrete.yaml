@@ -2,18 +2,21 @@ concretea:
 	idle: ICON.ICN
 		Start: 126
 		Offset: 0,0
+        ZOffset: -2050
 	icon: SHAPES.SHP
 		Start: 53
 		Offset: 0,0
-
+        
 concreteb:
 	idle: ICON.ICN
 		Start: 126
 		Offset: -8,-8
+        ZOffset: -2050
 	idle-tileset: ICON.ICN
 		Frames: 126, 126, 126, 126
 		Length 4
 		Offset: 0,0
+        ZOffset: -2050
 	icon: SHAPES.SHP
 		Start: 71
 		Offset: 0,0
