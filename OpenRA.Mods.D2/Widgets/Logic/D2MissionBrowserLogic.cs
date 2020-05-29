@@ -167,7 +167,7 @@ namespace OpenRA.Mods.D2.Widgets.Logic
 			};
 			widget.Get<ButtonWidget>("StartCampaign").OnClick = () =>
 			{
-				CampaignWidget.SwitchToMap = false;
+				CampaignWidget.ResetCampaign();
 			};
 			widget.Get<ButtonWidget>("CampaignNextLevel").OnClick = () =>
 			{
@@ -177,7 +177,7 @@ namespace OpenRA.Mods.D2.Widgets.Logic
 			{
 				CampaignWidget.DownLevelDelegate();
 			};
-			CampaignWidget.BindLevelOnMap(1);
+			//CampaignWidget.BindLevelOnMap(1);
 		}
 
 		void OnGameStart()
@@ -399,6 +399,8 @@ namespace OpenRA.Mods.D2.Widgets.Logic
 				orders.Add(Order.Command("option difficulty {0}".F(difficulty)));
 
 			orders.Add(Order.Command("option gamespeed {0}".F(gameSpeed)));
+			orders.Add(Order.Command("setcampaign {0} {1}".F(CampaignWidget.CampaignData.CampaignName, CampaignWidget.CampaignData.CurrentLevel)));
+			orders.Add(Order.Command("option explored True".F(Session.ClientState.Ready)));
 			orders.Add(Order.Command("state {0}".F(Session.ClientState.Ready)));
 
 			var missionData = selectedMap.Rules.Actors["world"].TraitInfoOrDefault<MissionDataInfo>();
@@ -408,11 +410,11 @@ namespace OpenRA.Mods.D2.Widgets.Logic
 				fullscreenVideoPlayer.Visible = true;
 				PlayVideo(fsPlayer, missionData.StartVideo, PlayingVideo.GameStart, () =>
 				{
-					Game.CreateAndStartLocalServer(selectedMap.Uid, orders);
+					Game.CreateAndStartLocalCampaignServer(selectedMap.Uid, orders, CampaignWidget.CampaignData.CampaignName, CampaignWidget.CampaignData.CurrentLevel);
 				});
 			}
 			else
-				Game.CreateAndStartLocalServer(selectedMap.Uid, orders);
+				Game.CreateAndStartLocalCampaignServer(selectedMap.Uid, orders, CampaignWidget.CampaignData.CampaignName, CampaignWidget.CampaignData.CurrentLevel);
 		}
 
 		public void OnHouseChoose(string housename)

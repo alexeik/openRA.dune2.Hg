@@ -57,13 +57,15 @@ namespace OpenRA.Mods.D2.Widgets
         FactionInfo CurrentFaction;
         public byte[] lastanswer;
         private ModData modData;
+        private World world;
         /// <summary>
         /// Если использовать [ObjectCreator.UseCtor] , то можно использовать DI для инициализации аргументов конструктора.
         /// </summary>
         /// <param name="world"></param>
         [ObjectCreator.UseCtor]
-        public CampaignWidget(World world, ModData modData)
+        public CampaignWidget(World world, ModData modData, OpenRA.Network.OrderManager orderManager)
         {
+            this.world = world;
             this.modData = modData;
             dunergnSprite = ChromeProvider.GetImage("dunergn", "background");
             dunergnclickSprite = ChromeProvider.GetImage("dunergnclk", "background");
@@ -71,6 +73,7 @@ namespace OpenRA.Mods.D2.Widgets
             housesmaskSprite = ChromeProvider.GetImage("heraldmask", "background");
             maproomSprite = ChromeProvider.GetImage("maproom", "background");
             maproommaskSprite = ChromeProvider.GetImage("maproommask", "background");
+           
             //тут такая механика.
             //используем DI и атрибут [ObjectCreator.UseCtor], тогда world будет заполнен . 
             //после идем в коллекцию Sequences , которая собирается из всех rules\sequences, где мы в misc.yaml прописали наш screen.cps
@@ -96,11 +99,11 @@ namespace OpenRA.Mods.D2.Widgets
 
             LoadData();
 
-            float3 cc1 = cd.Players[0].RegionColor;
+            float3 cc1 = CampaignData.Players[0].RegionColor;
             Layer1Color = new float[4] { cc1.X / 255, cc1.Y / 255, cc1.Z / 255, 1 };
-            cc1 = cd.Players[1].RegionColor;
+            cc1 = CampaignData.Players[1].RegionColor;
             Layer2Color = new float[4] { cc1.X / 255, cc1.Y / 255, cc1.Z / 255, 1 };
-            cc1 = cd.Players[2].RegionColor;
+            cc1 = CampaignData.Players[2].RegionColor;
             Layer3Color = new float[4] { cc1.X / 255, cc1.Y / 255, cc1.Z / 255, 1 };
 
 
@@ -110,10 +113,25 @@ namespace OpenRA.Mods.D2.Widgets
             UpLevelDelegate = UpLevel;
             DownLevelDelegate = DownLevel;
 
+            if (world.IsGameOver)
+            {
+                CurrentLevel = orderManager.LobbyInfo.GlobalSettings.CampaignLevel;
+                CurrentFaction = world.LocalPlayer.Faction;
+                UpLevel();
+                SwitchToMap = true;
+               
+            }
+            else
+            {
+                BindLevelOnMap(1);
+            }
+
+           
+
         }
         public void UpLevel()
         {
-            if (CurrentLevel+1>=1 && CurrentLevel+1 <= cd.Levels.Count)
+            if (CurrentLevel+1>=1 && CurrentLevel+1 <= CampaignData.Levels.Count)
             {
                 CurrentLevel += 1;
                 BindLevelOnMap(CurrentLevel);
@@ -121,7 +139,7 @@ namespace OpenRA.Mods.D2.Widgets
         }
         public void DownLevel()
         {
-            if (CurrentLevel-1 >= 1 && CurrentLevel-1 <= cd.Levels.Count)
+            if (CurrentLevel-1 >= 1 && CurrentLevel-1 <= CampaignData.Levels.Count)
             {
                 CurrentLevel -= 1;
                 BindLevelOnMap(CurrentLevel);
@@ -129,17 +147,31 @@ namespace OpenRA.Mods.D2.Widgets
         }
         public void BindLevelOnMap(int Level)
         {
+            if (world!=null)
+            {
+                if (world.IsGameOver)
+                {
+                    
+                }
+                else
+                {
+                    
+                }
+            }
             CurrentLevel = Level;
+            CampaignData.CurrentLevel = CurrentLevel;
             Level -= 1;
-            DrawTextDelegate(String.Format("Level switched to {0}", CurrentLevel));
-
+            if (DrawTextDelegate != null)
+            {
+                DrawTextDelegate(String.Format("Level switched to {0}", CurrentLevel));
+            }
             Layer2KeyColors = new float[10 * 4];
             Layer1KeyColors = new float[10 * 4];
             Layer4PickKeyColors = new float[10 * 4];
             Layer3KeyColors = new float[10 * 4];
             int k = 0;
 
-            Dictionary<float3, string> pr = cd.Levels[Level].PickRegions;
+            Dictionary<float3, string> pr = CampaignData.Levels[Level].PickRegions;
            
             foreach (var r in pr)
             {
@@ -156,7 +188,7 @@ namespace OpenRA.Mods.D2.Widgets
 
 
 
-            List<ReignRegion> rr = cd.Levels[Level].PlayersRegions[0].ReignRegions;
+            List<ReignRegion> rr = CampaignData.Levels[Level].PlayersRegions[0].ReignRegions;
             k = 0;
             
             foreach (ReignRegion r in rr)
@@ -171,7 +203,7 @@ namespace OpenRA.Mods.D2.Widgets
             }
 
 
-            rr = cd.Levels[Level].PlayersRegions[1].ReignRegions;
+            rr = CampaignData.Levels[Level].PlayersRegions[1].ReignRegions;
             k = 0;
            
             foreach (ReignRegion r in rr)
@@ -184,7 +216,7 @@ namespace OpenRA.Mods.D2.Widgets
                     Layer2KeyColors[k + 3] = 1;
                 }
             }
-            rr = cd.Levels[Level].PlayersRegions[2].ReignRegions;
+            rr = CampaignData.Levels[Level].PlayersRegions[2].ReignRegions;
             k = 0;
             
             foreach (ReignRegion r in rr)
@@ -198,11 +230,14 @@ namespace OpenRA.Mods.D2.Widgets
                 }
             }
         }
-        public CampaignData cd;
+        public CampaignData CampaignData;
+        public void ShowBrief()
+        {
 
+        }
         public void LoadData()
         {
-            cd = new CampaignData();
+            CampaignData = new CampaignData();
 
             List<MiniYamlNode> topnode;
             topnode = MiniYaml.Merge(modData.Manifest.CampaignDB.Select(
@@ -213,26 +248,26 @@ namespace OpenRA.Mods.D2.Widgets
                 {
                     if (j.Key == "CampaignName")
                     {
-                        cd.CampaignName = j.Value.Value;
+                        CampaignData.CampaignName = j.Value.Value;
                     }
                     if (j.Key == "CampaignDesc")
                     {
-                        cd.CampaignDesc = j.Value.Value;
+                        CampaignData.CampaignDesc = j.Value.Value;
                     }
                     if (j.Key == "CampaignForFractionCode")
                     {
-                        cd.CampaignForFractionCode = FieldLoader.GetValue<float3>("CampaignForFractionCode", j.Value.Value);
+                        CampaignData.CampaignForFractionCode = FieldLoader.GetValue<float3>("CampaignForFractionCode", j.Value.Value);
 
                     }
                     if (j.Key == "Players")
                     {
-                        cd.Players = new List<CampaignPlayers>();
+                        CampaignData.Players = new List<CampaignPlayers>();
                         foreach (MiniYamlNode k in j.Value.Nodes)
                         {
                             if (selectableFactions.Select(a => a.InternalName == k.Key).Any())
                             {
                                 CampaignPlayers item = new CampaignPlayers();
-                                cd.Players.Add(item);
+                                CampaignData.Players.Add(item);
                                 item.Color = FieldLoader.GetValue<float3>("CampaignPlayersColor", k.Value.Value);
                                 item.Name = k.Key;
                                 item.RegionColor = FieldLoader.GetValue<float3>("CampaignPlayersRegionColor", k.Value.Nodes[0].Value.Value);
@@ -242,11 +277,11 @@ namespace OpenRA.Mods.D2.Widgets
                     }
                     if (j.Key == "Levels")
                     {
-                        cd.Levels = new List<CampaignLevel>();
+                        CampaignData.Levels = new List<CampaignLevel>();
                         foreach (MiniYamlNode k in j.Value.Nodes)
                         {
                             CampaignLevel cl = new CampaignLevel();
-                            cd.Levels.Add(cl);
+                            CampaignData.Levels.Add(cl);
                             cl.Num = FieldLoader.GetValue<int>("CampaignLevelNum", k.Key);
 
                             foreach (MiniYamlNode h in k.Value.Nodes)
@@ -690,6 +725,14 @@ namespace OpenRA.Mods.D2.Widgets
         }
 
         public int AnimationStep = 5;
+        bool flaghousepicked = false;
+        public void ResetCampaign()
+        {
+            CurrentLevel = 1;
+            SwitchToMap = false;
+            BindLevelOnMap(CurrentLevel);
+        }
+
         public override void TickOuter()
         {
             newframe = true;
@@ -718,6 +761,7 @@ namespace OpenRA.Mods.D2.Widgets
                 //r = lastanswer[2];
                 //g = lastanswer[1];
                 //b = lastanswer[0];
+                
                 float3 feedbackcolor = new float3(lastanswer[2], lastanswer[1], lastanswer[0]);
                 if (SwitchToMap)
                 {
@@ -725,23 +769,30 @@ namespace OpenRA.Mods.D2.Widgets
                 }
                 else
                 {
-                    if (cd.Players[0].Color == feedbackcolor)
+                    if (CampaignData.Players[0].Color == feedbackcolor)
                     {
-                        CurrentFaction = selectableFactions.Where(f => f.InternalName == cd.Players[0].Name).First();
+                        CurrentFaction = selectableFactions.Where(f => f.InternalName == CampaignData.Players[0].Name).First();
+                        flaghousepicked = true;
                     }
-                    if (cd.Players[1].Color == feedbackcolor)
+                    if (CampaignData.Players[1].Color == feedbackcolor)
                     {
-                        CurrentFaction = selectableFactions.Where(f => f.InternalName == cd.Players[1].Name).First();
+                        CurrentFaction = selectableFactions.Where(f => f.InternalName == CampaignData.Players[1].Name).First();
+                        flaghousepicked = true;
                     }
-                    if (cd.Players[2].Color == feedbackcolor)
+                    if (CampaignData.Players[2].Color == feedbackcolor)
                     {
-                        CurrentFaction = selectableFactions.Where(f => f.InternalName == cd.Players[2].Name).First();
+                        CurrentFaction = selectableFactions.Where(f => f.InternalName == CampaignData.Players[2].Name).First();
+                        flaghousepicked = true;
+                    }
 
-                    }
-
-                    OnHouseChooseDelegate(CurrentFaction.Name);
+                    
                 }
-                SwitchToMap = true;
+                if (flaghousepicked)
+                {
+                    SwitchToMap = true;
+                    OnHouseChooseDelegate(CurrentFaction.Name);
+                    flaghousepicked = false;
+                }
                 Clicked = false;
 
             }

@@ -17,6 +17,7 @@ namespace OpenRA.Mods.D2.Widgets
         public string CommandArgs;
         public List<CampaignPlayers> Players;
         public List<CampaignLevel> Levels;
+        public int CurrentLevel;
     }
     public class CampaignPlayers
     {
