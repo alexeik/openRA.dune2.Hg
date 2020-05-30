@@ -42,6 +42,8 @@
 		Palette: d2
 		Type: Cell
 		TerrainTypes: Sand, Dune, Spice
+        SpawnAtLastPosition: False
+        MovingInterval:40
 	WithSpriteControlGroupDecoration:
 	HitShape:
 	MapEditorData:
