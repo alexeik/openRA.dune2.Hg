@@ -51,6 +51,7 @@ namespace OpenRA.Mods.D2.Widgets
         public Action<int> BindLevelDelegate;
         public Action UpLevelDelegate;
         public Action DownLevelDelegate;
+        public Action OnExit;
         public int CurrentLevel;
 
         List<FactionInfo> selectableFactions;
