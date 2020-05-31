@@ -31,8 +31,14 @@ namespace OpenRA.Mods.D2.Widgets
         public List<LevelPlayers> PlayersRegions;
         public string Description;
         public Dictionary<float3, string> PickRegions =new Dictionary<float3, string>();
-        public string Brief;
+        public Brief Brief;
 
+    }
+    public class Brief
+    {
+        public string Background;
+        public string SubBkgSequence;
+        public string SubBkgSequenceGroup;
     }
     public class ReignRegion
     {

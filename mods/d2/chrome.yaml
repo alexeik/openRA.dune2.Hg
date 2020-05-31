@@ -18,6 +18,9 @@ dune2cash: screenui
 dune2title: title
     background : 0,0,320,200
     
+fame: housessign
+    background : 0,0,320,200
+    
 ordostitle: housestitle
     background : 123,117,74,28
     
@@ -39,7 +42,19 @@ atrsign: housessign
 mentata: mentatascreen
     background : 0,0,320,200
         stretched: true
-        
+mentath: mentathscreen
+    background : 0,0,320,200
+        stretched: true
+mentato: mentatoscreen
+    background : 0,0,320,200
+        stretched: true
+mentatbtnnext: buttonmentatnext
+    background : 0,0,63,23
+        stretched: true
+mentatbtnrepeat: buttonmentatrepeat
+    background : 0,0,63,23
+        stretched: true
+    
 dunemap: dunemapcps
     background : 0,0,320,200
         stretched: true

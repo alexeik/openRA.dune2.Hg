@@ -109,7 +109,20 @@ optionshoverbtn:
         
 mentatascreen:
     idle: MENTATA.CPS
-    
+
+mentathscreen:
+    idle: MENTATH.CPS
+
+mentatoscreen:
+    idle: MENTATO.CPS
+
+buttonmentatnext: 
+    idle: MENTAT.ENG
+        Frames: 6
+buttonmentatrepeat: 
+    idle: MENTAT.ENG
+        Frames: 8
+        
 housestitle: 
     idle: HERALD.ENG
         Length: *
@@ -131,7 +144,10 @@ video3:
     play: FORDOS.WSA
         Length: *
         Tick: 700
-        
+mentata1lvl:
+    play: HARVEST.WSA
+        Length: *
+        Tick: 333
 westwoodwsa:
     play: WESTWOOD.WSA
         Length: *

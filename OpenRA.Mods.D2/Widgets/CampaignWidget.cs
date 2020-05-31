@@ -18,17 +18,13 @@ namespace OpenRA.Mods.D2.Widgets
 {
     public class CampaignWidget : Widget
     {
-        CpsD2Loader image = null;
-        TypeDictionary metadata;
-        ImmutablePalette cpspalette;
-        CpsD2Loader video;
-        ISpriteFrame[] imageSprite = null;
+
         ImmutablePalette palette;
         HardwarePalette hardwarePalette;
         PaletteReference pr;
         private PaletteReference prbase;
 
-   
+
         private Sprite houseSprite;
         private Sprite dunergnSprite;
         private Sprite dunergnclickSprite;
@@ -36,13 +32,16 @@ namespace OpenRA.Mods.D2.Widgets
         private Sprite housesmaskSprite;
         private Sprite maproomSprite;
         private Sprite maproommaskSprite;
+        private Sprite fameroomSprite;
+        private Sprite mentatbtnNextSprite;
+        private Sprite mentatbtnRepeatSprite;
         private SequenceProvider sp;
         private ITexture textemp;
         Sheet sh1;
-        Sprite sp1;
+        Sprite MapRegionMaskSprite;
 
         Sheet sh2;
-        Sprite sp2;
+        Sprite HousesMaskSprite;
         private Sheet sh3;
         private Sprite sp3;
         public Action<string> OnHouseChooseDelegate;
@@ -74,7 +73,10 @@ namespace OpenRA.Mods.D2.Widgets
             housesmaskSprite = ChromeProvider.GetImage("heraldmask", "background");
             maproomSprite = ChromeProvider.GetImage("maproom", "background");
             maproommaskSprite = ChromeProvider.GetImage("maproommask", "background");
-           
+            fameroomSprite = ChromeProvider.GetImage("fame", "background");
+
+            mentatbtnNextSprite = ChromeProvider.GetImage("mentatbtnnext", "background");
+            mentatbtnRepeatSprite = ChromeProvider.GetImage("mentatbtnrepeat", "background");
             //тут такая механика.
             //используем DI и атрибут [ObjectCreator.UseCtor], тогда world будет заполнен . 
             //после идем в коллекцию Sequences , которая собирается из всех rules\sequences, где мы в misc.yaml прописали наш screen.cps
@@ -119,20 +121,21 @@ namespace OpenRA.Mods.D2.Widgets
                 CurrentLevel = orderManager.LobbyInfo.GlobalSettings.CampaignLevel;
                 CurrentFaction = world.LocalPlayer.Faction;
                 UpLevel();
-                SwitchToMap = true;
-               
+                //SwitchToMap = true;
+                DrawFrame = DrawFrameEnum.Map;
+
             }
             else
             {
                 BindLevelOnMap(1);
             }
 
-           
+
 
         }
         public void UpLevel()
         {
-            if (CurrentLevel+1>=1 && CurrentLevel+1 <= CampaignData.Levels.Count)
+            if (CurrentLevel + 1 >= 1 && CurrentLevel + 1 <= CampaignData.Levels.Count)
             {
                 CurrentLevel += 1;
                 BindLevelOnMap(CurrentLevel);
@@ -140,7 +143,7 @@ namespace OpenRA.Mods.D2.Widgets
         }
         public void DownLevel()
         {
-            if (CurrentLevel-1 >= 1 && CurrentLevel-1 <= CampaignData.Levels.Count)
+            if (CurrentLevel - 1 >= 1 && CurrentLevel - 1 <= CampaignData.Levels.Count)
             {
                 CurrentLevel -= 1;
                 BindLevelOnMap(CurrentLevel);
@@ -148,15 +151,15 @@ namespace OpenRA.Mods.D2.Widgets
         }
         public void BindLevelOnMap(int Level)
         {
-            if (world!=null)
+            if (world != null)
             {
                 if (world.IsGameOver)
                 {
-                    
+
                 }
                 else
                 {
-                    
+
                 }
             }
             CurrentLevel = Level;
@@ -173,7 +176,7 @@ namespace OpenRA.Mods.D2.Widgets
             int k = 0;
 
             Dictionary<float3, string> pr = CampaignData.Levels[Level].PickRegions;
-           
+
             foreach (var r in pr)
             {
                 for (int i = 0; i < 1; i++, k += 4)
@@ -191,7 +194,7 @@ namespace OpenRA.Mods.D2.Widgets
 
             List<ReignRegion> rr = CampaignData.Levels[Level].PlayersRegions[0].ReignRegions;
             k = 0;
-            
+
             foreach (ReignRegion r in rr)
             {
                 for (int i = 0; i < 1; i++, k += 4)
@@ -206,7 +209,7 @@ namespace OpenRA.Mods.D2.Widgets
 
             rr = CampaignData.Levels[Level].PlayersRegions[1].ReignRegions;
             k = 0;
-           
+
             foreach (ReignRegion r in rr)
             {
                 for (int i = 0; i < 1; i++, k += 4)
@@ -219,7 +222,7 @@ namespace OpenRA.Mods.D2.Widgets
             }
             rr = CampaignData.Levels[Level].PlayersRegions[2].ReignRegions;
             k = 0;
-            
+
             foreach (ReignRegion r in rr)
             {
                 for (int i = 0; i < 1; i++, k += 4)
@@ -325,6 +328,26 @@ namespace OpenRA.Mods.D2.Widgets
                                         cl.PickRegions.Add(regcolor, d.Value.Value);
                                     }
                                 }
+                                if (h.Key == "Brief")
+                                {
+                                    Brief br = new Brief();
+                                    foreach (MiniYamlNode d in h.Value.Nodes)
+                                    {
+                                        if (d.Key == "Background")
+                                        {
+                                            br.Background = d.Value.Value;
+                                        }
+                                        if (d.Key == "SubBkgSequence")
+                                        {
+                                            br.SubBkgSequence = d.Value.Value;
+                                        }
+                                        if (d.Key == "SubBkgSequenceGroup")
+                                        {
+                                            br.SubBkgSequenceGroup = d.Value.Value;
+                                        }
+                                    }
+                                    cl.Brief = br;
+                                }
                             }
                         }
                     }
@@ -349,9 +372,9 @@ namespace OpenRA.Mods.D2.Widgets
                 housesT = Game.Renderer.PixelDumpRenderer.fb.Texture[2];
                 dunergnT = Game.Renderer.PixelDumpRenderer.fb.Texture[1];
                 sh1 = new Sheet(SheetType.BGRA, Game.Renderer.PixelDumpRenderer.fb.Texture[0]);
-                sp1 = new Sprite(sh1, new Rectangle(0, 0, RenderBounds.Width, RenderBounds.Height), TextureChannel.RGBA);
+                MapRegionMaskSprite = new Sprite(sh1, new Rectangle(0, 0, RenderBounds.Width, RenderBounds.Height), TextureChannel.RGBA);
                 sh2 = new Sheet(SheetType.BGRA, Game.Renderer.PixelDumpRenderer.fb.Texture[3]);
-                sp2 = new Sprite(sh2, new Rectangle(0, 0, RenderBounds.Width, RenderBounds.Height), TextureChannel.RGBA);
+                HousesMaskSprite = new Sprite(sh2, new Rectangle(0, 0, RenderBounds.Width, RenderBounds.Height), TextureChannel.RGBA);
                 textemp = Game.Renderer.PixelDumpRenderer.fb.Texture[4]; //ссылка на текстуру, куда будут уходить данные
                                                                          // об выбранных масках
 
@@ -386,7 +409,7 @@ namespace OpenRA.Mods.D2.Widgets
         private float[] Layer1Color;
         private float[] Layer2Color;
         private float[] Layer3Color;
-        private int EffectCycleInSteps=60;
+        private int EffectCycleInSteps = 60;
         private bool EffectBackward;
         private Sprite mapchamhark, mapchamatr, mapchamord;
 
@@ -439,35 +462,61 @@ namespace OpenRA.Mods.D2.Widgets
 
 
             sh1 = new Sheet(SheetType.BGRA, rgnclickT);
-            sp1 = new Sprite(sh1, new Rectangle(0, 0, RenderBounds.Width, RenderBounds.Height), TextureChannel.RGBA);
+            MapRegionMaskSprite = new Sprite(sh1, new Rectangle(0, 0, RenderBounds.Width, RenderBounds.Height), TextureChannel.RGBA);
             sh2 = new Sheet(SheetType.BGRA, housesMaskT);
-            sp2 = new Sprite(sh2, new Rectangle(0, 0, RenderBounds.Width, RenderBounds.Height), TextureChannel.RGBA);
+            HousesMaskSprite = new Sprite(sh2, new Rectangle(0, 0, RenderBounds.Width, RenderBounds.Height), TextureChannel.RGBA);
 
-           
+
 
             mapchamhark = ChromeProvider.GetImage("patched", "mapchamhark");
             if (mapchamhark == null)
             {
                 PatchHarkMapChamber();
+                mapchamhark = ChromeProvider.GetImage("patched", "mapchamhark");
             }
-            mapchamhark = ChromeProvider.GetImage("patched", "mapchamhark");
+
 
             mapchamatr = ChromeProvider.GetImage("patched", "mapchamatr");
             if (mapchamatr == null)
             {
                 PatchAtrMapChamber();
+                mapchamatr = ChromeProvider.GetImage("patched", "mapchamatr");
             }
-            mapchamatr = ChromeProvider.GetImage("patched", "mapchamatr");
+
             mapchamord = ChromeProvider.GetImage("patched", "mapchamord");
             if (mapchamord == null)
             {
                 PatchOrdosMapChamber();
+                mapchamord = ChromeProvider.GetImage("patched", "mapchamord");
             }
-            mapchamord = ChromeProvider.GetImage("patched", "mapchamord");
+
+            fameatr = ChromeProvider.GetImage("patched", "fameatr");
+            if (fameatr == null)
+            {
+                PatchStatFameAtrWindow();
+                fameatr = ChromeProvider.GetImage("patched", "fameatr");
+            }
+
+            famehark = ChromeProvider.GetImage("patched", "famehark");
+            if (famehark == null)
+            {
+                PatchStatFameHarkWindow();
+                famehark = ChromeProvider.GetImage("patched", "famehark");
+            }
+
+            fameordos = ChromeProvider.GetImage("patched", "fameordos");
+            if (fameordos == null)
+            {
+                PatchStatFameOrdosWindow();
+                fameordos = ChromeProvider.GetImage("patched", "fameordos");
+            }
 
 
+            Game.Renderer.PixelDumpRenderer.fb.Unbind();
 
-
+            mentatAtrSprite = ChromeProvider.GetImage("mentata", "background");
+            mentatHarkSprite = ChromeProvider.GetImage("mentath", "background");
+            mentatOrdosSprite = ChromeProvider.GetImage("mentato", "background");
         }
         Rectangle FlipRectangle(Rectangle rect, bool flipX, bool flipY)
         {
@@ -587,6 +636,54 @@ namespace OpenRA.Mods.D2.Widgets
             //sp5 = new Sprite(sh5, new Rectangle(0, 0, RenderBounds.Width, RenderBounds.Height), TextureChannel.RGBA);
             //sp5.SpriteType = 8;//режим растягивания спрайт по вертексам
         }
+        public void PatchStatFameOrdosWindow()
+        {
+            fameroomT = Game.Renderer.PixelDumpRenderer.fb.Bind(true, Game.Renderer.PixelDumpRenderer.fb.size); //патчим оригинальную текстуру знаками дома
+            Game.Renderer.PixelDumpRenderer.DrawSprite(fameroomSprite, new float3(0, 0, 0), new float3(320, 200, 0), prbase);
+            Game.Renderer.PixelDumpRenderer.DrawSprite(ChromeProvider.GetImage("ordossign", "background"), new float3(2, 9, 0), new float3(53, 54, 0), prbase);
+            Game.Renderer.PixelDumpRenderer.DrawSprite(ChromeProvider.GetImage("ordossign", "background"), new float3(266, 9, 0), new float3(53, 54, 0), prbase);
+            Game.Renderer.RgbaColorRenderer.FillRect(new float3(9, 136, 0), new float3(167 + 9, 55 + 136, 0), Color.FromArgb(255, 182, 125, 12)); //пишет в SPriteRenderer
+            Game.Renderer.SpriteRenderer.Flush();
+            Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
+
+            Sheet shtemp = new Sheet(SheetType.BGRA, fameroomT); //делаем спрайт по патченной текстуре.
+            Sprite stemp = new Sprite(shtemp, new Rectangle(0, 0, 320, 200), TextureChannel.RGBA); //указываем оригинальный размер спрайта, чтобы потом он адаптировался под разные рразрешения
+
+            ChromeProvider.AddSprite("patched", "fameordos", Game.SheetBuilder2D.AddSprite(stemp));
+
+        }
+        public void PatchStatFameHarkWindow()
+        {
+            fameroom2T = Game.Renderer.PixelDumpRenderer.fb.Bind(true, Game.Renderer.PixelDumpRenderer.fb.size); //патчим оригинальную текстуру знаками дома
+            Game.Renderer.PixelDumpRenderer.DrawSprite(fameroomSprite, new float3(0, 0, 0), new float3(320, 200, 0), prbase);
+            Game.Renderer.PixelDumpRenderer.DrawSprite(ChromeProvider.GetImage("harksign", "background"), new float3(2, 9, 0), new float3(53, 54, 0), prbase);
+            Game.Renderer.PixelDumpRenderer.DrawSprite(ChromeProvider.GetImage("harksign", "background"), new float3(266, 9, 0), new float3(53, 54, 0), prbase);
+            Game.Renderer.RgbaColorRenderer.FillRect(new float3(9, 136, 0), new float3(167 + 9, 55 + 136, 0), Color.FromArgb(255, 182, 125, 12)); //пишет в SPriteRenderer
+            Game.Renderer.SpriteRenderer.Flush();
+            Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
+
+            Sheet shtemp = new Sheet(SheetType.BGRA, fameroom2T); //делаем спрайт по патченной текстуре.
+            Sprite stemp = new Sprite(shtemp, new Rectangle(0, 0, 320, 200), TextureChannel.RGBA); //указываем оригинальный размер спрайта, чтобы потом он адаптировался под разные рразрешения
+
+            ChromeProvider.AddSprite("patched", "famehark", Game.SheetBuilder2D.AddSprite(stemp));
+
+        }
+        public void PatchStatFameAtrWindow()
+        {
+            fameroom3T = Game.Renderer.PixelDumpRenderer.fb.Bind(true, Game.Renderer.PixelDumpRenderer.fb.size); //патчим оригинальную текстуру знаками дома
+            Game.Renderer.PixelDumpRenderer.DrawSprite(fameroomSprite, new float3(0, 0, 0), new float3(320, 200, 0), prbase);
+            Game.Renderer.PixelDumpRenderer.DrawSprite(ChromeProvider.GetImage("atrsign", "background"), new float3(2, 9, 0), new float3(53, 54, 0), prbase);
+            Game.Renderer.PixelDumpRenderer.DrawSprite(ChromeProvider.GetImage("atrsign", "background"), new float3(266, 9, 0), new float3(53, 54, 0), prbase);
+            Game.Renderer.RgbaColorRenderer.FillRect(new float3(9, 136, 0), new float3(167 + 9, 55 + 136, 0), Color.FromArgb(255, 182, 125, 12)); //пишет в SPriteRenderer
+            Game.Renderer.SpriteRenderer.Flush();
+            Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
+
+            Sheet shtemp = new Sheet(SheetType.BGRA, fameroom3T); //делаем спрайт по патченной текстуре.
+            Sprite stemp = new Sprite(shtemp, new Rectangle(0, 0, 320, 200), TextureChannel.RGBA); //указываем оригинальный размер спрайта, чтобы потом он адаптировался под разные рразрешения
+
+            ChromeProvider.AddSprite("patched", "fameatr", Game.SheetBuilder2D.AddSprite(stemp));
+
+        }
         public void DrawHouses()
         {
             Game.Renderer.SpriteRenderer.Flush();
@@ -605,10 +702,10 @@ namespace OpenRA.Mods.D2.Widgets
 
             //оригинал выбора домов
             Game.Renderer.SpriteRenderer.shader.SetTexture("Texture1", housesT);
-            sp2.SpriteType = 7;
+            HousesMaskSprite.SpriteType = 7;
 
             //передаем вторым аргументом текстуру, где маска
-            WidgetUtils.FillRectWithSprite(RenderBounds, sp2, prbase);
+            WidgetUtils.FillRectWithSprite(RenderBounds, HousesMaskSprite, prbase);
             //Game.Renderer.SpriteRenderer.Flush(); //записать кадр во фреймбуфер 
         }
 
@@ -665,10 +762,10 @@ namespace OpenRA.Mods.D2.Widgets
             Game.Renderer.SpriteRenderer.shader.SetVec("iTime", EffectCycleInSteps);
             if (EffectCycleInSteps <= 0)
             {
-               
+
                 EffectBackward = true;
             }
-            if ( EffectCycleInSteps >= 255)
+            if (EffectCycleInSteps >= 255)
             {
 
                 EffectBackward = false;
@@ -677,13 +774,101 @@ namespace OpenRA.Mods.D2.Widgets
             Game.Renderer.SpriteRenderer.shader.SetTexture("Texture1", dunergnT); //dunergn
 
             //передаем вторым аргументом текстуру, где регионы для мышки
-            sp1.SpriteType = 6;
-            WidgetUtils.FillRectWithSprite(RenderBounds, sp1, prbase); //rgnclck //это такой способ установить в Texture0 sp1 с маской регионов
+            MapRegionMaskSprite.SpriteType = 6;
+            WidgetUtils.FillRectWithSprite(RenderBounds, MapRegionMaskSprite, prbase); //rgnclck //это такой способ установить в Texture0 MapRegionMaskSprite с маской регионов
+            //так как MapRegionMaskSprite сделат из Sheet, то уйдет в textureX, а не в Texture2DX
 
             // Game.Renderer.SpriteRenderer.Flush(); //записать кадр во фреймбуфер 
         }
+        public void DrawFame()
+        {
+            if (CurrentFaction.Name == "Harkonnen")
+            {
+                WidgetUtils.FillRectWithSprite(RenderBounds, famehark, prbase); //отрисуем спрайт комнаты для карты
+            }
+            if (CurrentFaction.Name == "Atreides")
+            {
+                WidgetUtils.FillRectWithSprite(RenderBounds, fameatr, prbase); //отрисуем спрайт комнаты для карты
+            }
+            if (CurrentFaction.Name == "Ordos")
+            {
+                WidgetUtils.FillRectWithSprite(RenderBounds, fameordos, prbase); //отрисуем спрайт комнаты для карты
+            }
+            // Game.Renderer.Flush(); //нужен, так как текстура используется внешняя и на один раз, ниже она уже замениться другой dunergnT
+        }
+        public CampaignLevel cLevel { get { return CampaignData.Levels[CurrentLevel-1]; } set { } }
+
+        public void DrawMentat()
+        {
+            if (CurrentFaction.Name == "Harkonnen")
+            {
+                DrawMentatSub(cLevel.Brief.SubBkgSequence,cLevel.Brief.SubBkgSequenceGroup, AnimationDirectionEnum.Repeat);
+                WidgetUtils.FillRectWithSprite(RenderBounds, mentatHarkSprite, prbase); //отрисуем спрайт комнаты для карты
+                
+
+            }
+            if (CurrentFaction.Name == "Atreides")
+            {
+                DrawMentatSub(cLevel.Brief.SubBkgSequence, cLevel.Brief.SubBkgSequenceGroup, AnimationDirectionEnum.Repeat);
+                WidgetUtils.FillRectWithSprite(RenderBounds, mentatAtrSprite, prbase); //отрисуем спрайт комнаты для карты
+            }
+            if (CurrentFaction.Name == "Ordos")
+            {
+                DrawMentatSub(cLevel.Brief.SubBkgSequence, cLevel.Brief.SubBkgSequenceGroup, AnimationDirectionEnum.Repeat);
+                WidgetUtils.FillRectWithSprite(RenderBounds, mentatOrdosSprite, prbase); //отрисуем спрайт комнаты для карты
+            }
+            DrawMentatSubButton();
+        }
+        public enum AnimationDirectionEnum
+        {
+            Repeat, Forward
+        }
+        int ratio = 2; //чтобы попасть в теже координаты, нужно учесть увеличение, относительно оригинального спрайта. ориг 320 на 200, а используется 640 на 400
+        public void DrawMentatSub(string seqname, string subseqname, AnimationDirectionEnum AnimationDirection)
+        {       //for wsa
+
+           
+            
+            Game.Renderer.SpriteRenderer.DrawSprite(AnimList[0].Image, new float3(RenderBounds.X+128* ratio, RenderBounds.Y+48* ratio, 0), 0, new float3(184* ratio, 112* ratio, 0));
+        }
+        public void SetupSubMentat(string seqname, string subseqname, AnimationDirectionEnum AnimationDirection)
+        {
+            AnimList.Clear();
+            Animation animation1 = new Animation(world, seqname);
+            AnimList.Add(animation1);
+            if (AnimationDirection == AnimationDirectionEnum.Forward)
+            {
+                animation1.Play(subseqname);
+            }
+            if (AnimationDirection == AnimationDirectionEnum.Repeat)
+            {
+                animation1.PlayRepeating(subseqname);
+            }
+            animation1.Tick(); //первый тик делаем тут
+        }
+
+        public void DrawMentatSubButton()
+        {
+
+            Game.Renderer.SpriteRenderer.DrawSprite(mentatbtnNextSprite, new float3(RenderBounds.X + 171 * ratio, RenderBounds.Y + 170 * ratio, 0), 0, new float3(63 * ratio, 23 * ratio, 0));
+            Game.Renderer.SpriteRenderer.DrawSprite(mentatbtnRepeatSprite, new float3(RenderBounds.X + 242 * ratio, RenderBounds.Y + 170 * ratio, 0), 0, new float3(63 * ratio, 23 * ratio, 0));
+        }
+        public List<Animation> AnimList=new List<Animation>();
+        public void SendTickToAnimations()
+        {
+            foreach ( Animation a in AnimList)
+            {
+                a.Tick();
+            }
+        }
+        public enum DrawFrameEnum
+        {
+            Map,Houses,Fame,Mentat
+        }
+        public DrawFrameEnum DrawFrame = DrawFrameEnum.Houses;
         public override void Draw()
         {
+            //тестовый код для debug framebuffer`а
             //Game.Renderer.PixelDumpRenderer.fb.ReBind((ITextureInternal)maproomT);
             //sp3.SpriteType = 2;
             //sp3.Stretched = true;
@@ -692,22 +877,25 @@ namespace OpenRA.Mods.D2.Widgets
             //Game.Renderer.PixelDumpRenderer.fb.Unbind();
 
             //return;
-            if (SwitchToMap)
+            switch (DrawFrame)
             {
-                DrawMap();
+                case DrawFrameEnum.Map:
+                    DrawMap();
+                    break;
+                case DrawFrameEnum.Houses:
+                    DrawHouses();
+                    break;
+                case DrawFrameEnum.Fame:
+                    DrawFame();
+                    break;
+                case DrawFrameEnum.Mentat:
+                    DrawMentat();
+                        break;
+                
+                default:
+                    break;
             }
-            else
-            {
-                DrawHouses();
-            }
 
-            //return;
-            //Game.Renderer.SpriteRenderer.SetFrameBufferMaskMode(false);
-            //DrawMap();
-
-            // Game.Renderer.SpriteRenderer.Flush();
-
-            //делаем спрайт по текстуре 1, в которой карта с регионами
 
         }
 
@@ -716,26 +904,37 @@ namespace OpenRA.Mods.D2.Widgets
         public void ResetCampaign()
         {
             CurrentLevel = 1;
-            SwitchToMap = false;
+            //SwitchToMap = false;
+            DrawFrame = DrawFrameEnum.Houses;
             BindLevelOnMap(CurrentLevel);
         }
 
         public override void TickOuter()
         {
             newframe = true;
+           
+
+
             if (Clicked)
             {
                 Game.Renderer.PixelDumpRenderer.fb.ReBind((ITextureInternal)textemp);
                 Game.Renderer.SpriteRenderer.SetFrameBufferMaskMode(true);
-                if (SwitchToMap)
+                if (DrawFrame == DrawFrameEnum.Map)
                 {
                     DrawMap();
                 }
-                else
+                if (DrawFrame == DrawFrameEnum.Houses)
                 {
                     DrawHouses();
                 }
-
+                if (DrawFrame == DrawFrameEnum.Fame)
+                {
+                    DrawFame();
+                }
+                if (DrawFrame == DrawFrameEnum.Mentat)
+                {
+                    DrawMentat();
+                }
                 Game.Renderer.SpriteRenderer.Flush();
                 //Game.Renderer.PixelDumpRenderer.Flush();
                 lastanswer = ReadPixelUnderMouse();
@@ -750,11 +949,12 @@ namespace OpenRA.Mods.D2.Widgets
                 //b = lastanswer[0];
                 
                 float3 feedbackcolor = new float3(lastanswer[2], lastanswer[1], lastanswer[0]);
-                if (SwitchToMap)
+                if (DrawFrame == DrawFrameEnum.Map)
                 {
                     OnMapRegionChooseDelegate(lastanswer[2], lastanswer[1], lastanswer[0]);
                 }
-                else
+
+                if (DrawFrame == DrawFrameEnum.Houses)
                 {
                     if (CampaignData.Players[0].Color == feedbackcolor)
                     {
@@ -776,13 +976,24 @@ namespace OpenRA.Mods.D2.Widgets
                 }
                 if (flaghousepicked)
                 {
-                    SwitchToMap = true;
+                    //SwitchToMap = true;
+                    DrawFrame = DrawFrameEnum.Mentat;
                     OnHouseChooseDelegate(CurrentFaction.Name);
                     flaghousepicked = false;
+                }
+                if (DrawFrame== DrawFrameEnum.Fame)
+                {
+                    OnMapRegionChooseDelegate(lastanswer[2], lastanswer[1], lastanswer[0]);
+                }
+                if (DrawFrame == DrawFrameEnum.Mentat)
+                {
+                    SetupSubMentat(cLevel.Brief.SubBkgSequence, cLevel.Brief.SubBkgSequenceGroup, AnimationDirectionEnum.Repeat);
+                    OnMapRegionChooseDelegate(lastanswer[2], lastanswer[1], lastanswer[0]);
                 }
                 Clicked = false;
 
             }
+            SendTickToAnimations();
         }
         public byte[] ReadPixelUnderMouse()
         {
@@ -816,6 +1027,15 @@ namespace OpenRA.Mods.D2.Widgets
         private Sheet sh5;
         private Sprite sp5;
         private bool newframe;
+        private ITexture fameroomT;
+        private ITexture fameroom2T;
+        private ITexture fameroom3T;
+        private Sprite fameatr;
+        private Sprite famehark;
+        private Sprite fameordos;
+        private Sprite mentatHarkSprite;
+        private Sprite mentatAtrSprite;
+        private Sprite mentatOrdosSprite;
 
         public override bool HandleMouseInput(MouseInput mi)
         {

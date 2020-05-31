@@ -41,6 +41,8 @@ CampaignHead :
                     Text:1
                         Kill everyone
                 Background:mentata
+                SubBkgSequence:mentata1lvl
+                SubBkgSequenceGroup:play
         2:
             PlayersRegions:
                 atreides:
