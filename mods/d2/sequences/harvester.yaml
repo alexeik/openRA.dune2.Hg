@@ -49,7 +49,7 @@ harvester:
 				Offset: 8,7
 		Length: 3
 		Facings: -8
-		Tick: 160
+		Tick: 400
 		ZOffset: 1
 	dock: UNITS.SHP
 		Start: 14
