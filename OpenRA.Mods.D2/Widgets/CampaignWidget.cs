@@ -38,9 +38,14 @@ namespace OpenRA.Mods.D2.Widgets
         private SequenceProvider sp;
         private ITexture textemp;
         Sheet sh1;
+        /// <summary>
+        /// <para/>Спрайт содержит маску регионов карты для пользователя
+        /// <para/>Он перерисован в текстуру с разрешением экрана и увеличен до размеров widget.RenderBounds.
+        /// </summary>
         Sprite MapRegionMaskSprite;
 
         Sheet sh2;
+
         Sprite HousesMaskSprite;
         private Sheet sh3;
         private Sprite sp3;
@@ -239,6 +244,7 @@ namespace OpenRA.Mods.D2.Widgets
         {
 
         }
+       
         public void LoadData()
         {
             CampaignData = new CampaignData();
@@ -362,7 +368,7 @@ namespace OpenRA.Mods.D2.Widgets
             base.Initialize(args);
             if (Game.Renderer.PixelDumpRenderer.fbcreated == false)
             {
-                Game.Renderer.PixelDumpRenderer.Setup(new Size(1024, 768)); //widget должен быть в пределах 1024 на 512 пикселей
+                Game.Renderer.PixelDumpRenderer.Setup(new Size(Game.Renderer.Resolution.Width, Game.Renderer.Resolution.Height)); //widget должен быть в пределах 1024 на 512 пикселей
 
                 PrepTextures();
             }
@@ -397,6 +403,9 @@ namespace OpenRA.Mods.D2.Widgets
         }
 
         private ITexture rgnclickT;
+        /// <summary>
+        /// <para>Эта текстура содержит спрайт регионов карты для пользователя</para> , с масштабом RenderBounds(widget в котором мы рисуем)
+        /// </summary>
         private ITexture dunergnT;
         private ITexture housesT;
         private ITexture housesMaskT;
@@ -443,7 +452,7 @@ namespace OpenRA.Mods.D2.Widgets
             Game.Renderer.PixelDumpRenderer.fb.Unbind();
 
             //переходим в размеры текстур как у игры! 
-            textemp = Game.Renderer.PixelDumpRenderer.fb.Bind(true, new Size(1024, 768));
+            textemp = Game.Renderer.PixelDumpRenderer.fb.Bind(true, Game.Renderer.PixelDumpRenderer.fb.size);
             Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
             Game.Renderer.PixelDumpRenderer.fb.Unbind();
 
@@ -849,7 +858,14 @@ namespace OpenRA.Mods.D2.Widgets
 
         public void DrawMentatSubButton()
         {
+            //если изменить SriteType=6 DrawMode=11, то нужно переложить их в Texture0 , которая по размерности равна игровому окну.
+            //Изначально эти спрайты лежат в размерности 2048 на 2048.
+            //что если держать размерность одинаковую с игровым экраном.
+            //патченные так и будут идти через фб1 и сохраняться обратно в 2048 на 2048
 
+            //нужно брать оригинал с тех же координат, что и маска.
+            //маска должна лежать по координатам игрового мира. ПОэтому маска должна быть в отдельном текстуре размером с игровой мир, чтобы в шейдере
+            //можно было ее использовать, но не рисовать.
             Game.Renderer.SpriteRenderer.DrawSprite(mentatbtnNextSprite, new float3(RenderBounds.X + 171 * ratio, RenderBounds.Y + 170 * ratio, 0), 0, new float3(63 * ratio, 23 * ratio, 0));
             Game.Renderer.SpriteRenderer.DrawSprite(mentatbtnRepeatSprite, new float3(RenderBounds.X + 242 * ratio, RenderBounds.Y + 170 * ratio, 0), 0, new float3(63 * ratio, 23 * ratio, 0));
         }
