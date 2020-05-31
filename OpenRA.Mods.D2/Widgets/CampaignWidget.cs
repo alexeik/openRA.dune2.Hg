@@ -443,7 +443,7 @@ namespace OpenRA.Mods.D2.Widgets
             sh2 = new Sheet(SheetType.BGRA, housesMaskT);
             sp2 = new Sprite(sh2, new Rectangle(0, 0, RenderBounds.Width, RenderBounds.Height), TextureChannel.RGBA);
 
-            maproomHarkT = Game.Renderer.PixelDumpRenderer.fb.Bind(true, Game.Renderer.PixelDumpRenderer.fb.size); //патчим оригинальную текстуру знаками дома
+           
 
             mapchamhark = ChromeProvider.GetImage("patched", "mapchamhark");
             if (mapchamhark == null)
@@ -481,10 +481,11 @@ namespace OpenRA.Mods.D2.Widgets
 
         public void PatchHarkMapChamber()
         {
+            maproomHarkT = Game.Renderer.PixelDumpRenderer.fb.Bind(true, Game.Renderer.PixelDumpRenderer.fb.size); //патчим оригинальную текстуру знаками дома
             //maproomHarkSizedT = Game.Renderer.PixelDumpRenderer.fb.Bind(true, Game.Renderer.PixelDumpRenderer.fb.size);
             //Game.Renderer.PixelDumpRenderer.fb.Unbind();
             //hark map
-            Game.Renderer.PixelDumpRenderer.fb.ReBind((ITextureInternal)maproomHarkT);
+            //Game.Renderer.PixelDumpRenderer.fb.ReBind((ITextureInternal)maproomHarkT);
             //maproomSprite.FlipY = 1;
             Game.Renderer.PixelDumpRenderer.DrawSprite(maproomSprite, new float3(0, 0, 0), new float3(320, 200, 0), prbase);
             Game.Renderer.PixelDumpRenderer.DrawSprite(ChromeProvider.GetImage("harksign", "background"), new float3(2, 145, 0), new float3(53, 54, 0), prbase);
@@ -501,28 +502,13 @@ namespace OpenRA.Mods.D2.Widgets
 
             ChromeProvider.AddSprite("patched", "mapchamhark", Game.SheetBuilder2D.AddSprite(sp3));
 
-            //var d = new Dictionary<string, Sprite>();
-            //d.Add("mapchamhark", Game.SheetBuilder2D.AddSprite(sp3));
-            //ChromeProvider.cachedSprites.Add("patched", d);
-            //Game.Renderer.PixelDumpRenderer.fb.ReBind((ITextureInternal)maproomHarkSizedT); //печатаем спрайт нужного размера в другую текстур и делаем с нее спрайт.
-            //sp3.SpriteType = 8;
-            //sp3.Stretched = true;
-            //Game.Renderer.PixelDumpRenderer.DrawSprite(sp3, new float3(0, 0, 0), new float3(RenderBounds.Width, RenderBounds.Height, 0), prbase);
-            //Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
-            //Game.Renderer.PixelDumpRenderer.fb.Unbind();
-
-            //sp3.Sheet.Dispose();
-
-            //sh3 = new Sheet(SheetType.BGRA, maproomHarkSizedT);
-            //sp3 = new Sprite(sh3, new Rectangle(0, 0, RenderBounds.Width, RenderBounds.Height), TextureChannel.RGBA);
-            //sp3.SpriteType = 8;//режим растягивания спрайт по вертексам
 
         }
         public void PatchAtrMapChamber()
         {
 
-            maproomAtrSizedT = Game.Renderer.PixelDumpRenderer.fb.Bind(true, Game.Renderer.PixelDumpRenderer.fb.size);
-            Game.Renderer.PixelDumpRenderer.fb.Unbind();
+            //maproomAtrSizedT = Game.Renderer.PixelDumpRenderer.fb.Bind(true, Game.Renderer.PixelDumpRenderer.fb.size);
+            //Game.Renderer.PixelDumpRenderer.fb.Unbind();
             //atr map
             maproomAtrT = Game.Renderer.PixelDumpRenderer.fb.Bind(true, Game.Renderer.PixelDumpRenderer.fb.size); //патчим оригинальную текстуру знаками дома
             Game.Renderer.PixelDumpRenderer.DrawSprite(maproomSprite, new float3(0, 0, 0), new float3(320, 200, 0), prbase);
@@ -563,8 +549,8 @@ namespace OpenRA.Mods.D2.Widgets
         }
         public void PatchOrdosMapChamber()
         {
-            maproomOrdosSizedT = Game.Renderer.PixelDumpRenderer.fb.Bind(true, Game.Renderer.PixelDumpRenderer.fb.size);
-            Game.Renderer.PixelDumpRenderer.fb.Unbind();
+            //maproomOrdosSizedT = Game.Renderer.PixelDumpRenderer.fb.Bind(true, Game.Renderer.PixelDumpRenderer.fb.size);
+            //Game.Renderer.PixelDumpRenderer.fb.Unbind();
             //atr map
             maproomOrdosT = Game.Renderer.PixelDumpRenderer.fb.Bind(true, Game.Renderer.PixelDumpRenderer.fb.size); //патчим оригинальную текстуру знаками дома
             Game.Renderer.PixelDumpRenderer.DrawSprite(maproomSprite, new float3(0, 0, 0), new float3(320, 200, 0), prbase);
