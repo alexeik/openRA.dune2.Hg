@@ -313,12 +313,12 @@ Fonts:
 		Font: common|FreeSans.ttf
 		Size:18
 	BigBold:
-		#Font: d2|dune2.otf
-		Font: common|FreeSans.ttf
-		Size:24
-	Small:
 		Font: d2|dune2.otf
 		#Font: common|FreeSans.ttf
+		Size:20
+	Small:
+		#Font: d2|dune2.otf
+		Font: common|FreeSans.ttf
 		Size:12
 	Tiny:
 		#Font: d2|dune2.otf

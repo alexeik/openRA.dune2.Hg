@@ -61,6 +61,7 @@ namespace OpenRA.Mods.D2.Widgets
         public byte[] lastanswer;
         private ModData modData;
         private World world;
+        public Dictionary<string, List<string>> TextDB=new Dictionary<string, List<string>>();
         /// <summary>
         /// Если использовать [ObjectCreator.UseCtor] , то можно использовать DI для инициализации аргументов конструктора.
         /// </summary>
@@ -131,7 +132,7 @@ namespace OpenRA.Mods.D2.Widgets
             {
                 BindLevelOnMap(1);
             }
-
+            TextDB.Add("TEXTA.ENG",LoadTextDB("TEXTA.ENG"));
 
 
         }
@@ -241,7 +242,7 @@ namespace OpenRA.Mods.D2.Widgets
         {
 
         }
-       
+
         public void LoadData()
         {
             CampaignData = new CampaignData();
@@ -802,15 +803,15 @@ namespace OpenRA.Mods.D2.Widgets
             }
             // Game.Renderer.Flush(); //нужен, так как текстура используется внешняя и на один раз, ниже она уже замениться другой dunergnT
         }
-        public CampaignLevel cLevel { get { return CampaignData.Levels[CurrentLevel-1]; } set { } }
+        public CampaignLevel cLevel { get { return CampaignData.Levels[CurrentLevel - 1]; } set { } }
 
         public void DrawMentat()
         {
             if (CurrentFaction.Name == "Harkonnen")
             {
-                DrawMentatSub(cLevel.Brief.SubBkgSequence,cLevel.Brief.SubBkgSequenceGroup, AnimationDirectionEnum.Repeat);
+                DrawMentatSub(cLevel.Brief.SubBkgSequence, cLevel.Brief.SubBkgSequenceGroup, AnimationDirectionEnum.Repeat);
                 WidgetUtils.FillRectWithSprite(RenderBounds, mentatHarkSprite, prbase); //отрисуем спрайт комнаты для карты
-                
+
 
             }
             if (CurrentFaction.Name == "Atreides")
@@ -834,9 +835,9 @@ namespace OpenRA.Mods.D2.Widgets
         public void DrawMentatSub(string seqname, string subseqname, AnimationDirectionEnum AnimationDirection)
         {       //for wsa
 
-           
-            
-            Game.Renderer.SpriteRenderer.DrawSprite(AnimList[0].Image, new float3(RenderBounds.X+128* ratio, RenderBounds.Y+48* ratio, 0), 0, new float3(184* ratio, 112* ratio, 0));
+
+
+            Game.Renderer.SpriteRenderer.DrawSprite(AnimList[0].Image, new float3(RenderBounds.X + 128 * ratio, RenderBounds.Y + 48 * ratio, 0), 0, new float3(184 * ratio, 112 * ratio, 0));
         }
         public void SetupSubMentat(string seqname, string subseqname, AnimationDirectionEnum AnimationDirection)
         {
@@ -844,9 +845,11 @@ namespace OpenRA.Mods.D2.Widgets
             Widget w = this.Get<ContainerWidget>("mentatstage");
             w.Visible = true;
             LabelWidget widgetMissionInfo = w.Get<LabelWidget>("mentatinfo");
-            widgetMissionInfo.GetText = () => { return AnimStringList[0].Text;  };
+            widgetMissionInfo.GetText = () => { return AnimStringList[0].Text; };
             SetupSubMentat_Back(seqname, subseqname, AnimationDirection);
-            List<string> l = new List<string>() { "123", "456", "1234546" };
+
+            List<string> l;
+            l = TextDB["TEXTA.ENG"][4].Split('.').ToList<string>();
             SetupSubMentat_MissionInfo(seqname, l, AnimationDirection);
 
         }
@@ -865,12 +868,48 @@ namespace OpenRA.Mods.D2.Widgets
             }
             animation1.Tick(); //первый тик делаем тут
         }
+
+        public List<string> LoadTextDB(string filename)
+        {
+            List<string> textdb = new List<string>();
+            using (var stream = modData.DefaultFileSystem.Open(filename))
+            {
+                var start = stream.Position;
+
+                //stream.Position += 2;
+
+                var format = stream.ReadUInt16();
+                int numIndexedStrings = format / 2 - 1;
+                List<int> offsets = new List<int>();
+
+                offsets.Add(format);
+                for (int k = 0; k < numIndexedStrings; k++)
+                {
+                    UInt16 nextbyte;
+                    nextbyte = stream.ReadUInt16();
+                    offsets.Add(nextbyte);
+                }
+                for (int k = 0; k < numIndexedStrings; k++)
+                {
+                    stream.Position = offsets[k];
+                    int len = offsets[k + 1] - offsets[k];
+                    byte[] texttodecode = new byte[len];
+
+                    stream.Read(texttodecode, 0, len);
+                    string temp = StringDecompress(texttodecode);
+                    textdb.Add(temp);
+                }
+
+            }
+            return textdb;
+        }
         public void SetupSubMentat_MissionInfo(string seqname, List<string> MissionInfoStrings, AnimationDirectionEnum AnimationDirection)
         {
+          
             AnimStringList.Clear();
             AnimationString animation1 = new AnimationString(world, seqname);
-            animation1.DefineTick = 2000;
-           AnimStringList.Add(animation1);
+            animation1.DefineTick = 40*60* 3;
+            AnimStringList.Add(animation1);
             if (AnimationDirection == AnimationDirectionEnum.Forward)
             {
                 animation1.Play(MissionInfoStrings);
@@ -881,7 +920,46 @@ namespace OpenRA.Mods.D2.Widgets
             }
             animation1.Tick(); //первый тик делаем тут
         }
+        public string StringDecompress(byte[] str)
+        {
+            char[] decodeTable1 = { ' ', 'e', 't', 'a', 'i', 'n', 'o', 's', 'r', 'l', 'h', 'c', 'd', 'u', 'p', 'm' };
+            char[,] decodeTable2 ={ { 't','a','s','i','o',' ','w','b' },
+                                    { ' ','r','n','s','d','a','l','m' },
+                                    { 'h',' ','i','e','o','r','a','s' },
+                                    { 'n','r','t','l','c',' ','s','y' },
+                                    { 'n','s','t','c','l','o','e','r' },
+                                    { ' ','d','t','g','e','s','i','o' },
+                                    { 'n','r',' ','u','f','m','s','w' },
+                                    { ' ','t','e','p','.','i','c','a' },
+                                    { 'e',' ','o','i','a','d','u','r' },
+                                    { ' ','l','a','e','i','y','o','d' },
+                                    { 'e','i','a',' ','o','t','r','u' },
+                                    { 'e','t','o','a','k','h','l','r' },
+                                    { ' ','e','i','u',',','.','o','a' },
+                                    { 'n','s','r','c','t','l','a','i' },
+                                    { 'l','e','o','i','r','a','t','p' },
+                                    { 'e','a','o','i','p',' ','b','m' } };
+            string ret="";
+            char temp;
+            for (int i = 0; i < str.Length - 1; i++)
+            {
+                temp = (char)str[i];
 
+                if ( (str[i] & 0x80)!=0  )
+                {
+                    char index1 =(char)((str[i] >> 3) & 0xF);
+                    char index2 = (char)(str[i] & 0x7);
+                     ret += decodeTable1[index1];
+                     ret += decodeTable2[index1,index2];
+                }
+                else
+                {
+                    ret += (char)str[i];
+                }
+            }
+            UInt16 count;
+            return ret;
+        }
         public void DrawMentatSubButton()
         {
             //если изменить SriteType=6 DrawMode=11, то нужно переложить их в Texture0 , которая по размерности равна игровому окну.
@@ -896,12 +974,12 @@ namespace OpenRA.Mods.D2.Widgets
             //Game.Renderer.SpriteRenderer.DrawSprite(mentatbtnRepeatSprite, new float3(RenderBounds.X + 242 * ratio, RenderBounds.Y + 170 * ratio, 0), 0, new float3(63 * ratio, 23 * ratio, 0));
         }
 
-        public List<Animation> AnimList=new List<Animation>();
+        public List<Animation> AnimList = new List<Animation>();
         public List<AnimationString> AnimStringList = new List<AnimationString>();
 
         public void SendTickToAnimations()
         {
-            foreach ( Animation a in AnimList)
+            foreach (Animation a in AnimList)
             {
                 a.Tick();
             }
@@ -913,7 +991,7 @@ namespace OpenRA.Mods.D2.Widgets
 
         public enum DrawFrameEnum
         {
-            Map,Houses,Fame,Mentat
+            Map, Houses, Fame, Mentat
         }
 
         public DrawFrameEnum DrawFrame = DrawFrameEnum.Houses;
@@ -942,8 +1020,8 @@ namespace OpenRA.Mods.D2.Widgets
                     break;
                 case DrawFrameEnum.Mentat:
                     DrawMentat();
-                        break;
-                
+                    break;
+
                 default:
                     break;
             }
@@ -998,11 +1076,12 @@ namespace OpenRA.Mods.D2.Widgets
                 //r = lastanswer[2];
                 //g = lastanswer[1];
                 //b = lastanswer[0];
-                
+
                 float3 feedbackcolor = new float3(lastanswer[2], lastanswer[1], lastanswer[0]);
                 if (DrawFrame == DrawFrameEnum.Map)
                 {
                     OnMapRegionChooseDelegate(lastanswer[2], lastanswer[1], lastanswer[0]);
+                    DrawFrame = DrawFrameEnum.Mentat;
                 }
 
                 if (DrawFrame == DrawFrameEnum.Houses)
@@ -1023,16 +1102,16 @@ namespace OpenRA.Mods.D2.Widgets
                         flaghousepicked = true;
                     }
 
-                    
+
                 }
                 if (flaghousepicked)
                 {
                     //SwitchToMap = true;
-                    DrawFrame = DrawFrameEnum.Mentat;
+                    DrawFrame = DrawFrameEnum.Map;
                     OnHouseChooseDelegate(CurrentFaction.Name);
                     flaghousepicked = false;
                 }
-                if (DrawFrame== DrawFrameEnum.Fame)
+                if (DrawFrame == DrawFrameEnum.Fame)
                 {
                     OnMapRegionChooseDelegate(lastanswer[2], lastanswer[1], lastanswer[0]);
                 }
