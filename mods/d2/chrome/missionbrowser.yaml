@@ -102,7 +102,32 @@ Background@MISSIONBROWSER_PANEL:
                             Y:0
                             Width:640
                             Height:400
-                           
+                            Children:
+                                Container@mentatstage
+                                    Width:640
+                                    Height:400
+                                    Visible:false
+                                    Children:
+                                        Label@mentatinfo
+                                            X:5*2
+                                            Y:1*2
+                                            Width:308
+                                            Height:25
+                                            Font: Small
+                                        Button@proceed
+                                            X:171*2
+                                            Y:170*2
+                                            Width:63*2
+                                            Height:23*2
+                                            Background:mentatbtnnext
+                                        Button@repeat
+                                            X:242*2
+                                            Y:170*2
+                                            Width:63*2
+                                            Height:23*2
+                                            Background:mentatbtnrepeat
+                                            
+                                   
 				ScrollPanel@MISSION_DESCRIPTION_PANEL:
 					Y: 337+73
 					Width: PARENT_RIGHT

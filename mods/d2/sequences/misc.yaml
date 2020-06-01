@@ -119,9 +119,17 @@ mentatoscreen:
 buttonmentatnext: 
     idle: MENTAT.ENG
         Frames: 6
+        
+buttonmentatnexthover: 
+    idle: MENTAT.ENG
+        Frames: 7
+        
 buttonmentatrepeat: 
     idle: MENTAT.ENG
         Frames: 8
+buttonmentatrepeathover: 
+    idle: MENTAT.ENG
+        Frames: 9
         
 housestitle: 
     idle: HERALD.ENG

@@ -33,8 +33,6 @@ namespace OpenRA.Mods.D2.Widgets
         private Sprite maproomSprite;
         private Sprite maproommaskSprite;
         private Sprite fameroomSprite;
-        private Sprite mentatbtnNextSprite;
-        private Sprite mentatbtnRepeatSprite;
         private SequenceProvider sp;
         private ITexture textemp;
         Sheet sh1;
@@ -80,8 +78,7 @@ namespace OpenRA.Mods.D2.Widgets
             maproommaskSprite = ChromeProvider.GetImage("maproommask", "background");
             fameroomSprite = ChromeProvider.GetImage("fame", "background");
 
-            mentatbtnNextSprite = ChromeProvider.GetImage("mentatbtnnext", "background");
-            mentatbtnRepeatSprite = ChromeProvider.GetImage("mentatbtnrepeat", "background");
+
             //тут такая механика.
             //используем DI и атрибут [ObjectCreator.UseCtor], тогда world будет заполнен . 
             //после идем в коллекцию Sequences , которая собирается из всех rules\sequences, где мы в misc.yaml прописали наш screen.cps
@@ -826,13 +823,14 @@ namespace OpenRA.Mods.D2.Widgets
                 DrawMentatSub(cLevel.Brief.SubBkgSequence, cLevel.Brief.SubBkgSequenceGroup, AnimationDirectionEnum.Repeat);
                 WidgetUtils.FillRectWithSprite(RenderBounds, mentatOrdosSprite, prbase); //отрисуем спрайт комнаты для карты
             }
-            DrawMentatSubButton();
+            //DrawMentatSubButton(); сделано через widget
         }
         public enum AnimationDirectionEnum
         {
             Repeat, Forward
         }
         int ratio = 2; //чтобы попасть в теже координаты, нужно учесть увеличение, относительно оригинального спрайта. ориг 320 на 200, а используется 640 на 400
+
         public void DrawMentatSub(string seqname, string subseqname, AnimationDirectionEnum AnimationDirection)
         {       //for wsa
 
@@ -841,6 +839,18 @@ namespace OpenRA.Mods.D2.Widgets
             Game.Renderer.SpriteRenderer.DrawSprite(AnimList[0].Image, new float3(RenderBounds.X+128* ratio, RenderBounds.Y+48* ratio, 0), 0, new float3(184* ratio, 112* ratio, 0));
         }
         public void SetupSubMentat(string seqname, string subseqname, AnimationDirectionEnum AnimationDirection)
+        {
+
+            Widget w = this.Get<ContainerWidget>("mentatstage");
+            w.Visible = true;
+            LabelWidget widgetMissionInfo = w.Get<LabelWidget>("mentatinfo");
+            widgetMissionInfo.GetText = () => { return AnimStringList[0].Text;  };
+            SetupSubMentat_Back(seqname, subseqname, AnimationDirection);
+            List<string> l = new List<string>() { "123", "456", "1234546" };
+            SetupSubMentat_MissionInfo(seqname, l, AnimationDirection);
+
+        }
+        public void SetupSubMentat_Back(string seqname, string subseqname, AnimationDirectionEnum AnimationDirection)
         {
             AnimList.Clear();
             Animation animation1 = new Animation(world, seqname);
@@ -855,6 +865,22 @@ namespace OpenRA.Mods.D2.Widgets
             }
             animation1.Tick(); //первый тик делаем тут
         }
+        public void SetupSubMentat_MissionInfo(string seqname, List<string> MissionInfoStrings, AnimationDirectionEnum AnimationDirection)
+        {
+            AnimStringList.Clear();
+            AnimationString animation1 = new AnimationString(world, seqname);
+            animation1.DefineTick = 2000;
+           AnimStringList.Add(animation1);
+            if (AnimationDirection == AnimationDirectionEnum.Forward)
+            {
+                animation1.Play(MissionInfoStrings);
+            }
+            if (AnimationDirection == AnimationDirectionEnum.Repeat)
+            {
+                animation1.PlayRepeating(MissionInfoStrings);
+            }
+            animation1.Tick(); //первый тик делаем тут
+        }
 
         public void DrawMentatSubButton()
         {
@@ -866,22 +892,32 @@ namespace OpenRA.Mods.D2.Widgets
             //нужно брать оригинал с тех же координат, что и маска.
             //маска должна лежать по координатам игрового мира. ПОэтому маска должна быть в отдельном текстуре размером с игровой мир, чтобы в шейдере
             //можно было ее использовать, но не рисовать.
-            Game.Renderer.SpriteRenderer.DrawSprite(mentatbtnNextSprite, new float3(RenderBounds.X + 171 * ratio, RenderBounds.Y + 170 * ratio, 0), 0, new float3(63 * ratio, 23 * ratio, 0));
-            Game.Renderer.SpriteRenderer.DrawSprite(mentatbtnRepeatSprite, new float3(RenderBounds.X + 242 * ratio, RenderBounds.Y + 170 * ratio, 0), 0, new float3(63 * ratio, 23 * ratio, 0));
+            //Game.Renderer.SpriteRenderer.DrawSprite(mentatbtnNextSprite, new float3(RenderBounds.X + 171 * ratio, RenderBounds.Y + 170 * ratio, 0), 0, new float3(63 * ratio, 23 * ratio, 0));
+            //Game.Renderer.SpriteRenderer.DrawSprite(mentatbtnRepeatSprite, new float3(RenderBounds.X + 242 * ratio, RenderBounds.Y + 170 * ratio, 0), 0, new float3(63 * ratio, 23 * ratio, 0));
         }
+
         public List<Animation> AnimList=new List<Animation>();
+        public List<AnimationString> AnimStringList = new List<AnimationString>();
+
         public void SendTickToAnimations()
         {
             foreach ( Animation a in AnimList)
             {
                 a.Tick();
             }
+            foreach (AnimationString a in AnimStringList)
+            {
+                a.Tick();
+            }
         }
+
         public enum DrawFrameEnum
         {
             Map,Houses,Fame,Mentat
         }
+
         public DrawFrameEnum DrawFrame = DrawFrameEnum.Houses;
+
         public override void Draw()
         {
             //тестовый код для debug framebuffer`а
@@ -917,24 +953,30 @@ namespace OpenRA.Mods.D2.Widgets
 
         public int AnimationStep = 5;
         bool flaghousepicked = false;
+
         public void ResetCampaign()
         {
             CurrentLevel = 1;
             //SwitchToMap = false;
             DrawFrame = DrawFrameEnum.Houses;
+            this.Get<ContainerWidget>("mentatstage").Visible = false;
             BindLevelOnMap(CurrentLevel);
+
         }
 
         public override void TickOuter()
         {
             newframe = true;
-           
-
-
             if (Clicked)
             {
+                if (DrawFrame == DrawFrameEnum.Mentat || DrawFrame == DrawFrameEnum.Fame) //так как не нужно вычислять через fb цвет, то для этогосостояния нечего делать- простовыходим.
+                {
+                    return;
+                }
+
                 Game.Renderer.PixelDumpRenderer.fb.ReBind((ITextureInternal)textemp);
                 Game.Renderer.SpriteRenderer.SetFrameBufferMaskMode(true);
+
                 if (DrawFrame == DrawFrameEnum.Map)
                 {
                     DrawMap();
@@ -943,14 +985,7 @@ namespace OpenRA.Mods.D2.Widgets
                 {
                     DrawHouses();
                 }
-                if (DrawFrame == DrawFrameEnum.Fame)
-                {
-                    DrawFame();
-                }
-                if (DrawFrame == DrawFrameEnum.Mentat)
-                {
-                    DrawMentat();
-                }
+
                 Game.Renderer.SpriteRenderer.Flush();
                 //Game.Renderer.PixelDumpRenderer.Flush();
                 lastanswer = ReadPixelUnderMouse();
@@ -1011,6 +1046,7 @@ namespace OpenRA.Mods.D2.Widgets
             }
             SendTickToAnimations();
         }
+
         public byte[] ReadPixelUnderMouse()
         {
             Size s = Game.Renderer.Resolution;

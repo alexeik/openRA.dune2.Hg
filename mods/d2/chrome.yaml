@@ -51,10 +51,17 @@ mentato: mentatoscreen
 mentatbtnnext: buttonmentatnext
     background : 0,0,63,23
         stretched: true
+mentatbtnnext-hover: buttonmentatnexthover
+    background : 0,0,63,23
+        stretched: true
+        
 mentatbtnrepeat: buttonmentatrepeat
     background : 0,0,63,23
         stretched: true
-    
+mentatbtnrepeat-hover: buttonmentatrepeathover
+    background : 0,0,63,23
+        stretched: true
+        
 dunemap: dunemapcps
     background : 0,0,320,200
         stretched: true

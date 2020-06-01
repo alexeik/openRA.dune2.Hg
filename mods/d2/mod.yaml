@@ -317,8 +317,8 @@ Fonts:
 		Font: common|FreeSans.ttf
 		Size:24
 	Small:
-		#Font: d2|dune2.otf
-		Font: common|FreeSans.ttf
+		Font: d2|dune2.otf
+		#Font: common|FreeSans.ttf
 		Size:12
 	Tiny:
 		#Font: d2|dune2.otf
