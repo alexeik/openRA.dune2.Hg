@@ -349,6 +349,10 @@ namespace OpenRA.Mods.D2.Widgets
                                         {
                                             br.SubBkgSequenceGroup = d.Value.Value;
                                         }
+                                        if (d.Key == "DbIndex")
+                                        {
+                                            br.DbIndex = FieldLoader.GetValue<int>("DbIndex", d.Value.Value); 
+                                        }
                                     }
                                     cl.Brief = br;
                                 }
@@ -839,7 +843,7 @@ namespace OpenRA.Mods.D2.Widgets
 
             Game.Renderer.SpriteRenderer.DrawSprite(AnimList[0].Image, new float3(RenderBounds.X + 128 * ratio, RenderBounds.Y + 48 * ratio, 0), 0, new float3(184 * ratio, 112 * ratio, 0));
         }
-        public void SetupSubMentat(string seqname, string subseqname, AnimationDirectionEnum AnimationDirection)
+        public void SetupSubMentat(string seqname, string subseqname, int dbIndex, AnimationDirectionEnum AnimationDirection)
         {
 
             Widget w = this.Get<ContainerWidget>("mentatstage");
@@ -851,7 +855,8 @@ namespace OpenRA.Mods.D2.Widgets
             SetupSubMentat_Back(seqname, subseqname, AnimationDirection);
 
             List<string> l;
-            l = TextDB["TEXTA.ENG"][4].Split('.').ToList<string>();
+            l = TextDB["TEXTA.ENG"][dbIndex].Split('.').ToList<string>();
+            l.RemoveAt(l.Count - 1);
             SetupSubMentat_MissionInfo(seqname, l, AnimationDirection);
 
         }
@@ -1120,7 +1125,7 @@ namespace OpenRA.Mods.D2.Widgets
                 }
                 if (DrawFrame == DrawFrameEnum.Mentat)
                 {
-                    SetupSubMentat(cLevel.Brief.SubBkgSequence, cLevel.Brief.SubBkgSequenceGroup, AnimationDirectionEnum.Repeat);
+                    SetupSubMentat(cLevel.Brief.SubBkgSequence, cLevel.Brief.SubBkgSequenceGroup,cLevel.Brief.DbIndex, AnimationDirectionEnum.Repeat);
                     OnMapRegionChooseDelegate(lastanswer[2], lastanswer[1], lastanswer[0]);
                 }
                 Clicked = false;

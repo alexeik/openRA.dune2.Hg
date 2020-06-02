@@ -115,6 +115,7 @@ Background@MISSIONBROWSER_PANEL:
                                             Height:50
                                             Font: BigBold
                                             WordWrap: true
+                                            TextColor:ffd689
                                         Button@proceed
                                             X:171*2
                                             Y:170*2

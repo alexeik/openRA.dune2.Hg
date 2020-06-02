@@ -156,6 +156,12 @@ mentata1lvl:
     play: HARVEST.WSA
         Length: *
         Tick: 333
+        
+mentata2lvl:
+    play: HEADQRTS.WSA
+        Length: *
+        Tick: 333
+        
 westwoodwsa:
     play: WESTWOOD.WSA
         Length: *

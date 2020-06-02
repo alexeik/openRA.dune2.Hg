@@ -39,6 +39,7 @@ namespace OpenRA.Mods.D2.Widgets
         public string Background;
         public string SubBkgSequence;
         public string SubBkgSequenceGroup;
+        public int DbIndex;
     }
     public class ReignRegion
     {

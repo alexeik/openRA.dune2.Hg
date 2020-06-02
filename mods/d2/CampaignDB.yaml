@@ -43,6 +43,7 @@ CampaignHead :
                 Background:mentata
                 SubBkgSequence:mentata1lvl
                 SubBkgSequenceGroup:play
+                DbIndex:4
         2:
             PlayersRegions:
                 atreides:
@@ -73,4 +74,7 @@ CampaignHead :
                     Text:1
                         Kill everyone
                 Background:mentata
+                SubBkgSequence:mentata2lvl
+                SubBkgSequenceGroup:play
+                DbIndex:8
 
