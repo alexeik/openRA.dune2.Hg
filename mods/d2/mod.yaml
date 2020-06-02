@@ -315,7 +315,7 @@ Fonts:
 	BigBold:
 		Font: d2|dune2.otf
 		#Font: common|FreeSans.ttf
-		Size:20
+		Size:25
 	Small:
 		#Font: d2|dune2.otf
 		Font: common|FreeSans.ttf

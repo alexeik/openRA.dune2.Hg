@@ -845,7 +845,9 @@ namespace OpenRA.Mods.D2.Widgets
             Widget w = this.Get<ContainerWidget>("mentatstage");
             w.Visible = true;
             LabelWidget widgetMissionInfo = w.Get<LabelWidget>("mentatinfo");
+
             widgetMissionInfo.GetText = () => { return AnimStringList[0].Text; };
+
             SetupSubMentat_Back(seqname, subseqname, AnimationDirection);
 
             List<string> l;
@@ -910,6 +912,7 @@ namespace OpenRA.Mods.D2.Widgets
             AnimationString animation1 = new AnimationString(world, seqname);
             animation1.DefineTick = 40*60* 3;
             AnimStringList.Add(animation1);
+
             if (AnimationDirection == AnimationDirectionEnum.Forward)
             {
                 animation1.Play(MissionInfoStrings);

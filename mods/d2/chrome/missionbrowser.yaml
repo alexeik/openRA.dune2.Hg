@@ -111,9 +111,10 @@ Background@MISSIONBROWSER_PANEL:
                                         Label@mentatinfo
                                             X:5*2
                                             Y:1*2
-                                            Width:200
-                                            Height:100
+                                            Width:600
+                                            Height:50
                                             Font: BigBold
+                                            WordWrap: true
                                         Button@proceed
                                             X:171*2
                                             Y:170*2
