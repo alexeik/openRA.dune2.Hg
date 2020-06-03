@@ -370,7 +370,7 @@ namespace OpenRA.Mods.D2.Widgets
             base.Initialize(args);
             if (Game.Renderer.PixelDumpRenderer.fbcreated == false)
             {
-                Game.Renderer.PixelDumpRenderer.Setup(new Size(Game.Renderer.Resolution.Width, Game.Renderer.Resolution.Height)); //widget должен быть в пределах 1024 на 512 пикселей
+                Game.Renderer.PixelDumpRenderer.Setup(new Size(Game.Renderer.Resolution.Width, Game.Renderer.Resolution.Height)); 
 
                 PrepTextures();
             }
