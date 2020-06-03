@@ -16,6 +16,8 @@ Visibility: MissionSelector
 
 Categories: Mission
 
+LoadResourceLayer: False
+
 Players:
 	PlayerReference@Neutral:
 		Name: Neutral
