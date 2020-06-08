@@ -389,6 +389,10 @@ namespace OpenRA.Mods.D2.Widgets
                 mapchamord = ChromeProvider.GetImage("patched", "mapchamord");
                 mapchamhark = ChromeProvider.GetImage("patched", "mapchamhark");
                 mapchamatr = ChromeProvider.GetImage("patched", "mapchamatr");
+
+                mentatAtrSprite = ChromeProvider.GetImage("mentata", "background");
+                mentatHarkSprite = ChromeProvider.GetImage("mentath", "background");
+                mentatOrdosSprite = ChromeProvider.GetImage("mentato", "background");
             }
         }
         void LoadPalette(ImmutablePalette cpspalette, string customname)
