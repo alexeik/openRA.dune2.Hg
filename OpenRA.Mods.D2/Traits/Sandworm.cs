@@ -10,8 +10,11 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using OpenRA;
 using OpenRA.Mods.Common.Traits;
+using OpenRA.Mods.D2.Activities;
 using OpenRA.Primitives;
 using OpenRA.Traits;
 
@@ -34,13 +37,16 @@ namespace OpenRA.Mods.D2.Traits
 		public override object Create(ActorInitializer init) { return new Sandworm(init.Self, this); }
 	}
 
-	class Sandworm : Wanders, ITick, INotifyActorDisposing
+	class Sandworm : Wanders, ITick, INotifyActorDisposing, INotifyBecomingIdle
 	{
 		public readonly SandwormInfo WormInfo;
 
 		readonly ActorSpawnManager manager;
 		readonly Mobile mobile;
 		readonly AttackBase attackTrait;
+		readonly ResourceLayer resLayer;
+		readonly ResourceClaimLayer claimLayer;
+		readonly Dictionary<ResourceTypeInfo, int> contents = new Dictionary<ResourceTypeInfo, int>();
 
 		public bool IsMovingTowardTarget { get; private set; }
 
@@ -56,16 +62,51 @@ namespace OpenRA.Mods.D2.Traits
 			mobile = self.Trait<Mobile>();
 			attackTrait = self.Trait<AttackBase>();
 			//manager = self.World.WorldActor.Trait<ActorSpawnManager>();
+			resLayer = self.World.WorldActor.Trait<ResourceLayer>();
+			claimLayer = self.World.WorldActor.Trait<ResourceClaimLayer>();
+		}
+		public bool CanHarvestCell(Actor self, CPos cell)
+		{
+			// Resources only exist in the ground layer
+			if (cell.Layer != 0)
+				return false;
+
+			var resType = resLayer.GetResource(cell);
+			if (resType == null)
+				return false;
+
+			// Can the harvester collect this kind of resource?
+			//return Info.Resources.Contains(resType.Info.Type);
+			return true;
+		}
+
+
+		public void AcceptResource(Actor self, ResourceType type)
+		{
+			if (!contents.ContainsKey(type.Info))
+				contents[type.Info] = 1;
+			else
+				contents[type.Info]++;
+
+			//UpdateCondition(self);
 		}
 
 		public override void DoAction(Actor self, CPos targetCell)
 		{
+
 			IsMovingTowardTarget = false;
+
+
+
+			self.QueueActivity(new FindAndEatResources(self));
+
+			return;
+			if (IsMovingTowardTarget)
+				return;
 
 			RescanForTargets(self);
 
-			if (IsMovingTowardTarget)
-				return;
+			
 
 			self.QueueActivity(mobile.MoveWithinRange(Target.FromCell(self.World, targetCell, SubCell.Any), WDist.FromCells(1), targetLineColor: Color.Red));
 		}
@@ -76,6 +117,28 @@ namespace OpenRA.Mods.D2.Traits
 				return;
 
 			RescanForTargets(self);
+		}
+
+		void EatSpice()
+		{
+			FindSpiceSpawn();
+			MoveToSpice(); // insert Activity
+
+		}
+
+		private void MoveToSpice()
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void OnBecomingIdle(Actor self)
+		{
+			//используется, чтобы не войти в TickIdle цикл. Где уже будет поиск Activity по другим правилам, чем в Tick
+		}
+
+		private void FindSpiceSpawn()
+		{
+			throw new NotImplementedException();
 		}
 
 		void RescanForTargets(Actor self)
