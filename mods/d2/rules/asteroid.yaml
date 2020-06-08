@@ -26,27 +26,13 @@ asteroid:
 	Targetable@AIRBORNE:
 		TargetTypes: Air
 		RequiresCondition: airborne
-	SpawnActorOnDeath:
-		Actor: asteroid.husk
-		RequiresCondition: airborne
-		OwnerType: InternalName
-		EffectiveOwnerFromOwner: true
 	RenderSprites:
 		Image: asteroid
         Palette: asteroidpal
     FallsToEarthAsteroid:
         Explosion:BloomExplosion
         Spins: False
-        Velocity:43
+        Velocity:20
+        Moves: True
     
-asteroid.husk:
-	Inherits: ^AircraftHusk
-	Tooltip:
-		Name: Carryall
-	Aircraft:
-		TurnSpeed: 4
-		Speed: 144
-		CanHover: True
-		VTOL: true
-	RenderSprites:
-		Image: carryall
+
