@@ -34,8 +34,8 @@ CampaignHead :
             LevelDescription: LevelDescription
             PickRegions:
                 170,85,0:scena001
-                170,170,170:scena002
-                170,0,0:scena003
+                170,170,170:scena001
+                170,0,0:scena001
             Brief:
                 Texts:
                     Text:1
@@ -66,9 +66,9 @@ CampaignHead :
                         255,255,85
             LevelDescription: LevelDescription
             PickRegions:
-                142,142,109:scena001
+                142,142,109:scena002
                 125,125,97:scena002
-                101,101,77:scena003
+                101,101,77:scena002
             Brief:
                 Texts:
                     Text:1
