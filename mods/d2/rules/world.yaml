@@ -153,7 +153,7 @@ World:
 	ActorSpawnManager:
 		Actors: sandworm
         Maximum: 5
-	ActorSpawnManager@w1:
+	AsteroidSpawnManager:
 		Actors: asteroid    
         RemoveActorBeforeSpawn: true
         SpawnInterval: 500
