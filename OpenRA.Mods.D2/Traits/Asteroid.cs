@@ -61,6 +61,7 @@ namespace OpenRA.Mods.Common.D2.Traits
 		CPos? landingCell;
 
 		public WDist LandAltitude { get; private set; }
+		public CPos CrushLocation { get; private set; }
 
 		public static WPos GroundPosition(Actor self)
 		{
@@ -77,6 +78,8 @@ namespace OpenRA.Mods.Common.D2.Traits
 		WPos cachedPosition;
 		int cachedFacing;
 		bool? landNow;
+		private CPos EndLocation;
+		private CPos StartLocation;
 
 		public Asteroid(ActorInitializer init, AsteroidInfo info)
 		{
@@ -84,10 +87,17 @@ namespace OpenRA.Mods.Common.D2.Traits
 			self = init.Self;
 
 			if (init.Contains<LocationInit>())
+			{
 				SetPosition(self, init.Get<LocationInit, CPos>());
-
+				StartLocation = init.Get<LocationInit, CPos>();
+			}
 			if (init.Contains<CenterPositionInit>())
 				SetPosition(self, init.Get<CenterPositionInit, WPos>());
+			if (init.Contains<LocationOfCrush>())
+				CrushLocation= init.Get<LocationOfCrush, CPos>();
+
+			if (init.Contains<LocationOfEnd>())
+				EndLocation = init.Get<LocationOfEnd, CPos>();
 
 			Facing = init.Contains<FacingInit>() ? init.Get<FacingInit, int>() : Info.InitialFacing;
 			LandAltitude = info.LandAltitude;
@@ -453,8 +463,10 @@ namespace OpenRA.Mods.Common.D2.Traits
 			{
 
 			}
-
-			if (self.Location== new CPos(70, 70))
+			WVec distwhencrush;
+			distwhencrush = self.World.Map.CenterOfCell(CrushLocation) - self.World.Map.CenterOfCell(self.Location);
+			//self.World.Map.CellContaining(distwhencrush);
+			if (self.Location.X== CrushLocation.X)
 			{
 				FallsToEarth i2;
 				i2=self.Trait<FallsToEarth>();
@@ -480,7 +492,7 @@ namespace OpenRA.Mods.Common.D2.Traits
 
 				//WPos? pos1;
 				//pos1 =self.World.Map.CenterOfCell(new CPos(100, 72));
-				self.QueueActivity(new D2.Activities.Fly(self, Target.FromCell(self.World,new CPos(70,70))));
+				self.QueueActivity(new D2.Activities.Fly(self, Target.FromCell(self.World,CrushLocation)));
 			}
 		}
 

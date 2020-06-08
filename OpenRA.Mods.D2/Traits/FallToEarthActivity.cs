@@ -34,6 +34,7 @@ namespace OpenRA.Mods.Common.D2.Activities
 				acceleration = self.World.SharedRandom.Next(2) * 2 - 1;
 		}
 
+		//параллельно работает с другими activity 
 		public override Activity Tick(Actor self)
 		{
 			if (self.World.Map.DistanceAboveTerrain(self.CenterPosition).Length <= 0)
