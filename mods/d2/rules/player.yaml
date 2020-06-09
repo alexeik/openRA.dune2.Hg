@@ -30,6 +30,7 @@ Player:
 		CashTickDownNotification: CashTickDown
 	DeveloperMode:
 		CheckboxDisplayOrder: 7
+        CheckboxEnabled: true
 	BaseAttackNotifier:
 	Shroud:
 		FogCheckboxDisplayOrder: 3
