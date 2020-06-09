@@ -4,6 +4,7 @@ using OpenRA.Graphics;
 using OpenRA.Mods.Common.Widgets;
 using OpenRA.Mods.D2.FileFormats;
 using OpenRA.Mods.D2.SpriteLoaders;
+using OpenRA.Network;
 using OpenRA.Platforms.Default;
 using OpenRA.Primitives;
 using OpenRA.Traits;
@@ -119,22 +120,41 @@ namespace OpenRA.Mods.D2.Widgets
             UpLevelDelegate = UpLevel;
             DownLevelDelegate = DownLevel;
 
-            if (world.IsGameOver)
+            if (world.IsGameOver) //вызов окна компании после любого исхода миссии из компании
             {
-                CurrentLevel = orderManager.LobbyInfo.GlobalSettings.CampaignLevel;
-                CurrentFaction = world.LocalPlayer.Faction;
-                UpLevel();
-                //SwitchToMap = true;
-                DrawFrame = DrawFrameEnum.Map;
-
+                LogicLocalPlayerAfter(orderManager);
             }
             else
             {
-                BindLevelOnMap(1);
+                LogicLocalPlayerStartCampaign();
             }
+
             TextDB.Add("TEXTA.ENG",LoadTextDB("TEXTA.ENG"));
 
 
+        }
+
+        public void LogicLocalPlayerStartCampaign()
+        {
+            BindLevelOnMap(1);
+        }
+        public void LogicLocalPlayerAfter(OrderManager om)
+        {
+
+            if (world.LocalPlayer.WinState == WinState.Won)
+            {
+                CurrentLevel = om.LobbyInfo.GlobalSettings.CampaignLevel;
+                CurrentFaction = world.LocalPlayer.Faction;
+                UpLevel();
+                DrawFrame = DrawFrameEnum.Map;
+            }
+            if (world.LocalPlayer.WinState == WinState.Lost)
+            {
+                CurrentLevel = om.LobbyInfo.GlobalSettings.CampaignLevel;
+                CurrentFaction = world.LocalPlayer.Faction;
+                BindLevelOnMap(CurrentLevel);
+                DrawFrame = DrawFrameEnum.Map;
+            }
         }
         public void UpLevel()
         {
