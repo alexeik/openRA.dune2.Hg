@@ -71,7 +71,7 @@ Container@PLAYER_WIDGETS:
 					Width: 25
 					Height: 274
         Container@D2GameScreenUI
-            ClickThrough: false
+            ClickThrough: true
             Logic:D2GameScreenLogic
             Children:
                 D2GameScreen@dune2ui:
@@ -91,21 +91,6 @@ Container@PLAYER_WIDGETS:
                     Y:8
                     Width:118
                     Height:15
-                WorldButton@REPAIR_BUTTON:
-                    Logic: RepairOrderButtonLogic, AddFactionSuffixLogic
-                    X: WINDOW_RIGHT-50
-                    Width: 27
-                    Height: 34
-                    Background: dune2btnmentat
-                    Key: Repair
-                    TooltipText: Repair
-                    TooltipContainer: TOOLTIP_CONTAINER
-                    VisualHeight: 0
-                    Children:
-                        Image@ICON:
-                            X: 6
-                            Y: 5
-                            ImageCollection: order-repair
                 Button@mentat
                     X:WINDOW_RIGHT-474
                     Y:8
@@ -124,17 +109,48 @@ Container@PLAYER_WIDGETS:
                     Width:640
                     Height:400
                     Background:mentata
+                WorldButton@REPAIR_BUTTON:
+                    Logic: RepairOrderButtonLogic
+                    X: WINDOW_RIGHT-50
+                    Y:0
+                    Key: Repair
+                    TooltipText: Repair
+                    TooltipContainer: TOOLTIP_CONTAINER
+                    Width: 34
+                    Height: 27 
+                    LeftMargin:0
+                    RightMargin:0
+                    Children:
+                        Image@ICON:
+                            ImageCollection: order-repair    
+                MenuButton@DEBUG_BUTTON:
+                    Logic: MenuButtonsChromeLogic
+                    X: 4
+                    Width: 34
+                    Height: 35
+                    Background:
+                    Key: escape Shift
+                    TooltipText: Debug Menu
+                    TooltipContainer: TOOLTIP_CONTAINER
+                    DisableWorldSounds: true
+                    VisualHeight: 0
+                    Children:
+                        Image@ICON:
+                            X: 0
+                            Y: 0
+                            ImageCollection: order-icons
+                            ImageName: debug
 		Container@ACTOR_INFO:
 			Logic: D2IngameActorInfoDisplayLogic
 			X: WINDOW_RIGHT - 218
-			Y: 19
+			Y: 31
 			Width: 218
 			Height: 256
 			ClickThrough: false
 			Children:
 				D2Panel@PANEL:
 					X: 0
-					Y: 12
+					Y: 0
 					Width: 218
 					Height: 256
 				Label@NAME:
@@ -195,3 +211,4 @@ Container@PLAYER_WIDGETS:
 					Width: 88
 					Height: 16
 					Visible: false
+        
