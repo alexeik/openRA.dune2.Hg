@@ -62,6 +62,8 @@ namespace OpenRA.Mods.D2.Widgets
         public byte[] lastanswer;
         private ModData modData;
         private World world;
+        public string CampaignName;
+
         public Dictionary<string, List<string>> TextDB=new Dictionary<string, List<string>>();
         /// <summary>
         /// Если использовать [ObjectCreator.UseCtor] , то можно использовать DI для инициализации аргументов конструктора.
@@ -106,11 +108,12 @@ namespace OpenRA.Mods.D2.Widgets
 
             LoadData();
 
-            float3 cc1 = CampaignData.Players[0].RegionColor;
+
+            float3 cc1 = CurrentCampaignData.Players[0].RegionColor;
             Layer1Color = new float[4] { cc1.X / 255, cc1.Y / 255, cc1.Z / 255, 1 };
-            cc1 = CampaignData.Players[1].RegionColor;
+            cc1 = CurrentCampaignData.Players[1].RegionColor;
             Layer2Color = new float[4] { cc1.X / 255, cc1.Y / 255, cc1.Z / 255, 1 };
-            cc1 = CampaignData.Players[2].RegionColor;
+            cc1 = CurrentCampaignData.Players[2].RegionColor;
             Layer3Color = new float[4] { cc1.X / 255, cc1.Y / 255, cc1.Z / 255, 1 };
 
 
@@ -120,12 +123,15 @@ namespace OpenRA.Mods.D2.Widgets
             UpLevelDelegate = UpLevel;
             DownLevelDelegate = DownLevel;
 
+          
+
             if (world.IsGameOver) //вызов окна компании после любого исхода миссии из компании
             {
-                LogicLocalPlayerAfter(orderManager);
+                LogicNextStepAfterGameOver(orderManager);
             }
             else
             {
+                SetCampaignWidgetState();// тут, так как это просто заход в Missions кнопку. Нужно дать начать с начала или продолжить кампанию.
                 LogicLocalPlayerStartCampaign();
             }
 
@@ -133,12 +139,31 @@ namespace OpenRA.Mods.D2.Widgets
 
 
         }
+        public void SetCampaignWidgetState()
+        {
+            //new campaign or continue present
+            bool flagnew=true;
+            if (Game.Settings.CampSavePoint.CampaignLevel!=0)
+            {
+                flagnew = false;
+                //load data from Game.Settings
+                CurrentLevel = Game.Settings.CampSavePoint.CampaignLevel ;
+                CampaignName = Game.Settings.CampSavePoint.CampaignNameYaml;
+                string factionname = CampaignData.Where(f => f.CampaignName == CampaignName).ToList()[0].CampaignForFractionName;
+                CurrentFaction = world.Map.Rules.Actors["world"].TraitInfos<FactionInfo>().Where(f => f.InternalName== factionname).ToList()[0];
+                DrawFrame = DrawFrameEnum.Map;
+            }
+            if (flagnew)
+            {
+                //ничего не делаем. ждем пока пользователь выберет кампанию(в дюне это три штуки)
+            }
 
+        }
         public void LogicLocalPlayerStartCampaign()
         {
-            BindLevelOnMap(1);
+            BindLevelOnMap(CurrentLevel);
         }
-        public void LogicLocalPlayerAfter(OrderManager om)
+        public void LogicNextStepAfterGameOver(OrderManager om)
         {
 
             if (world.LocalPlayer.WinState == WinState.Won)
@@ -147,6 +172,12 @@ namespace OpenRA.Mods.D2.Widgets
                 CurrentFaction = world.LocalPlayer.Faction;
                 UpLevel();
                 DrawFrame = DrawFrameEnum.Map;
+
+                //save progress to Game.Settings for this Try. CampTry:Id+ Progress
+                Game.Settings.CampSavePoint.CampaignLevel = CurrentLevel;
+                Game.Settings.CampSavePoint.TryID = 1;
+                Game.Settings.Save();
+                //Game.Settings.CampSavePoint.CampaignNameYaml = "";
             }
             if (world.LocalPlayer.WinState == WinState.Lost)
             {
@@ -158,7 +189,7 @@ namespace OpenRA.Mods.D2.Widgets
         }
         public void UpLevel()
         {
-            if (CurrentLevel + 1 >= 1 && CurrentLevel + 1 <= CampaignData.Levels.Count)
+            if (CurrentLevel + 1 >= 1 && CurrentLevel + 1 <= CurrentCampaignData.Levels.Count)
             {
                 CurrentLevel += 1;
                 BindLevelOnMap(CurrentLevel);
@@ -166,7 +197,7 @@ namespace OpenRA.Mods.D2.Widgets
         }
         public void DownLevel()
         {
-            if (CurrentLevel - 1 >= 1 && CurrentLevel - 1 <= CampaignData.Levels.Count)
+            if (CurrentLevel - 1 >= 1 && CurrentLevel - 1 <= CurrentCampaignData.Levels.Count)
             {
                 CurrentLevel -= 1;
                 BindLevelOnMap(CurrentLevel);
@@ -186,7 +217,7 @@ namespace OpenRA.Mods.D2.Widgets
                 }
             }
             CurrentLevel = Level;
-            CampaignData.CurrentLevel = CurrentLevel;
+            CurrentCampaignData.CurrentLevel = CurrentLevel;
             Level -= 1;
             if (DrawTextDelegate != null)
             {
@@ -198,7 +229,7 @@ namespace OpenRA.Mods.D2.Widgets
             Layer3KeyColors = new float[10 * 4];
             int k = 0;
 
-            Dictionary<float3, string> pr = CampaignData.Levels[Level].PickRegions;
+            Dictionary<float3, string> pr = CurrentCampaignData.Levels[Level].PickRegions;
 
             foreach (var r in pr)
             {
@@ -215,7 +246,7 @@ namespace OpenRA.Mods.D2.Widgets
 
 
 
-            List<ReignRegion> rr = CampaignData.Levels[Level].PlayersRegions[0].ReignRegions;
+            List<ReignRegion> rr = CurrentCampaignData.Levels[Level].PlayersRegions[0].ReignRegions;
             k = 0;
 
             foreach (ReignRegion r in rr)
@@ -230,7 +261,7 @@ namespace OpenRA.Mods.D2.Widgets
             }
 
 
-            rr = CampaignData.Levels[Level].PlayersRegions[1].ReignRegions;
+            rr = CurrentCampaignData.Levels[Level].PlayersRegions[1].ReignRegions;
             k = 0;
 
             foreach (ReignRegion r in rr)
@@ -243,7 +274,7 @@ namespace OpenRA.Mods.D2.Widgets
                     Layer2KeyColors[k + 3] = 1;
                 }
             }
-            rr = CampaignData.Levels[Level].PlayersRegions[2].ReignRegions;
+            rr = CurrentCampaignData.Levels[Level].PlayersRegions[2].ReignRegions;
             k = 0;
 
             foreach (ReignRegion r in rr)
@@ -257,7 +288,8 @@ namespace OpenRA.Mods.D2.Widgets
                 }
             }
         }
-        public CampaignData CampaignData;
+        public List<CampaignData> CampaignData;
+        public CampaignData CurrentCampaignData;
         public void ShowBrief()
         {
 
@@ -265,7 +297,10 @@ namespace OpenRA.Mods.D2.Widgets
 
         public void LoadData()
         {
-            CampaignData = new CampaignData();
+            CampaignData = new List<CampaignData>();
+            CampaignData tempcd = new CampaignData();
+
+            CampaignData.Add(tempcd);
 
             List<MiniYamlNode> topnode;
             topnode = MiniYaml.Merge(modData.Manifest.CampaignDB.Select(
@@ -276,26 +311,32 @@ namespace OpenRA.Mods.D2.Widgets
                 {
                     if (j.Key == "CampaignName")
                     {
-                        CampaignData.CampaignName = j.Value.Value;
+                        tempcd.CampaignName = j.Value.Value;
                     }
                     if (j.Key == "CampaignDesc")
                     {
-                        CampaignData.CampaignDesc = j.Value.Value;
+                        tempcd.CampaignDesc = j.Value.Value;
                     }
                     if (j.Key == "CampaignForFractionCode")
                     {
-                        CampaignData.CampaignForFractionCode = FieldLoader.GetValue<float3>("CampaignForFractionCode", j.Value.Value);
+                        tempcd.CampaignForFractionCode = FieldLoader.GetValue<float3>("CampaignForFractionCode", j.Value.Value);
 
                     }
+                    if (j.Key == "CampaignForFractionName")
+                    {
+                        tempcd.CampaignForFractionName = FieldLoader.GetValue<string>("CampaignForFractionName", j.Value.Value);
+
+                    }
+
                     if (j.Key == "Players")
                     {
-                        CampaignData.Players = new List<CampaignPlayers>();
+                        tempcd.Players = new List<CampaignPlayers>();
                         foreach (MiniYamlNode k in j.Value.Nodes)
                         {
                             if (selectableFactions.Select(a => a.InternalName == k.Key).Any())
                             {
                                 CampaignPlayers item = new CampaignPlayers();
-                                CampaignData.Players.Add(item);
+                                tempcd.Players.Add(item);
                                 item.Color = FieldLoader.GetValue<float3>("CampaignPlayersColor", k.Value.Value);
                                 item.Name = k.Key;
                                 item.RegionColor = FieldLoader.GetValue<float3>("CampaignPlayersRegionColor", k.Value.Nodes[0].Value.Value);
@@ -305,11 +346,11 @@ namespace OpenRA.Mods.D2.Widgets
                     }
                     if (j.Key == "Levels")
                     {
-                        CampaignData.Levels = new List<CampaignLevel>();
+                        tempcd.Levels = new List<CampaignLevel>();
                         foreach (MiniYamlNode k in j.Value.Nodes)
                         {
                             CampaignLevel cl = new CampaignLevel();
-                            CampaignData.Levels.Add(cl);
+                            tempcd.Levels.Add(cl);
                             cl.Num = FieldLoader.GetValue<int>("CampaignLevelNum", k.Key);
 
                             foreach (MiniYamlNode h in k.Value.Nodes)
@@ -383,7 +424,7 @@ namespace OpenRA.Mods.D2.Widgets
 
             }
             // = MiniYaml.FromString(modData.Manifest.CampaignDB.ToString());
-
+            CurrentCampaignData = CampaignData[0];
         }
         public override void Initialize(WidgetArgs args)
         {
@@ -831,7 +872,7 @@ namespace OpenRA.Mods.D2.Widgets
             }
             // Game.Renderer.Flush(); //нужен, так как текстура используется внешняя и на один раз, ниже она уже замениться другой dunergnT
         }
-        public CampaignLevel cLevel { get { return CampaignData.Levels[CurrentLevel - 1]; } set { } }
+        public CampaignLevel cLevel { get { return CurrentCampaignData.Levels[CurrentLevel - 1]; } set { } }
 
         public void DrawMentat()
         {
@@ -1074,9 +1115,33 @@ namespace OpenRA.Mods.D2.Widgets
 
         }
 
+        public void DrawFrameBufferForFeedback()
+        {
+            Game.Renderer.PixelDumpRenderer.fb.ReBind((ITextureInternal)textemp);
+            Game.Renderer.SpriteRenderer.SetFrameBufferMaskMode(true);
+
+            if (DrawFrame == DrawFrameEnum.Map)
+            {
+                DrawMap();
+            }
+            if (DrawFrame == DrawFrameEnum.Houses)
+            {
+                DrawHouses();
+
+            }
+
+            Game.Renderer.SpriteRenderer.Flush();
+            //Game.Renderer.PixelDumpRenderer.Flush();
+            lastanswer = ReadPixelUnderMouse();
+
+            Game.Renderer.SpriteRenderer.SetFrameBufferMaskMode(false);
+            Game.Renderer.PixelDumpRenderer.fb.Unbind();
+        }
         public override void TickOuter()
         {
+            //DrawFrame изначально установлен на Houses.
             newframe = true;
+
             if (Clicked)
             {
                 if (DrawFrame == DrawFrameEnum.Mentat || DrawFrame == DrawFrameEnum.Fame) //так как не нужно вычислять через fb цвет, то для этогосостояния нечего делать- простовыходим.
@@ -1084,25 +1149,8 @@ namespace OpenRA.Mods.D2.Widgets
                     return;
                 }
 
-                Game.Renderer.PixelDumpRenderer.fb.ReBind((ITextureInternal)textemp);
-                Game.Renderer.SpriteRenderer.SetFrameBufferMaskMode(true);
 
-                if (DrawFrame == DrawFrameEnum.Map)
-                {
-                    DrawMap();
-                }
-                if (DrawFrame == DrawFrameEnum.Houses)
-                {
-                    DrawHouses();
-                }
-
-                Game.Renderer.SpriteRenderer.Flush();
-                //Game.Renderer.PixelDumpRenderer.Flush();
-                lastanswer = ReadPixelUnderMouse();
-
-                Game.Renderer.SpriteRenderer.SetFrameBufferMaskMode(false);
-                Game.Renderer.PixelDumpRenderer.fb.Unbind();
-
+                DrawFrameBufferForFeedback();
 
                 //int r, g, b;
                 //r = lastanswer[2];
@@ -1110,6 +1158,7 @@ namespace OpenRA.Mods.D2.Widgets
                 //b = lastanswer[0];
 
                 float3 feedbackcolor = new float3(lastanswer[2], lastanswer[1], lastanswer[0]);
+
                 if (DrawFrame == DrawFrameEnum.Map)
                 {
                     OnMapRegionChooseDelegate(lastanswer[2], lastanswer[1], lastanswer[0]);
@@ -1118,23 +1167,18 @@ namespace OpenRA.Mods.D2.Widgets
 
                 if (DrawFrame == DrawFrameEnum.Houses)
                 {
-                    if (CampaignData.Players[0].Color == feedbackcolor)
-                    {
-                        CurrentFaction = selectableFactions.Where(f => f.InternalName == CampaignData.Players[0].Name).First();
-                        flaghousepicked = true;
-                    }
-                    if (CampaignData.Players[1].Color == feedbackcolor)
-                    {
-                        CurrentFaction = selectableFactions.Where(f => f.InternalName == CampaignData.Players[1].Name).First();
-                        flaghousepicked = true;
-                    }
-                    if (CampaignData.Players[2].Color == feedbackcolor)
-                    {
-                        CurrentFaction = selectableFactions.Where(f => f.InternalName == CampaignData.Players[2].Name).First();
-                        flaghousepicked = true;
-                    }
 
+                    CurrentCampaignData= CampaignData.Where(f => f.CampaignForFractionCode == feedbackcolor).ToList<CampaignData>()[0];
 
+                    CurrentFaction = selectableFactions.Where(f => f.InternalName == CurrentCampaignData.CampaignForFractionName).First();
+
+                   
+                    Game.Settings.CampSavePoint.CampaignNameYaml = CurrentCampaignData.CampaignName; //поле содержит имя компании, а у нее в данных находится фракция
+
+                    CampaignName = Game.Settings.CampSavePoint.CampaignNameYaml;
+                   
+                    flaghousepicked = true;
+                    //нужно сохранить выбор фракции
                 }
                 if (flaghousepicked)
                 {
@@ -1142,6 +1186,7 @@ namespace OpenRA.Mods.D2.Widgets
                     DrawFrame = DrawFrameEnum.Map;
                     OnHouseChooseDelegate(CurrentFaction.Name);
                     flaghousepicked = false;
+                    
                 }
                 if (DrawFrame == DrawFrameEnum.Fame)
                 {

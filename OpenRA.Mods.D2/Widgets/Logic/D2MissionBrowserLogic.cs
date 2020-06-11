@@ -43,7 +43,7 @@ namespace OpenRA.Mods.D2.Widgets.Logic
 		readonly ScrollPanelWidget missionList;
 		readonly ScrollItemWidget headerTemplate;
 		readonly ScrollItemWidget template;
-
+		public List<MapPreview> allPreviews;
 		MapPreview selectedMap;
 		PlayingVideo playingVideo;
 
@@ -100,7 +100,7 @@ namespace OpenRA.Mods.D2.Widgets.Logic
 			CampaignWidget.DrawTextDelegate = OnShowUserHelp;
 			CampaignWidget.OnExit = onExit;
 
-			var allPreviews = new List<MapPreview>();
+			allPreviews = new List<MapPreview>();
 			missionList.RemoveChildren();
 
 			// Add a group for each campaign
@@ -400,10 +400,10 @@ namespace OpenRA.Mods.D2.Widgets.Logic
 				orders.Add(Order.Command("option difficulty {0}".F(difficulty)));
 
 			orders.Add(Order.Command("option gamespeed {0}".F(gameSpeed)));
-			orders.Add(Order.Command("setcampaign {0} {1}".F(CampaignWidget.CampaignData.CampaignName, CampaignWidget.CampaignData.CurrentLevel)));
+			orders.Add(Order.Command("setcampaign {0} {1}".F(CampaignWidget.CurrentCampaignData.CampaignName, CampaignWidget.CurrentCampaignData.CurrentLevel)));
 			orders.Add(Order.Command("option explored True".F(Session.ClientState.Ready)));
 			orders.Add(Order.Command("state {0}".F(Session.ClientState.Ready)));
-
+			
 			var missionData = selectedMap.Rules.Actors["world"].TraitInfoOrDefault<MissionDataInfo>();
 			if (1==2 && missionData != null && missionData.StartVideo != null && modData.DefaultFileSystem.Exists(missionData.StartVideo))
 			{
@@ -411,11 +411,11 @@ namespace OpenRA.Mods.D2.Widgets.Logic
 				fullscreenVideoPlayer.Visible = true;
 				PlayVideo(fsPlayer, missionData.StartVideo, PlayingVideo.GameStart, () =>
 				{
-					Game.CreateAndStartLocalCampaignServer(selectedMap.Uid, orders, CampaignWidget.CampaignData.CampaignName, CampaignWidget.CampaignData.CurrentLevel);
+					Game.CreateAndStartLocalCampaignServer(selectedMap.Uid, orders, CampaignWidget.CurrentCampaignData.CampaignName, CampaignWidget.CurrentCampaignData.CurrentLevel);
 				});
 			}
 			else
-				Game.CreateAndStartLocalCampaignServer(selectedMap.Uid, orders, CampaignWidget.CampaignData.CampaignName, CampaignWidget.CampaignData.CurrentLevel);
+				Game.CreateAndStartLocalCampaignServer(selectedMap.Uid, orders, CampaignWidget.CurrentCampaignData.CampaignName, CampaignWidget.CurrentCampaignData.CurrentLevel);
 		}
 
 		public void OnHouseChoose(string housename)
@@ -438,24 +438,29 @@ namespace OpenRA.Mods.D2.Widgets.Logic
 		}
 		public void OnMapRegionChoose(int r, int g, int b)
 		{
+			//selectedMap = allPreviews.Where(f => f.Title == "scene002").ToList()[0];
+			int lev = CampaignWidget.CurrentCampaignData.CurrentLevel;
+			string mapname;
+			mapname= CampaignWidget.CurrentCampaignData.Levels.Where(f=>f.Num==lev).ToList()[0].PickRegions.Where(d=>d.Key==new float3(r,g,b)).ToList()[0].Value;
 			string mapcode = "Uknown";
-			if (r == 170 && g == 0 & b == 170)
-			{
-				mapcode = "Map0";
-			}
-			if (r == 170 && g == 85 & b == 0)
-			{
-				mapcode = "Map1";
-			}
-			if (r == 85 && g == 85 & b == 85)
-			{
-				mapcode = "Map2";
-			}
-			if (r == 186 && g == 190 & b == 150)
-			{
-				mapcode = "Map3";
-			}
-
+			selectedMap = allPreviews.Where(f => f.Package.Name.Contains(mapname)).ToList()[0];
+			//if (r == 170 && g == 0 & b == 170)
+			//{
+			//	mapcode = "Map0";
+			//}
+			//if (r == 170 && g == 85 & b == 0)
+			//{
+			//	mapcode = "Map1";
+			//}
+			//if (r == 85 && g == 85 & b == 85)
+			//{
+			//	mapcode = "Map2";
+			//}
+			//if (r == 186 && g == 190 & b == 150)
+			//{
+			//	mapcode = "Map3";
+			//}
+			mapcode = selectedMap.Title;
 			description.Text += Environment.NewLine + String.Format("Map:{0} ", mapcode);
 			var height = descriptionFont.Measure(description.Text).Y;
 			description.Bounds.Height = height;
