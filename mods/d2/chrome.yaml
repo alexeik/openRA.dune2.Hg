@@ -18,6 +18,9 @@ dune2cash: screenui
 dune2title: title
     background : 0,0,320,200
     
+logos: title
+    logo : 0,0,320,200
+    
 fame: housessign
     background : 0,0,320,200
     
