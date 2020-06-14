@@ -55,6 +55,9 @@ namespace OpenRA.Mods.D2.Widgets
         public Action UpLevelDelegate;
         public Action DownLevelDelegate;
         public Action OnExit;
+        public Action OnMentatProceedClick;
+        public Action OnMentatRepeatClick;
+
         public int CurrentLevel;
 
         List<FactionInfo> selectableFactions;
@@ -70,7 +73,7 @@ namespace OpenRA.Mods.D2.Widgets
         /// </summary>
         /// <param name="world"></param>
         [ObjectCreator.UseCtor]
-        public CampaignWidget(World world, ModData modData, OpenRA.Network.OrderManager orderManager)
+        public CampaignWidget( World world, ModData modData, OpenRA.Network.OrderManager orderManager)
         {
             this.world = world;
             this.modData = modData;
@@ -123,7 +126,6 @@ namespace OpenRA.Mods.D2.Widgets
             UpLevelDelegate = UpLevel;
             DownLevelDelegate = DownLevel;
 
-          
 
             if (world.IsGameOver) //вызов окна компании после любого исхода миссии из компании
             {
@@ -139,6 +141,40 @@ namespace OpenRA.Mods.D2.Widgets
 
 
         }
+        public override void Initialize(WidgetArgs args)
+        {
+            base.Initialize(args);
+
+          
+
+            if (Game.Renderer.PixelDumpRenderer.fbcreated == false)
+            {
+                Game.Renderer.PixelDumpRenderer.Setup(new Size(Game.Renderer.Resolution.Width, Game.Renderer.Resolution.Height));
+
+                PrepTextures();
+            }
+            else
+            {
+                //переинициализация этих переменных происходит только  на 2+N раз
+                housesT = Game.Renderer.PixelDumpRenderer.fb.Texture[2];
+                dunergnT = Game.Renderer.PixelDumpRenderer.fb.Texture[1];
+                sh1 = new Sheet(SheetType.BGRA, Game.Renderer.PixelDumpRenderer.fb.Texture[0]);
+                MapRegionMaskSprite = new Sprite(sh1, new Rectangle(0, 0, RenderBounds.Width, RenderBounds.Height), TextureChannel.RGBA);
+                sh2 = new Sheet(SheetType.BGRA, Game.Renderer.PixelDumpRenderer.fb.Texture[3]);
+                HousesMaskSprite = new Sprite(sh2, new Rectangle(0, 0, RenderBounds.Width, RenderBounds.Height), TextureChannel.RGBA);
+                textemp = Game.Renderer.PixelDumpRenderer.fb.Texture[4]; //ссылка на текстуру, куда будут уходить данные
+                                                                         // об выбранных масках
+
+                mapchamord = ChromeProvider.GetImage("patched", "mapchamord");
+                mapchamhark = ChromeProvider.GetImage("patched", "mapchamhark");
+                mapchamatr = ChromeProvider.GetImage("patched", "mapchamatr");
+
+                mentatAtrSprite = ChromeProvider.GetImage("mentata", "background");
+                mentatHarkSprite = ChromeProvider.GetImage("mentath", "background");
+                mentatOrdosSprite = ChromeProvider.GetImage("mentato", "background");
+            }
+        }
+
         public void SetCampaignWidgetState()
         {
             //new campaign or continue present
@@ -426,36 +462,7 @@ namespace OpenRA.Mods.D2.Widgets
             // = MiniYaml.FromString(modData.Manifest.CampaignDB.ToString());
             CurrentCampaignData = CampaignData[0];
         }
-        public override void Initialize(WidgetArgs args)
-        {
-            base.Initialize(args);
-            if (Game.Renderer.PixelDumpRenderer.fbcreated == false)
-            {
-                Game.Renderer.PixelDumpRenderer.Setup(new Size(Game.Renderer.Resolution.Width, Game.Renderer.Resolution.Height)); 
-
-                PrepTextures();
-            }
-            else
-            {
-                //переинициализация этих переменных происходит только  на 2+N раз
-                housesT = Game.Renderer.PixelDumpRenderer.fb.Texture[2];
-                dunergnT = Game.Renderer.PixelDumpRenderer.fb.Texture[1];
-                sh1 = new Sheet(SheetType.BGRA, Game.Renderer.PixelDumpRenderer.fb.Texture[0]);
-                MapRegionMaskSprite = new Sprite(sh1, new Rectangle(0, 0, RenderBounds.Width, RenderBounds.Height), TextureChannel.RGBA);
-                sh2 = new Sheet(SheetType.BGRA, Game.Renderer.PixelDumpRenderer.fb.Texture[3]);
-                HousesMaskSprite = new Sprite(sh2, new Rectangle(0, 0, RenderBounds.Width, RenderBounds.Height), TextureChannel.RGBA);
-                textemp = Game.Renderer.PixelDumpRenderer.fb.Texture[4]; //ссылка на текстуру, куда будут уходить данные
-                                                                         // об выбранных масках
-
-                mapchamord = ChromeProvider.GetImage("patched", "mapchamord");
-                mapchamhark = ChromeProvider.GetImage("patched", "mapchamhark");
-                mapchamatr = ChromeProvider.GetImage("patched", "mapchamatr");
-
-                mentatAtrSprite = ChromeProvider.GetImage("mentata", "background");
-                mentatHarkSprite = ChromeProvider.GetImage("mentath", "background");
-                mentatOrdosSprite = ChromeProvider.GetImage("mentato", "background");
-            }
-        }
+       
         void LoadPalette(ImmutablePalette cpspalette, string customname)
         {
             Game.worldRenderer.AddPalette("dune2widget", cpspalette, false, false);
@@ -913,6 +920,20 @@ namespace OpenRA.Mods.D2.Widgets
 
             Widget w = this.Get<ContainerWidget>("mentatstage");
             w.Visible = true;
+
+            //
+            ButtonWidget proceedmentat = this.Get<ButtonWidget>("proceed");
+            if (proceedmentat.OnClick != null)
+            {
+                proceedmentat.OnClick = OnMentatProceedClick;
+            }
+            ButtonWidget repeatmentat = this.Get<ButtonWidget>("repeat");
+            if (repeatmentat.OnClick != null)
+            {
+                repeatmentat.OnClick = OnMentatRepeatClick;
+            }
+            //
+
             LabelWidget widgetMissionInfo = w.Get<LabelWidget>("mentatinfo");
 
             widgetMissionInfo.GetText = () => { return AnimStringList[0].Text; };

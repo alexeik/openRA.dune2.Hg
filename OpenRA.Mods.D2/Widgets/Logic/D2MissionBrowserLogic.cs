@@ -98,6 +98,7 @@ namespace OpenRA.Mods.D2.Widgets.Logic
 			CampaignWidget.OnHouseChooseDelegate = OnHouseChoose;
 			CampaignWidget.OnMapRegionChooseDelegate = OnMapRegionChoose;
 			CampaignWidget.DrawTextDelegate = OnShowUserHelp;
+			CampaignWidget.OnMentatProceedClick = StartMissionClicked;
 			CampaignWidget.OnExit = onExit;
 
 			allPreviews = new List<MapPreview>();
