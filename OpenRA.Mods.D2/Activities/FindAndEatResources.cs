@@ -122,7 +122,10 @@ namespace OpenRA.Mods.D2.Activities
 
 			//	return this;
 			//}
-
+			if (closestHarvestableCell==null)
+			{
+				return this;
+			}
 			// If we get here, our search for resources was successful. Commence harvesting.
 			QueueChild(self, new EatResource(self, closestHarvestableCell.Value), true);
 			lastHarvestedCell = closestHarvestableCell.Value;
