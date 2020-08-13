@@ -15,7 +15,7 @@ Bounds: 1,1,128,128
 Visibility: Shellmap
 
 Categories: Conquest
-
+LoadResourceLayer: False
 Players:
 	PlayerReference@Neutral:
 		Name: Neutral

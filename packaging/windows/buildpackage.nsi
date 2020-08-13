@@ -20,7 +20,7 @@
 !include "WordFunc.nsh"
 
 Name "${PACKAGING_DISPLAY_NAME}"
-OutFile "OpenRA.Setup.exe"
+OutFile "OpenRA.Hg.Setup.exe"
 
 InstallDir "$PROGRAMFILES\${PACKAGING_WINDOWS_INSTALL_DIR_NAME}"
 InstallDirRegKey HKLM "Software\${PACKAGING_WINDOWS_REGISTRY_KEY}" "InstallDir"
@@ -35,7 +35,7 @@ RequestExecutionLevel admin
 !define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKLM"
 !define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\${PACKAGING_WINDOWS_REGISTRY_KEY}"
 !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
-!define MUI_STARTMENUPAGE_DEFAULTFOLDER "OpenRA"
+!define MUI_STARTMENUPAGE_DEFAULTFOLDER "OpenRA.Hg"
 
 Var StartMenuFolder
 !insertmacro MUI_PAGE_STARTMENU Application $StartMenuFolder
@@ -70,7 +70,7 @@ Section "Game" GAME
 
 	SetOutPath "$INSTDIR"
 	File /r "${SRCDIR}\mods"
-	File "${SRCDIR}\${PACKAGING_WINDOWS_LAUNCHER_NAME}.exe"
+	;File "${SRCDIR}\${PACKAGING_WINDOWS_LAUNCHER_NAME}.exe"
 	File "${SRCDIR}\OpenRA.Game.exe"
 	File "${SRCDIR}\OpenRA.Game.exe.config"
 	File "${SRCDIR}\OpenRA.Utility.exe"
@@ -78,6 +78,13 @@ Section "Game" GAME
 	File "${SRCDIR}\OpenRA.Platforms.Default.dll"
 	File "${SRCDIR}\ICSharpCode.SharpZipLib.dll"
 	File "${SRCDIR}\FuzzyLogicLibrary.dll"
+	File "${SRCDIR}\OpenRA.BaseTypes.dll"
+	File "${SRCDIR}\ImGui.NET.dll"
+	File "${SRCDIR}\libdunemusic.dll"
+	File "${SRCDIR}\cimgui.dll"
+	File "${SRCDIR}\netstandard.dll"
+	File "${SRCDIR}\System.Numerics.Vectors.dll"
+	File "${SRCDIR}\System.Runtime.CompilerServices.Unsafe.dll"
 	File "${SRCDIR}\Open.Nat.dll"
 	File "${SRCDIR}\VERSION"
 	File "${SRCDIR}\AUTHORS"
