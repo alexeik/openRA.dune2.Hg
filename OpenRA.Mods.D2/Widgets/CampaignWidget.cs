@@ -1163,7 +1163,7 @@ namespace OpenRA.Mods.D2.Widgets
             //DrawFrame изначально установлен на Houses.
             newframe = true;
 
-            if (Clicked)
+            if (Clicked) // код работает, если было нажатие мышки
             {
                 if (DrawFrame == DrawFrameEnum.Mentat || DrawFrame == DrawFrameEnum.Fame) //так как не нужно вычислять через fb цвет, то для этогосостояния нечего делать- простовыходим.
                 {
