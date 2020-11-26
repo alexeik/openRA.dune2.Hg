@@ -26,7 +26,7 @@ InstallDir "$PROGRAMFILES\${PACKAGING_WINDOWS_INSTALL_DIR_NAME}"
 InstallDirRegKey HKLM "Software\${PACKAGING_WINDOWS_REGISTRY_KEY}" "InstallDir"
 
 SetCompressor lzma
-RequestExecutionLevel admin
+RequestExecutionLevel user
 
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_LICENSE "${PACKAGING_WINDOWS_LICENSE_FILE}"
@@ -70,7 +70,7 @@ Section "Game" GAME
 
 	SetOutPath "$INSTDIR"
 	File /r "${SRCDIR}\mods"
-	;File "${SRCDIR}\${PACKAGING_WINDOWS_LAUNCHER_NAME}.exe"
+	File "${SRCDIR}\${PACKAGING_WINDOWS_LAUNCHER_NAME}.exe"
 	File "${SRCDIR}\OpenRA.Game.exe"
 	File "${SRCDIR}\OpenRA.Game.exe.config"
 	File "${SRCDIR}\OpenRA.Utility.exe"
@@ -84,6 +84,7 @@ Section "Game" GAME
 	File "${SRCDIR}\cimgui.dll"
 	File "${SRCDIR}\netstandard.dll"
 	File "${SRCDIR}\System.Numerics.Vectors.dll"
+	File "${SRCDIR}\System.Runtime.dll"
 	File "${SRCDIR}\System.Runtime.CompilerServices.Unsafe.dll"
 	File "${SRCDIR}\Open.Nat.dll"
 	File "${SRCDIR}\VERSION"
@@ -104,7 +105,7 @@ Section "Game" GAME
 
 	!insertmacro MUI_STARTMENU_WRITE_BEGIN Application
 		CreateDirectory "$SMPROGRAMS\$StartMenuFolder"
-		CreateShortCut "$SMPROGRAMS\$StartMenuFolder\${PACKAGING_DISPLAY_NAME}.lnk" "$OUTDIR\${PACKAGING_WINDOWS_LAUNCHER_NAME}.exe" "" \
+		CreateShortCut "$SMPROGRAMS\$StartMenuFolder\${PACKAGING_DISPLAY_NAME}.lnk" "$OUTDIR\${PACKAGING_WINDOWS_LAUNCHER_NAME}.exe" "Game.Mod=d2" \
 			"$OUTDIR\${PACKAGING_WINDOWS_LAUNCHER_NAME}.exe" "" "" "" ""
 	!insertmacro MUI_STARTMENU_WRITE_END
 
@@ -122,15 +123,13 @@ Section "Game" GAME
 
 	SetShellVarContext all
 	CreateDirectory "$APPDATA\OpenRA\ModMetadata"
-	nsExec::ExecToLog '"$INSTDIR\OpenRA.Utility.exe" ${MOD_ID} --register-mod "$INSTDIR\${PACKAGING_WINDOWS_LAUNCHER_NAME}.exe" system'
-	nsExec::ExecToLog '"$INSTDIR\OpenRA.Utility.exe" ${MOD_ID} --clear-invalid-mod-registrations system'
 	SetShellVarContext current
 
 SectionEnd
 
 Section "Desktop Shortcut" DESKTOPSHORTCUT
 	SetOutPath "$INSTDIR"
-	CreateShortCut "$DESKTOP\OpenRA - ${PACKAGING_DISPLAY_NAME}.lnk" "$INSTDIR\${PACKAGING_WINDOWS_LAUNCHER_NAME}.exe" "" \
+	CreateShortCut "$DESKTOP\OpenRA - Hg.lnk" "$INSTDIR\${PACKAGING_WINDOWS_LAUNCHER_NAME}.exe" "Game.Mod=d2" \
 		"$INSTDIR\${PACKAGING_WINDOWS_LAUNCHER_NAME}.exe" "" "" "" ""
 SectionEnd
 
