@@ -158,13 +158,14 @@ namespace OpenRA.Mods.D2.Widgets
                 //переинициализация этих переменных происходит только  на 2+N раз
                 housesT = Game.Renderer.PixelDumpRenderer.fb.Texture[2];
                 dunergnT = Game.Renderer.PixelDumpRenderer.fb.Texture[1];
-                sh1 = new Sheet(SheetType.BGRA, Game.Renderer.PixelDumpRenderer.fb.Texture[0]);
-                MapRegionMaskSprite = new Sprite(sh1, new Rectangle(0, 0, RenderBounds.Width, RenderBounds.Height), TextureChannel.RGBA);
-                sh2 = new Sheet(SheetType.BGRA, Game.Renderer.PixelDumpRenderer.fb.Texture[3]);
-                HousesMaskSprite = new Sprite(sh2, new Rectangle(0, 0, RenderBounds.Width, RenderBounds.Height), TextureChannel.RGBA);
+                //sh1 = new Sheet(SheetType.BGRA, Game.Renderer.PixelDumpRenderer.fb.Texture[0]);
+                //MapRegionMaskSprite = new Sprite(sh1, new Rectangle(0, 0, RenderBounds.Width, RenderBounds.Height), TextureChannel.RGBA);
+                //sh2 = new Sheet(SheetType.BGRA, Game.Renderer.PixelDumpRenderer.fb.Texture[3]);
+                //HousesMaskSprite = new Sprite(sh2, new Rectangle(0, 0, RenderBounds.Width, RenderBounds.Height), TextureChannel.RGBA);
                 textemp = Game.Renderer.PixelDumpRenderer.fb.Texture[4]; //ссылка на текстуру, куда будут уходить данные
                                                                          // об выбранных масках
-
+                MapRegionMaskSprite = ChromeProvider.GetImage("patched", "MapRegionMaskSprite");
+                HousesMaskSprite = ChromeProvider.GetImage("patched", "HousesMaskSprite");
                 mapchamord = ChromeProvider.GetImage("patched", "mapchamord");
                 mapchamhark = ChromeProvider.GetImage("patched", "mapchamhark");
                 mapchamatr = ChromeProvider.GetImage("patched", "mapchamatr");
@@ -188,6 +189,10 @@ namespace OpenRA.Mods.D2.Widgets
                 string factionname = CampaignData.Where(f => f.CampaignName == CampaignName).ToList()[0].CampaignForFractionName;
                 CurrentFaction = world.Map.Rules.Actors["world"].TraitInfos<FactionInfo>().Where(f => f.InternalName== factionname).ToList()[0];
                 DrawFrame = DrawFrameEnum.Map;
+            }
+            else
+            {
+                CurrentLevel = 1;
             }
             if (flagnew)
             {
@@ -544,11 +549,16 @@ namespace OpenRA.Mods.D2.Widgets
 
 
 
-            sh1 = new Sheet(SheetType.BGRA, rgnclickT);
-            MapRegionMaskSprite = new Sprite(sh1, new Rectangle(0, 0, RenderBounds.Width, RenderBounds.Height), TextureChannel.RGBA);
+            sh1 = new Sheet(SheetType.BGRA, rgnclickT); //сохраняем GL текстуру в CPU sheet. Но тут мы минуем свою БД SheetBuilder, которая содержит все данные текстуры.
+            // Поэтому если текстура в OGL БД поломается, ее придется заново восстанавливать своими руками.
+            MapRegionMaskSprite = new Sprite(sh1, new Rectangle(0, 0, RenderBounds.Width, RenderBounds.Height), TextureChannel.RGBA); // сохраняем координаты пикселей в Sprite
+            //После этого, у нас есть спрайт, который превращается в команду для рисования шейдеру. В спрайте есть текстура и координаты области, которые будут использоваться шейдером.
+            ChromeProvider.AddSprite("patched", "MapRegionMaskSprite", MapRegionMaskSprite);
+
+
             sh2 = new Sheet(SheetType.BGRA, housesMaskT);
             HousesMaskSprite = new Sprite(sh2, new Rectangle(0, 0, RenderBounds.Width, RenderBounds.Height), TextureChannel.RGBA);
-
+            ChromeProvider.AddSprite("patched", "HousesMaskSprite", HousesMaskSprite);
 
 
             mapchamhark = ChromeProvider.GetImage("patched", "mapchamhark");
@@ -785,10 +795,10 @@ namespace OpenRA.Mods.D2.Widgets
 
             //оригинал выбора домов
             Game.Renderer.SpriteRenderer.shader.SetTexture("Texture1", housesT);
-            HousesMaskSprite.SpriteType = 7;
+            HousesMaskSprite.SpriteType = 7; // это DrawMode=11 и функция в шейдер ждет Texture0 и Texture1
 
             //передаем вторым аргументом текстуру, где маска
-            WidgetUtils.FillRectWithSprite(RenderBounds, HousesMaskSprite, prbase);
+            WidgetUtils.FillRectWithSprite(RenderBounds, HousesMaskSprite, prbase); // HousesMaskSprite маска для областей каждого дома. Сделана в png. Уйдет в Texture0
             //Game.Renderer.SpriteRenderer.Flush(); //записать кадр во фреймбуфер 
         }
 
