@@ -5,7 +5,7 @@
     <Optimize>true</Optimize>
     <LangVersion>5</LangVersion>
     <DebugSymbols>true</DebugSymbols>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <OutputPath>bin\debug</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <PlatformTarget>AnyCPU</PlatformTarget>
