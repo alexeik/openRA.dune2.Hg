@@ -15,6 +15,7 @@
 	RenderSprites:
 	#KillsSelf:
 	D2Concrete:
+    D2ConretePassable:
     RevealsShroud:
         Range: 2c0
         Type: CenterPosition
