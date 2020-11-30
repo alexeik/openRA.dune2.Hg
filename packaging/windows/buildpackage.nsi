@@ -19,13 +19,16 @@
 !include "FileFunc.nsh"
 !include "WordFunc.nsh"
 
+SetCompressor lzma
+
+
+
 Name "${PACKAGING_DISPLAY_NAME}"
 OutFile "OpenRA.Hg.Setup.exe"
 
 InstallDir "$PROGRAMFILES\${PACKAGING_WINDOWS_INSTALL_DIR_NAME}"
 InstallDirRegKey HKLM "Software\${PACKAGING_WINDOWS_REGISTRY_KEY}" "InstallDir"
 
-SetCompressor lzma
 RequestExecutionLevel user
 
 !insertmacro MUI_PAGE_WELCOME
@@ -36,6 +39,11 @@ RequestExecutionLevel user
 !define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\${PACKAGING_WINDOWS_REGISTRY_KEY}"
 !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
 !define MUI_STARTMENUPAGE_DEFAULTFOLDER "OpenRA.Hg"
+
+!define UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\OpenRA.Hg - Dune2"
+
+
+
 
 Var StartMenuFolder
 !insertmacro MUI_PAGE_STARTMENU Application $StartMenuFolder
@@ -105,7 +113,7 @@ Section "Game" GAME
 
 	!insertmacro MUI_STARTMENU_WRITE_BEGIN Application
 		CreateDirectory "$SMPROGRAMS\$StartMenuFolder"
-		CreateShortCut "$SMPROGRAMS\$StartMenuFolder\${PACKAGING_DISPLAY_NAME}.lnk" "$OUTDIR\${PACKAGING_WINDOWS_LAUNCHER_NAME}.exe" "Game.Mod=d2" \
+		CreateShortCut "$SMPROGRAMS\$StartMenuFolder\${PACKAGING_DISPLAY_NAME}.lnk" "$OUTDIR\${PACKAGING_WINDOWS_LAUNCHER_NAME}.exe" "" \
 			"$OUTDIR\${PACKAGING_WINDOWS_LAUNCHER_NAME}.exe" "" "" "" ""
 	!insertmacro MUI_STARTMENU_WRITE_END
 
@@ -124,12 +132,12 @@ Section "Game" GAME
 	SetShellVarContext all
 	CreateDirectory "$APPDATA\OpenRA\ModMetadata"
 	SetShellVarContext current
-
+	
 SectionEnd
 
 Section "Desktop Shortcut" DESKTOPSHORTCUT
 	SetOutPath "$INSTDIR"
-	CreateShortCut "$DESKTOP\OpenRA - Hg.lnk" "$INSTDIR\${PACKAGING_WINDOWS_LAUNCHER_NAME}.exe" "Game.Mod=d2" \
+	CreateShortCut "$DESKTOP\OpenRA - Hg.lnk" "$INSTDIR\${PACKAGING_WINDOWS_LAUNCHER_NAME}.exe" "" \
 		"$INSTDIR\${PACKAGING_WINDOWS_LAUNCHER_NAME}.exe" "" "" "" ""
 SectionEnd
 
@@ -153,16 +161,16 @@ SectionEnd
 ;***************************
 Section "-Uninstaller"
 	WriteUninstaller $INSTDIR\uninstaller.exe
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGING_WINDOWS_REGISTRY_KEY}" "DisplayName" "${PACKAGING_DISPLAY_NAME}"
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGING_WINDOWS_REGISTRY_KEY}" "UninstallString" "$INSTDIR\uninstaller.exe"
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGING_WINDOWS_REGISTRY_KEY}" "QuietUninstallString" "$\"$INSTDIR\uninstall.exe$\" /S"
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGING_WINDOWS_REGISTRY_KEY}" "InstallLocation" "$INSTDIR"
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGING_WINDOWS_REGISTRY_KEY}" "DisplayIcon" "$INSTDIR\${MOD_ID}.ico"
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGING_WINDOWS_REGISTRY_KEY}" "Publisher" "${PACKAGING_AUTHORS}"
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGING_WINDOWS_REGISTRY_KEY}" "URLInfoAbout" "${PACKAGING_WEBSITE_URL}"
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGING_WINDOWS_REGISTRY_KEY}" "DisplayVersion" "${TAG}"
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGING_WINDOWS_REGISTRY_KEY}" "NoModify" "1"
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGING_WINDOWS_REGISTRY_KEY}" "NoRepair" "1"
+	 WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGING_WINDOWS_REGISTRY_KEY}" "DisplayName" "${PACKAGING_DISPLAY_NAME}"
+	 WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGING_WINDOWS_REGISTRY_KEY}" "UninstallString" "$INSTDIR\uninstaller.exe"
+	 WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGING_WINDOWS_REGISTRY_KEY}" "QuietUninstallString" "$\"$INSTDIR\uninstall.exe$\" /S"
+	 WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGING_WINDOWS_REGISTRY_KEY}" "InstallLocation" "$INSTDIR"
+	 WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGING_WINDOWS_REGISTRY_KEY}" "DisplayIcon" "$INSTDIR\${MOD_ID}.ico"
+	 WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGING_WINDOWS_REGISTRY_KEY}" "Publisher" "${PACKAGING_AUTHORS}"
+	 WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGING_WINDOWS_REGISTRY_KEY}" "URLInfoAbout" "${PACKAGING_WEBSITE_URL}"
+	 WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGING_WINDOWS_REGISTRY_KEY}" "DisplayVersion" "${TAG}"
+	 WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGING_WINDOWS_REGISTRY_KEY}" "NoModify" "1"
+	 WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PACKAGING_WINDOWS_REGISTRY_KEY}" "NoRepair" "1"
 SectionEnd
 
 !macro Clean UN
@@ -181,6 +189,15 @@ Function ${UN}Clean
 	Delete $INSTDIR\OpenRA.Platforms.Default.dll
 	Delete $INSTDIR\ICSharpCode.SharpZipLib.dll
 	Delete $INSTDIR\FuzzyLogicLibrary.dll
+	Delete "$INSTDIR\ImGui.NET.dll"
+	Delete "$INSTDIR\libdunemusic.dll"
+	Delete "$INSTDIR\cimgui.dll"
+	Delete "$INSTDIR\netstandard.dll"
+	Delete "$INSTDIR\System.Numerics.Vectors.dll"
+	Delete "$INSTDIR\System.Runtime.dll"
+	Delete "$INSTDIR\System.Runtime.CompilerServices.Unsafe.dll"
+	Delete "$INSTDIR\Open.Nat.dll"
+	Delete "$INSTDIR\OpenRA.BaseTypes.dll"
 	Delete $INSTDIR\Open.Nat.dll
 	Delete $INSTDIR\VERSION
 	Delete $INSTDIR\AUTHORS
@@ -222,6 +239,7 @@ FunctionEnd
 !insertmacro Clean "un."
 
 Section "Uninstall"
+	DeleteRegKey SHCTX "${UNINST_KEY}"
 	Call un.Clean
 SectionEnd
 
