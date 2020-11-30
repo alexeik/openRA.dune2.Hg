@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace OpenRA.Mods.D2.Traits.Buildings
 {
+    /// <summary>
+    /// Passable Actor template for Dune2 slabs.
+    /// </summary>
     public class D2ConretePassableInfo : ITraitInfo, ITemporaryBlockerInfo
     {
         public virtual object Create(ActorInitializer init) { return new D2ConretePassable(init.Self); }
