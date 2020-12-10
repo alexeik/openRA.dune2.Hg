@@ -34,5 +34,6 @@ asteroid:
         Spins: False
         Velocity:20
         Moves: True
+        ScaleStep: 0.005
     
 

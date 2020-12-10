@@ -25,6 +25,7 @@ namespace OpenRA.Mods.Common.D2.Traits
 
 		public readonly bool Spins = true;
 		public readonly bool Moves = false;
+		public readonly float ScaleStep = 1f;
 		public readonly WDist Velocity = new WDist(43);
 
 		public WeaponInfo ExplosionWeapon { get; private set; }

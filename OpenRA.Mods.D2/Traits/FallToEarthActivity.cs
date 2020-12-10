@@ -13,6 +13,7 @@ using System.Linq;
 using OpenRA.Activities;
 using OpenRA.Mods.Common.D2.Traits;
 using OpenRA.Mods.Common.Traits;
+using OpenRA.Mods.D2.MathExtention;
 using OpenRA.Primitives;
 using OpenRA.Traits;
 
@@ -59,6 +60,14 @@ namespace OpenRA.Mods.Common.D2.Activities
 			move -= new WVec(WDist.Zero, WDist.Zero, info.Velocity);
 			asteroid.SetPosition(self, asteroid.CenterPosition + move);
 
+			if (self.Scale <= 0.2f)
+			{
+				self.Scale = 0.2f;
+			}
+			else
+			{
+				self.Scale -= info.ScaleStep;
+			}
 			return this;
 		}
 	}
