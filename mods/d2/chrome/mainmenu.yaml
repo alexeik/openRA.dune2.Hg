@@ -436,12 +436,12 @@ Container@MAINMENU:
         Background@dune2stolbvert3
             X:11
             Y:WINDOW_BOTTOM-12
-            Width:WINDOW_RIGHT-12-12
+            Width:WINDOW_RIGHT-12-11
             Height:12
             Background:dune2stolbvert90    
         Background@dune2stolbvert4
             X:11
             Y:0
-            Width:WINDOW_RIGHT-12-12
+            Width:WINDOW_RIGHT-12-11
             Height:12
             Background:dune2stolbvert90             

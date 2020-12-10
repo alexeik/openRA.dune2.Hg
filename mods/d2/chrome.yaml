@@ -5,11 +5,17 @@ dune2circle: screenui
     background: 241,124,12,11
 dune2stolbvert: screenui
     background: 241,142,12,39
-dune2stolbvert90: screenui
+
+dune2stolbvert90: D2-1.png
+    background: 0,0,39,12     
+    
+dune2stolbvert901: screenui
     background: 241,142,12,39         
-        rotate:90
+        
 dune2stolbverttop: screenui
     background: 241,136,12,5
+    
+    
 dune2stolbvertbot: screenui
     background: 241,182,12,5
 dune2cash: screenui
