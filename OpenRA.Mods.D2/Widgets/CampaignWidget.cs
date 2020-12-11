@@ -1199,17 +1199,26 @@ namespace OpenRA.Mods.D2.Widgets
                 if (DrawFrame == DrawFrameEnum.Houses)
                 {
 
-                    CurrentCampaignData= CampaignData.Where(f => f.CampaignForFractionCode == feedbackcolor).ToList<CampaignData>()[0];
+                    // проверка наличия кампании для дома
+                    if (CampaignData.Where(f => f.CampaignForFractionCode == feedbackcolor).Count() > 0)
+                    {
+                        CurrentCampaignData = CampaignData.Where(f => f.CampaignForFractionCode == feedbackcolor).ToList<CampaignData>()[0];
 
-                    CurrentFaction = selectableFactions.Where(f => f.InternalName == CurrentCampaignData.CampaignForFractionName).First();
+                        CurrentFaction = selectableFactions.Where(f => f.InternalName == CurrentCampaignData.CampaignForFractionName).First();
 
-                   
-                    Game.Settings.CampSavePoint.CampaignNameYaml = CurrentCampaignData.CampaignName; //поле содержит имя компании, а у нее в данных находится фракция
 
-                    CampaignName = Game.Settings.CampSavePoint.CampaignNameYaml;
-                   
-                    flaghousepicked = true;
-                    //нужно сохранить выбор фракции
+                        Game.Settings.CampSavePoint.CampaignNameYaml = CurrentCampaignData.CampaignName; //поле содержит имя компании, а у нее в данных находится фракция
+
+                        CampaignName = Game.Settings.CampSavePoint.CampaignNameYaml;
+
+                        flaghousepicked = true;
+                        //нужно сохранить выбор фракции
+                    }
+                    else
+                    {
+                        OnHouseChooseDelegate("Wait... Campaign is coming... Now it is empty.");
+                    }
+
                 }
                 if (flaghousepicked)
                 {
