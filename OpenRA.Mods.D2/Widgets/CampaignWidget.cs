@@ -149,7 +149,7 @@ namespace OpenRA.Mods.D2.Widgets
 
             if (Game.Renderer.PixelDumpRenderer.fbcreated == false)
             {
-                Game.Renderer.PixelDumpRenderer.Setup(new Size(Game.Renderer.Resolution.Width, Game.Renderer.Resolution.Height));
+                Game.Renderer.PixelDumpRenderer.SetupOneMoreFrameBuffer(new Size(Game.Renderer.Resolution.Width, Game.Renderer.Resolution.Height));
 
                 PrepTextures();
             }
@@ -508,25 +508,25 @@ namespace OpenRA.Mods.D2.Widgets
         {
 
             Game.Renderer.Flush();
-            rgnclickT = Game.Renderer.PixelDumpRenderer.fb.Bind(true);
+            rgnclickT = Game.Renderer.PixelDumpRenderer.fb.BindThisFrameBuffer(true);
 
-            Game.Renderer.PixelDumpRenderer.DrawSprite(dunergnclickSprite, new float3(0, 0, 0), new float3(RenderBounds.Width, RenderBounds.Height, 0), prbase);
+            Game.Renderer.PixelDumpRenderer.AddDrawSpriteCommand(dunergnclickSprite, new float3(0, 0, 0), new float3(RenderBounds.Width, RenderBounds.Height, 0), prbase);
 
             Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
             Game.Renderer.PixelDumpRenderer.fb.Unbind();
 
             dunergnT = Game.Renderer.PixelDumpRenderer.fb.Bind(true, Game.Renderer.PixelDumpRenderer.fb.size);
-            Game.Renderer.PixelDumpRenderer.DrawSprite(dunergnSprite, new float3(0, 0, 0), new float3(RenderBounds.Width, RenderBounds.Height, 0), prbase);
+            Game.Renderer.PixelDumpRenderer.AddDrawSpriteCommand(dunergnSprite, new float3(0, 0, 0), new float3(RenderBounds.Width, RenderBounds.Height, 0), prbase);
             Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
             Game.Renderer.PixelDumpRenderer.fb.Unbind();
 
             housesT = Game.Renderer.PixelDumpRenderer.fb.Bind(true, Game.Renderer.PixelDumpRenderer.fb.size);
-            Game.Renderer.PixelDumpRenderer.DrawSprite(housesSprite, new float3(0, 0, 0), new float3(RenderBounds.Width, RenderBounds.Height, 0), prbase);
+            Game.Renderer.PixelDumpRenderer.AddDrawSpriteCommand(housesSprite, new float3(0, 0, 0), new float3(RenderBounds.Width, RenderBounds.Height, 0), prbase);
             Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
             Game.Renderer.PixelDumpRenderer.fb.Unbind();
 
             housesMaskT = Game.Renderer.PixelDumpRenderer.fb.Bind(true, Game.Renderer.PixelDumpRenderer.fb.size);
-            Game.Renderer.PixelDumpRenderer.DrawSprite(housesmaskSprite, new float3(0, 0, 0), new float3(RenderBounds.Width, RenderBounds.Height, 0), prbase);
+            Game.Renderer.PixelDumpRenderer.AddDrawSpriteCommand(housesmaskSprite, new float3(0, 0, 0), new float3(RenderBounds.Width, RenderBounds.Height, 0), prbase);
             Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
             Game.Renderer.PixelDumpRenderer.fb.Unbind();
 
@@ -543,7 +543,7 @@ namespace OpenRA.Mods.D2.Widgets
 
 
             maproomMaskT = Game.Renderer.PixelDumpRenderer.fb.Bind(true, Game.Renderer.PixelDumpRenderer.fb.size);
-            Game.Renderer.PixelDumpRenderer.DrawSprite(maproommaskSprite, new float3(0, 0, 0), new float3(RenderBounds.Width, RenderBounds.Height, 0), prbase);
+            Game.Renderer.PixelDumpRenderer.AddDrawSpriteCommand(maproommaskSprite, new float3(0, 0, 0), new float3(RenderBounds.Width, RenderBounds.Height, 0), prbase);
             Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
             Game.Renderer.PixelDumpRenderer.fb.Unbind();
 
@@ -629,9 +629,9 @@ namespace OpenRA.Mods.D2.Widgets
             //hark map
             //Game.Renderer.PixelDumpRenderer.fb.ReBind((ITextureInternal)maproomHarkT);
             //maproomSprite.FlipY = 1;
-            Game.Renderer.PixelDumpRenderer.DrawSprite(maproomSprite, new float3(0, 0, 0), new float3(320, 200, 0), prbase);
-            Game.Renderer.PixelDumpRenderer.DrawSprite(ChromeProvider.GetImage("harksign", "background"), new float3(2, 145, 0), new float3(53, 54, 0), prbase);
-            Game.Renderer.PixelDumpRenderer.DrawSprite(ChromeProvider.GetImage("harksign", "background"), new float3(266, 145, 0), new float3(53, 54, 0), prbase);
+            Game.Renderer.PixelDumpRenderer.AddDrawSpriteCommand(maproomSprite, new float3(0, 0, 0), new float3(320, 200, 0), prbase);
+            Game.Renderer.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage("harksign", "background"), new float3(2, 145, 0), new float3(53, 54, 0), prbase);
+            Game.Renderer.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage("harksign", "background"), new float3(266, 145, 0), new float3(53, 54, 0), prbase);
             Game.Renderer.RgbaColorRenderer.FillRect(new float3(7, 24, 0), new float3(304 + 8, 119 + 24, 0), Color.Black); //пишет в SPriteRenderer
             Game.Renderer.SpriteRenderer.Flush();
             Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
@@ -653,9 +653,9 @@ namespace OpenRA.Mods.D2.Widgets
             //Game.Renderer.PixelDumpRenderer.fb.Unbind();
             //atr map
             maproomAtrT = Game.Renderer.PixelDumpRenderer.fb.Bind(true, Game.Renderer.PixelDumpRenderer.fb.size); //патчим оригинальную текстуру знаками дома
-            Game.Renderer.PixelDumpRenderer.DrawSprite(maproomSprite, new float3(0, 0, 0), new float3(320, 200, 0), prbase);
-            Game.Renderer.PixelDumpRenderer.DrawSprite(ChromeProvider.GetImage("atrsign", "background"), new float3(2, 145, 0), new float3(53, 54, 0), prbase);
-            Game.Renderer.PixelDumpRenderer.DrawSprite(ChromeProvider.GetImage("atrsign", "background"), new float3(266, 145, 0), new float3(53, 54, 0), prbase);
+            Game.Renderer.PixelDumpRenderer.AddDrawSpriteCommand(maproomSprite, new float3(0, 0, 0), new float3(320, 200, 0), prbase);
+            Game.Renderer.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage("atrsign", "background"), new float3(2, 145, 0), new float3(53, 54, 0), prbase);
+            Game.Renderer.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage("atrsign", "background"), new float3(266, 145, 0), new float3(53, 54, 0), prbase);
             Game.Renderer.RgbaColorRenderer.FillRect(new float3(7, 24, 0), new float3(304 + 8, 119 + 24, 0), Color.Black); //пишет в SPriteRenderer
             Game.Renderer.SpriteRenderer.Flush();
             Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
@@ -695,9 +695,9 @@ namespace OpenRA.Mods.D2.Widgets
             //Game.Renderer.PixelDumpRenderer.fb.Unbind();
             //atr map
             maproomOrdosT = Game.Renderer.PixelDumpRenderer.fb.Bind(true, Game.Renderer.PixelDumpRenderer.fb.size); //патчим оригинальную текстуру знаками дома
-            Game.Renderer.PixelDumpRenderer.DrawSprite(maproomSprite, new float3(0, 0, 0), new float3(320, 200, 0), prbase);
-            Game.Renderer.PixelDumpRenderer.DrawSprite(ChromeProvider.GetImage("ordossign", "background"), new float3(2, 145, 0), new float3(53, 54, 0), prbase);
-            Game.Renderer.PixelDumpRenderer.DrawSprite(ChromeProvider.GetImage("ordossign", "background"), new float3(266, 145, 0), new float3(53, 54, 0), prbase);
+            Game.Renderer.PixelDumpRenderer.AddDrawSpriteCommand(maproomSprite, new float3(0, 0, 0), new float3(320, 200, 0), prbase);
+            Game.Renderer.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage("ordossign", "background"), new float3(2, 145, 0), new float3(53, 54, 0), prbase);
+            Game.Renderer.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage("ordossign", "background"), new float3(266, 145, 0), new float3(53, 54, 0), prbase);
             Game.Renderer.RgbaColorRenderer.FillRect(new float3(7, 24, 0), new float3(304 + 8, 119 + 24, 0), Color.Black); //пишет в SPriteRenderer
             Game.Renderer.SpriteRenderer.Flush();
             Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
@@ -732,9 +732,9 @@ namespace OpenRA.Mods.D2.Widgets
         public void PatchStatFameOrdosWindow()
         {
             fameroomT = Game.Renderer.PixelDumpRenderer.fb.Bind(true, Game.Renderer.PixelDumpRenderer.fb.size); //патчим оригинальную текстуру знаками дома
-            Game.Renderer.PixelDumpRenderer.DrawSprite(fameroomSprite, new float3(0, 0, 0), new float3(320, 200, 0), prbase);
-            Game.Renderer.PixelDumpRenderer.DrawSprite(ChromeProvider.GetImage("ordossign", "background"), new float3(2, 9, 0), new float3(53, 54, 0), prbase);
-            Game.Renderer.PixelDumpRenderer.DrawSprite(ChromeProvider.GetImage("ordossign", "background"), new float3(266, 9, 0), new float3(53, 54, 0), prbase);
+            Game.Renderer.PixelDumpRenderer.AddDrawSpriteCommand(fameroomSprite, new float3(0, 0, 0), new float3(320, 200, 0), prbase);
+            Game.Renderer.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage("ordossign", "background"), new float3(2, 9, 0), new float3(53, 54, 0), prbase);
+            Game.Renderer.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage("ordossign", "background"), new float3(266, 9, 0), new float3(53, 54, 0), prbase);
             Game.Renderer.RgbaColorRenderer.FillRect(new float3(9, 136, 0), new float3(167 + 9, 55 + 136, 0), Color.FromArgb(255, 182, 125, 12)); //пишет в SPriteRenderer
             Game.Renderer.SpriteRenderer.Flush();
             Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
@@ -748,9 +748,9 @@ namespace OpenRA.Mods.D2.Widgets
         public void PatchStatFameHarkWindow()
         {
             fameroom2T = Game.Renderer.PixelDumpRenderer.fb.Bind(true, Game.Renderer.PixelDumpRenderer.fb.size); //патчим оригинальную текстуру знаками дома
-            Game.Renderer.PixelDumpRenderer.DrawSprite(fameroomSprite, new float3(0, 0, 0), new float3(320, 200, 0), prbase);
-            Game.Renderer.PixelDumpRenderer.DrawSprite(ChromeProvider.GetImage("harksign", "background"), new float3(2, 9, 0), new float3(53, 54, 0), prbase);
-            Game.Renderer.PixelDumpRenderer.DrawSprite(ChromeProvider.GetImage("harksign", "background"), new float3(266, 9, 0), new float3(53, 54, 0), prbase);
+            Game.Renderer.PixelDumpRenderer.AddDrawSpriteCommand(fameroomSprite, new float3(0, 0, 0), new float3(320, 200, 0), prbase);
+            Game.Renderer.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage("harksign", "background"), new float3(2, 9, 0), new float3(53, 54, 0), prbase);
+            Game.Renderer.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage("harksign", "background"), new float3(266, 9, 0), new float3(53, 54, 0), prbase);
             Game.Renderer.RgbaColorRenderer.FillRect(new float3(9, 136, 0), new float3(167 + 9, 55 + 136, 0), Color.FromArgb(255, 182, 125, 12)); //пишет в SPriteRenderer
             Game.Renderer.SpriteRenderer.Flush();
             Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
@@ -764,9 +764,9 @@ namespace OpenRA.Mods.D2.Widgets
         public void PatchStatFameAtrWindow()
         {
             fameroom3T = Game.Renderer.PixelDumpRenderer.fb.Bind(true, Game.Renderer.PixelDumpRenderer.fb.size); //патчим оригинальную текстуру знаками дома
-            Game.Renderer.PixelDumpRenderer.DrawSprite(fameroomSprite, new float3(0, 0, 0), new float3(320, 200, 0), prbase);
-            Game.Renderer.PixelDumpRenderer.DrawSprite(ChromeProvider.GetImage("atrsign", "background"), new float3(2, 9, 0), new float3(53, 54, 0), prbase);
-            Game.Renderer.PixelDumpRenderer.DrawSprite(ChromeProvider.GetImage("atrsign", "background"), new float3(266, 9, 0), new float3(53, 54, 0), prbase);
+            Game.Renderer.PixelDumpRenderer.AddDrawSpriteCommand(fameroomSprite, new float3(0, 0, 0), new float3(320, 200, 0), prbase);
+            Game.Renderer.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage("atrsign", "background"), new float3(2, 9, 0), new float3(53, 54, 0), prbase);
+            Game.Renderer.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage("atrsign", "background"), new float3(266, 9, 0), new float3(53, 54, 0), prbase);
             Game.Renderer.RgbaColorRenderer.FillRect(new float3(9, 136, 0), new float3(167 + 9, 55 + 136, 0), Color.FromArgb(255, 182, 125, 12)); //пишет в SPriteRenderer
             Game.Renderer.SpriteRenderer.Flush();
             Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.

@@ -40,7 +40,7 @@ namespace OpenRA.Mods.D2.Widgets
             if (ImGui.Button("Dump Sequence Texture"))
             {
                 {
-                    Game.Renderer.PixelDumpRenderer.Setup();
+                    Game.Renderer.PixelDumpRenderer.SetupOneMoreFrameBuffer();
                     DumpTextureChannel(TextureChannel.Red);
                     DumpTextureChannel(TextureChannel.Blue);
                     DumpTextureChannel(TextureChannel.Green);
