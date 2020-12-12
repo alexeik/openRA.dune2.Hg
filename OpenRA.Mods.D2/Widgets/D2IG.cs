@@ -6,6 +6,7 @@ using OpenRA.Mods.Common.Traits.Render;
 using OpenRA.Mods.Common.Widgets;
 using OpenRA.Mods.D2.FileFormats;
 using OpenRA.Mods.D2.SpriteLoaders;
+using OpenRA.Platforms.Default;
 using OpenRA.Primitives;
 using OpenRA.Widgets;
 using System;
@@ -40,11 +41,12 @@ namespace OpenRA.Mods.D2.Widgets
             if (ImGui.Button("Dump Sequence Texture"))
             {
                 {
-                    Game.Renderer.PixelDumpRenderer.SetupOneMoreFrameBuffer();
-                    DumpTextureChannel(TextureChannel.Red);
-                    DumpTextureChannel(TextureChannel.Blue);
-                    DumpTextureChannel(TextureChannel.Green);
-                    DumpTextureChannel(TextureChannel.Alpha);
+                    FrameBuffer fb;
+                    fb = Game.Renderer.PixelDumpRenderer.SetupOneMoreFrameBuffer("fbIMGUI");
+                    DumpTextureChannel(TextureChannel.Red,fb);
+                    DumpTextureChannel(TextureChannel.Blue,fb);
+                    DumpTextureChannel(TextureChannel.Green,fb);
+                    DumpTextureChannel(TextureChannel.Alpha,fb);
                 }
 
 
@@ -72,9 +74,9 @@ namespace OpenRA.Mods.D2.Widgets
             base.Draw();
         }
 
-        public void DumpTextureChannel(TextureChannel channel)
+        public void DumpTextureChannel(TextureChannel channel,FrameBuffer fb)
         {
-            Game.Renderer.PixelDumpRenderer.fb.Bind();
+            fb.Bind();
             Sheet2D seqsheet;
             //seqsheet = Game.ModData.DefaultSequences["arrakis2"].SpriteCache.SheetBuilder2D.Current;
             seqsheet = Game.SheetBuilder2D.Current;
@@ -84,13 +86,13 @@ namespace OpenRA.Mods.D2.Widgets
             //Нужно запустить и в режиме RGBA - сделать...
             Game.Renderer.PixelDumpRenderer.DrawSprite(sp, new float3(0, 0, 0));
             Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
-            Game.Renderer.PixelDumpRenderer.fb.Unbind();
+            fb.Unbind();
             //нарисовали в текстуру в свой фреймбуфер.
 
 
             //теперь нужно запустить еще раз рендер, где эта текстура будет как аргумент у шейдера и он нарисует все пиксели в фреймбуфер главный.
 
-            Sheet sh1 = new Sheet(SheetType.BGRA, Game.Renderer.PixelDumpRenderer.fb.Texture[0]); //тут ставим текстуру от FB1 в аргумент шейдера Texture0
+            Sheet sh1 = new Sheet(SheetType.BGRA, fb.Texture[0]); //тут ставим текстуру от FB1 в аргумент шейдера Texture0
             Sprite sp2 = new Sprite(sh1, new Rectangle(0, 0, 2048, 2048), TextureChannel.Red); //тут канал не важен, он будет подавлен через SPriteType
             //Создаем связку спрайт+текстура, чтобы передать текстуру в шейдер. и потом через SpriteType вызываем нужный код в шейдере.
             sp2.SpriteType = 5;
@@ -100,7 +102,7 @@ namespace OpenRA.Mods.D2.Widgets
             sp.SpriteType = 0;
             Game.Renderer.PixelDumpRenderer.Flush();
 
-            Game.TakeTextureInner(Game.Renderer.PixelDumpRenderer.fb.Texture[0]);
+            Game.TakeTextureInner(fb.Texture[0]);
         }
     }
 
