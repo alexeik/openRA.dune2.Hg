@@ -42,7 +42,7 @@ namespace OpenRA.Mods.D2.Widgets
             {
                 {
                     FrameBuffer fb;
-                    fb = Game.Renderer.PixelDumpRenderer.SetupOneMoreFrameBuffer("fbIMGUI");
+                    fb = Game.Renderer.PixelDumpRenderer.SetupOrGetOneMoreFrameBuffer("fbIMGUI");
                     DumpTextureChannel(TextureChannel.Red,fb);
                     DumpTextureChannel(TextureChannel.Blue,fb);
                     DumpTextureChannel(TextureChannel.Green,fb);

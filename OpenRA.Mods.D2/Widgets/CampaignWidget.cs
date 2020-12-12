@@ -67,13 +67,13 @@ namespace OpenRA.Mods.D2.Widgets
         private World world;
         public string CampaignName;
         public FrameBuffer iternalFB;
-        public Dictionary<string, List<string>> TextDB=new Dictionary<string, List<string>>();
+        public Dictionary<string, List<string>> TextDB = new Dictionary<string, List<string>>();
         /// <summary>
         /// Если использовать [ObjectCreator.UseCtor] , то можно использовать DI для инициализации аргументов конструктора.
         /// </summary>
         /// <param name="world"></param>
         [ObjectCreator.UseCtor]
-        public CampaignWidget( World world, ModData modData, OpenRA.Network.OrderManager orderManager)
+        public CampaignWidget(World world, ModData modData, OpenRA.Network.OrderManager orderManager)
         {
             this.world = world;
             this.modData = modData;
@@ -137,7 +137,7 @@ namespace OpenRA.Mods.D2.Widgets
                 LogicLocalPlayerStartCampaign();
             }
 
-            TextDB.Add("TEXTA.ENG",LoadTextDB("TEXTA.ENG"));
+            TextDB.Add("TEXTA.ENG", LoadTextDB("TEXTA.ENG"));
 
 
         }
@@ -145,22 +145,13 @@ namespace OpenRA.Mods.D2.Widgets
         {
             base.Initialize(args);
 
-          
 
-            if (Game.Renderer.PixelDumpRenderer.fb.ContainsKey("fbCampaign"))
-            {
-                iternalFB = Game.Renderer.PixelDumpRenderer.fb["fbCampaign"];
-                //переинициализация этих переменных происходит только  на 2+N раз
-                housesT = iternalFB.Texture[2];
-                dunergnT = iternalFB.Texture[1];
-                textemp = iternalFB.Texture[4]; //ссылка на текстуру, куда будут уходить данные
-             
-            }
-            else
-            {
-                iternalFB = Game.Renderer.PixelDumpRenderer.SetupOneMoreFrameBuffer(new Size(Game.Renderer.Resolution.Width, Game.Renderer.Resolution.Height), "fbCampaign");
-              
-            }
+            iternalFB = Game.Renderer.PixelDumpRenderer.SetupOrGetOneMoreFrameBuffer(new Size(Game.Renderer.Resolution.Width, Game.Renderer.Resolution.Height), "fbCampaign");
+
+            //переинициализация этих переменных происходит только  на 2+N раз
+            housesT = iternalFB.Texture[2];
+            dunergnT = iternalFB.Texture[1];
+            textemp = iternalFB.Texture[4]; //ссылка на текстуру, куда будут уходить данные
 
             PrepTextures();
             // об выбранных масках
@@ -178,15 +169,15 @@ namespace OpenRA.Mods.D2.Widgets
         public void SetCampaignWidgetState()
         {
             //new campaign or continue present
-            bool flagnew=true;
-            if (Game.Settings.CampSavePoint.CampaignLevel!=0)
+            bool flagnew = true;
+            if (Game.Settings.CampSavePoint.CampaignLevel != 0)
             {
                 flagnew = false;
                 //load data from Game.Settings
-                CurrentLevel = Game.Settings.CampSavePoint.CampaignLevel ;
+                CurrentLevel = Game.Settings.CampSavePoint.CampaignLevel;
                 CampaignName = Game.Settings.CampSavePoint.CampaignNameYaml;
                 string factionname = CampaignData.Where(f => f.CampaignName == CampaignName).ToList()[0].CampaignForFractionName;
-                CurrentFaction = world.Map.Rules.Actors["world"].TraitInfos<FactionInfo>().Where(f => f.InternalName== factionname).ToList()[0];
+                CurrentFaction = world.Map.Rules.Actors["world"].TraitInfos<FactionInfo>().Where(f => f.InternalName == factionname).ToList()[0];
                 DrawFrame = DrawFrameEnum.Map;
             }
             else
@@ -452,7 +443,7 @@ namespace OpenRA.Mods.D2.Widgets
                                         }
                                         if (d.Key == "DbIndex")
                                         {
-                                            br.DbIndex = FieldLoader.GetValue<int>("DbIndex", d.Value.Value); 
+                                            br.DbIndex = FieldLoader.GetValue<int>("DbIndex", d.Value.Value);
                                         }
                                     }
                                     cl.Brief = br;
@@ -466,7 +457,7 @@ namespace OpenRA.Mods.D2.Widgets
             // = MiniYaml.FromString(modData.Manifest.CampaignDB.ToString());
             CurrentCampaignData = CampaignData[0];
         }
-       
+
         void LoadPalette(ImmutablePalette cpspalette, string customname)
         {
             Game.worldRenderer.AddPalette("dune2widget", cpspalette, false, false);
@@ -1009,10 +1000,10 @@ namespace OpenRA.Mods.D2.Widgets
         }
         public void SetupSubMentat_MissionInfo(string seqname, List<string> MissionInfoStrings, AnimationDirectionEnum AnimationDirection)
         {
-          
+
             AnimStringList.Clear();
             AnimationString animation1 = new AnimationString(world, seqname);
-            animation1.DefineTick = 40*60* 3;
+            animation1.DefineTick = 40 * 60 * 3;
             AnimStringList.Add(animation1);
 
             if (AnimationDirection == AnimationDirectionEnum.Forward)
@@ -1044,18 +1035,18 @@ namespace OpenRA.Mods.D2.Widgets
                                     { 'n','s','r','c','t','l','a','i' },
                                     { 'l','e','o','i','r','a','t','p' },
                                     { 'e','a','o','i','p',' ','b','m' } };
-            string ret="";
+            string ret = "";
             char temp;
             for (int i = 0; i < str.Length - 1; i++)
             {
                 temp = (char)str[i];
 
-                if ( (str[i] & 0x80)!=0  )
+                if ((str[i] & 0x80) != 0)
                 {
-                    char index1 =(char)((str[i] >> 3) & 0xF);
+                    char index1 = (char)((str[i] >> 3) & 0xF);
                     char index2 = (char)(str[i] & 0x7);
-                     ret += decodeTable1[index1];
-                     ret += decodeTable2[index1,index2];
+                    ret += decodeTable1[index1];
+                    ret += decodeTable2[index1, index2];
                 }
                 else
                 {
@@ -1227,7 +1218,7 @@ namespace OpenRA.Mods.D2.Widgets
                     DrawFrame = DrawFrameEnum.Map;
                     OnHouseChooseDelegate(CurrentFaction.Name);
                     flaghousepicked = false;
-                    
+
                 }
                 if (DrawFrame == DrawFrameEnum.Fame)
                 {
@@ -1235,7 +1226,7 @@ namespace OpenRA.Mods.D2.Widgets
                 }
                 if (DrawFrame == DrawFrameEnum.Mentat)
                 {
-                    SetupSubMentat(cLevel.Brief.SubBkgSequence, cLevel.Brief.SubBkgSequenceGroup,cLevel.Brief.DbIndex, AnimationDirectionEnum.Repeat);
+                    SetupSubMentat(cLevel.Brief.SubBkgSequence, cLevel.Brief.SubBkgSequenceGroup, cLevel.Brief.DbIndex, AnimationDirectionEnum.Repeat);
                     OnMapRegionChooseDelegate(lastanswer[2], lastanswer[1], lastanswer[0]);
                 }
                 Clicked = false;
