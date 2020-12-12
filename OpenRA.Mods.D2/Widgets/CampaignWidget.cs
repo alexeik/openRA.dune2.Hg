@@ -26,7 +26,7 @@ namespace OpenRA.Mods.D2.Widgets
         private PaletteReference prbase;
 
 
-        private Sprite houseSprite;
+
         private Sprite dunergnSprite;
         private Sprite dunergnclickSprite;
         private Sprite housesSprite;
@@ -158,10 +158,6 @@ namespace OpenRA.Mods.D2.Widgets
                 //переинициализация этих переменных происходит только  на 2+N раз
                 housesT = Game.Renderer.PixelDumpRenderer.fb.Texture[2];
                 dunergnT = Game.Renderer.PixelDumpRenderer.fb.Texture[1];
-                //sh1 = new Sheet(SheetType.BGRA, Game.Renderer.PixelDumpRenderer.fb.Texture[0]);
-                //MapRegionMaskSprite = new Sprite(sh1, new Rectangle(0, 0, RenderBounds.Width, RenderBounds.Height), TextureChannel.RGBA);
-                //sh2 = new Sheet(SheetType.BGRA, Game.Renderer.PixelDumpRenderer.fb.Texture[3]);
-                //HousesMaskSprite = new Sprite(sh2, new Rectangle(0, 0, RenderBounds.Width, RenderBounds.Height), TextureChannel.RGBA);
                 textemp = Game.Renderer.PixelDumpRenderer.fb.Texture[4]; //ссылка на текстуру, куда будут уходить данные
                                                                          // об выбранных масках
                 MapRegionMaskSprite = ChromeProvider.GetImage("patched", "MapRegionMaskSprite");
@@ -503,6 +499,7 @@ namespace OpenRA.Mods.D2.Widgets
 
         /// <summary>
         /// КОнвертирует все 1 байтовые пиксели в 4 байтовые, чтобы работать с этими картинками в шейдере в drawmode=10
+        /// Через перерисование 1 байтовых с помощью шейдера в другую текстуру.
         /// </summary>
         public void PrepTextures()
         {
