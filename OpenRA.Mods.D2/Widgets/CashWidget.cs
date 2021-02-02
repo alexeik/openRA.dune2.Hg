@@ -179,7 +179,7 @@ namespace OpenRA.Mods.D2.Widgets
                         Game.Renderer.sproc.AddCommand(4, 0, 0, 0, 0, new int2(0, 0), offsetXY2 + new int2(0, -8) + aOffset, numsprites[newindex].Size, numsprites[newindex], pr);
                         Game.Renderer.sproc.ExecCommandBuffer();
 
-                        Game.Renderer.Flush(); // делаем, это  тут, так как рисуем вне очереди, то управляем очередью.
+                        //Game.Renderer.Flush(); // делаем, это  тут, так как рисуем вне очереди, то управляем очередью.
                         Game.Renderer.sproc.AddCommand(4, 0, 0, 0, 0, new int2(0, 0), offsetXY + aOffset, numsprites[previndex].Size, numsprites[previndex], pr);
                         Game.Renderer.sproc.ExecCommandBuffer();
                     }
@@ -187,9 +187,9 @@ namespace OpenRA.Mods.D2.Widgets
                     {
                         Game.Renderer.Flush(); // делаем, это  тут, так как рисуем вне очереди, то управляем очередью.
                         Game.Renderer.sproc.AddCommand(4, 0, 0, 0, 0, new int2(0, 0), offsetXY - aOffset, numsprites[previndex].Size, numsprites[previndex], pr);
-                        Game.Renderer.sproc.ExecCommandBuffer();
+                       Game.Renderer.sproc.ExecCommandBuffer();
 
-                        Game.Renderer.Flush(); // делаем, это  тут, так как рисуем вне очереди, то управляем очередью.
+                        //Game.Renderer.Flush(); // делаем, это  тут, так как рисуем вне очереди, то управляем очередью.
                         Game.Renderer.sproc.AddCommand(4, 0, 0, 0, 0, new int2(0, 0), offsetXY2 - new int2(0, -8) - aOffset, numsprites[newindex].Size, numsprites[newindex], pr);
                         Game.Renderer.sproc.ExecCommandBuffer();
 

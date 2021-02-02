@@ -42,7 +42,8 @@ namespace OpenRA.Mods.D2.Widgets
             {
                 {
                     FrameBuffer fb;
-                    fb = Game.Renderer.PixelDumpRenderer.SetupOrGetOneMoreFrameBuffer("fbIMGUI");
+                    fb = FrameBuffer.SetupOrGetOneMoreFrameBuffer("fbIMGUI");
+                    fb.PixelDumpRenderer.SetViewportParams(new Size(2048, 2048), 0f, 0f, 1f, int2.Zero);
                     DumpTextureChannel(TextureChannel.Red,fb);
                     DumpTextureChannel(TextureChannel.Blue,fb);
                     DumpTextureChannel(TextureChannel.Green,fb);
@@ -84,8 +85,8 @@ namespace OpenRA.Mods.D2.Widgets
                                                                                                                                        //нужно использовать 4 итерации, где нужно менять канал в спрайте.
             //так как sp.SpriteType не задан, то будет запущено DrawMode =0 , что отрисует только пиксели из палитры.
             //Нужно запустить и в режиме RGBA - сделать...
-            Game.Renderer.PixelDumpRenderer.DrawSprite(sp, new float3(0, 0, 0));
-            Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
+            fb.PixelDumpRenderer.DrawSprite(sp, new float3(0, 0, 0));
+            fb.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
             fb.Unbind();
             //нарисовали в текстуру в свой фреймбуфер.
 
@@ -96,11 +97,11 @@ namespace OpenRA.Mods.D2.Widgets
             Sprite sp2 = new Sprite(sh1, new Rectangle(0, 0, 2048, 2048), TextureChannel.Red); //тут канал не важен, он будет подавлен через SPriteType
             //Создаем связку спрайт+текстура, чтобы передать текстуру в шейдер. и потом через SpriteType вызываем нужный код в шейдере.
             sp2.SpriteType = 5;
-            Game.Renderer.PixelDumpRenderer.DrawSprite(sp2, new float3(0, 0, 0)); //рисуем каждый пиксель из Texture0 в текстуру FB0 по алгоритму DrawMode=9
+            fb.PixelDumpRenderer.DrawSprite(sp2, new float3(0, 0, 0)); //рисуем каждый пиксель из Texture0 в текстуру FB0 по алгоритму DrawMode=9
 
             
             sp.SpriteType = 0;
-            Game.Renderer.PixelDumpRenderer.Flush();
+            fb.PixelDumpRenderer.Flush();
 
             Game.TakeTextureInner(fb.Texture[0]);
         }

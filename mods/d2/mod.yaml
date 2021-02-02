@@ -332,6 +332,9 @@ Fonts:
 CampaignDB:
 	d2|CampaignDB.yaml
 
+PixelPatcher:
+	d2|PixelPatcher/1.yaml
+    
 SupportsMapsFrom: d2
 
 SoundFormats: Voc, Aud, Wav, ADL

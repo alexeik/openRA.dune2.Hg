@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace OpenRA.Mods.D2.Widgets
@@ -144,14 +145,13 @@ namespace OpenRA.Mods.D2.Widgets
         public override void Initialize(WidgetArgs args)
         {
             base.Initialize(args);
-
-
-            iternalFB = Game.Renderer.PixelDumpRenderer.SetupOrGetOneMoreFrameBuffer(new Size(Game.Renderer.Resolution.Width, Game.Renderer.Resolution.Height), "fbCampaign");
-
+            //InitializePixelPatcher(Game.ModData);
+            iternalFB = FrameBuffer.SetupOrGetOneMoreFrameBuffer(new Size(Game.Renderer.Resolution.Width, Game.Renderer.Resolution.Height), "fbCampaign");
+            iternalFB.PixelDumpRenderer.SetViewportParams(new Size(Game.Renderer.Resolution.Width, Game.Renderer.Resolution.Height), 0f, 0f, 1f, int2.Zero);
             //переинициализация этих переменных происходит только  на 2+N раз
-            housesT = iternalFB.Texture[2];
-            dunergnT = iternalFB.Texture[1];
-            textemp = iternalFB.Texture[4]; //ссылка на текстуру, куда будут уходить данные
+            //housesT = iternalFB.Texture[2];
+            //dunergnT = iternalFB.Texture[1];
+            //textemp = iternalFB.Texture[4]; //ссылка на текстуру, куда будут уходить данные
 
             PrepTextures();
             // об выбранных масках
@@ -165,7 +165,71 @@ namespace OpenRA.Mods.D2.Widgets
             //mentatHarkSprite = ChromeProvider.GetImage("mentath", "background");
             //mentatOrdosSprite = ChromeProvider.GetImage("mentato", "background");
         }
+        public void InitializePixelPatcher(ModData modData)
+        {
+            var fileSystem = Game.worldRenderer.World.Map;
+            var ppnodes = MiniYaml.Merge(modData.Manifest.PixelPatcher
+                .Select(s => MiniYaml.FromStream(fileSystem.Open(s), s)));
 
+            FrameBuffer iternalFB = FrameBuffer.SetupOrGetOneMoreFrameBuffer(new Size(Game.Renderer.Resolution.Width, Game.Renderer.Resolution.Height), "fbCampaign");
+            iternalFB.PixelDumpRenderer.SetViewportParams(new Size(Game.Renderer.Resolution.Width, Game.Renderer.Resolution.Height), 0f, 0f, 1f, int2.Zero);
+            //Game.Renderer.SpriteRenderer.Flush();
+            ITexture maproomHarkT = iternalFB.BindThisFrameBufferWithNewTexture(true, iternalFB.size);
+            foreach (var kvp in ppnodes)
+            {
+                PixelPatcherAdapter(kvp.Value, kvp.Value.Nodes[0].Value.Value.ToString(), kvp.Value.Nodes[1].Value.Value.ToString(), iternalFB, maproomHarkT);
+            }
+        }
+        public void PixelPatcherAdapter(MiniYaml commands, string CollectionName, string CollectionItemName, FrameBuffer iternalFB, ITexture text)
+        {
+            PaletteReference prbase = null;
+            Sheet sh3;
+            Sprite sp3;
+            var d = commands.Nodes[2].Value.ToDictionary();
+
+            Regex re = new Regex("DrawSprite?");
+            foreach (var node in d)
+            {
+                var f = node.Value.ToDictionary();
+                if (re.Match(node.Key).Success)
+                {
+                    string ColName = LoadField(f, "CollectionName", "");
+                    string ColItem = LoadField(f, "CollectionItem", "");
+                    string PaletteName = LoadField(f, "Palette", "");
+                    prbase = Game.worldRenderer.Palette(PaletteName);
+                    float2 topleft2 = LoadField(f, "RectangleTopLeft", new float2(0, 1));
+                    float2 topleft3 = LoadField(f, "RectangleBottomRight", new float2(0, 1));
+
+                    iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage(ColName, ColItem), new float3(topleft2.X, topleft2.Y, 0), new float3(topleft3.X, topleft3.Y, 0), prbase);
+                }
+
+                if (node.Key == "FillRect")
+                {
+                    float2 topleft2 = LoadField(f, "RectangleTopLeft", new float2(0, 1));
+                    float2 topleft3 = LoadField(f, "RectangleBottomRight", new float2(0, 1));
+                    OpenRA.Primitives.Color color = LoadField(f, "PrimitivesColor", Color.Black);
+                    iternalFB.RgbaColorRenderer.FillRect(new float3(topleft2.X, topleft2.Y, 0), new float3(topleft3.X, topleft3.Y, 0), color);
+
+                }
+            }
+
+            iternalFB.PixelDumpRenderer.Flush();
+
+            sh3 = new Sheet(SheetType.BGRA, text);
+            sp3 = new Sprite(sh3, new Rectangle(0, 0, 320, 200), TextureChannel.RGBA); //указываем оригинальный размер спрайта, чтобы потом он адаптировался под разные рразрешения
+
+            ChromeProvider.AddSprite(CollectionName, CollectionItemName, Game.SheetBuilder2D.AddSprite(sp3));
+            iternalFB.Unbind();
+        }
+
+        protected static T LoadField<T>(Dictionary<string, MiniYaml> d, string key, T fallback)
+        {
+            MiniYaml value;
+            if (d.TryGetValue(key, out value))
+                return FieldLoader.GetValue<T>(key, value.Value);
+
+            return fallback;
+        }
         public void SetCampaignWidgetState()
         {
             //new campaign or continue present
@@ -498,33 +562,33 @@ namespace OpenRA.Mods.D2.Widgets
         public void PrepTextures()
         {
 
-            Game.Renderer.Flush();
-            rgnclickT = iternalFB.BindThisFrameBuffer(true);
+            //Game.Renderer.Flush();
+            rgnclickT = iternalFB.BindThisFrameBufferWithNewTexture(true, iternalFB.size);
 
-            Game.Renderer.PixelDumpRenderer.AddDrawSpriteCommand(dunergnclickSprite, new float3(0, 0, 0), new float3(RenderBounds.Width, RenderBounds.Height, 0), prbase);
+            iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(dunergnclickSprite, new float3(0, 0, 0), new float3(RenderBounds.Width, RenderBounds.Height, 0), prbase);
 
-            Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
-            iternalFB.Unbind();
+            iternalFB.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
+            //iternalFB.Unbind();
 
-            dunergnT = iternalFB.BindThisFrameBufferWithNewColorAttachment(true, iternalFB.size);
-            Game.Renderer.PixelDumpRenderer.AddDrawSpriteCommand(dunergnSprite, new float3(0, 0, 0), new float3(RenderBounds.Width, RenderBounds.Height, 0), prbase);
-            Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
-            iternalFB.Unbind();
+            dunergnT = iternalFB.BindThisFrameBufferWithNewTexture(true, iternalFB.size);
+            iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(dunergnSprite, new float3(0, 0, 0), new float3(RenderBounds.Width, RenderBounds.Height, 0), prbase);
+            iternalFB.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
+            //iternalFB.Unbind();
 
-            housesT = iternalFB.BindThisFrameBufferWithNewColorAttachment(true, iternalFB.size);
-            Game.Renderer.PixelDumpRenderer.AddDrawSpriteCommand(housesSprite, new float3(0, 0, 0), new float3(RenderBounds.Width, RenderBounds.Height, 0), prbase);
-            Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
-            iternalFB.Unbind();
+            housesT = iternalFB.BindThisFrameBufferWithNewTexture(true, iternalFB.size);
+            iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(housesSprite, new float3(0, 0, 0), new float3(RenderBounds.Width, RenderBounds.Height, 0), prbase);
+            iternalFB.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
+            //iternalFB.Unbind();
 
-            housesMaskT = iternalFB.BindThisFrameBufferWithNewColorAttachment(true, iternalFB.size);
-            Game.Renderer.PixelDumpRenderer.AddDrawSpriteCommand(housesmaskSprite, new float3(0, 0, 0), new float3(RenderBounds.Width, RenderBounds.Height, 0), prbase);
-            Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
-            iternalFB.Unbind();
+            housesMaskT = iternalFB.BindThisFrameBufferWithNewTexture(true, iternalFB.size);
+            iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(housesmaskSprite, new float3(0, 0, 0), new float3(RenderBounds.Width, RenderBounds.Height, 0), prbase);
+            iternalFB.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
+            //iternalFB.Unbind();
 
             //переходим в размеры текстур как у игры! 
-            textemp = iternalFB.BindThisFrameBufferWithNewColorAttachment(true, iternalFB.size);
-            Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
-            iternalFB.Unbind();
+            textemp = iternalFB.BindThisFrameBufferWithNewTexture(true, iternalFB.size);
+            iternalFB.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
+            //iternalFB.Unbind();
 
             // textemp ссылка на текстуру, куда будут уходить данные об выбранных масках
 
@@ -533,14 +597,14 @@ namespace OpenRA.Mods.D2.Widgets
 
 
 
-            maproomMaskT = iternalFB.BindThisFrameBufferWithNewColorAttachment(true, iternalFB.size);
-            Game.Renderer.PixelDumpRenderer.AddDrawSpriteCommand(maproommaskSprite, new float3(0, 0, 0), new float3(RenderBounds.Width, RenderBounds.Height, 0), prbase);
-            Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
+            maproomMaskT = iternalFB.BindThisFrameBufferWithNewTexture(true, iternalFB.size);
+            iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(maproommaskSprite, new float3(0, 0, 0), new float3(RenderBounds.Width, RenderBounds.Height, 0), prbase);
+            iternalFB.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
             iternalFB.Unbind();
 
 
 
-            sh1 = new Sheet(SheetType.BGRA, rgnclickT); //сохраняем GL текстуру в CPU sheet. Но тут мы минуем свою БД SheetBuilder, которая содержит все данные текстуры.
+            sh1 = new Sheet(SheetType.BGRA, rgnclickT); //сохраняем ссылку на GL текстуру в CPU БД sheet. Но тут мы минуем свою БД SheetBuilder, которая содержит все данные текстуры.
             // Поэтому если текстура в OGL БД поломается, ее придется заново восстанавливать своими руками.
             MapRegionMaskSprite = new Sprite(sh1, new Rectangle(0, 0, RenderBounds.Width, RenderBounds.Height), TextureChannel.RGBA); // сохраняем координаты пикселей в Sprite
             //После этого, у нас есть спрайт, который превращается в команду для рисования шейдеру. В спрайте есть текстура и координаты области, которые будут использоваться шейдером.
@@ -613,18 +677,18 @@ namespace OpenRA.Mods.D2.Widgets
 
         public void PatchHarkMapChamber()
         {
-            maproomHarkT = iternalFB.BindThisFrameBufferWithNewColorAttachment(true, iternalFB.size); //патчим оригинальную текстуру знаками дома
+            maproomHarkT = iternalFB.BindThisFrameBufferWithNewTexture(true, iternalFB.size); //патчим оригинальную текстуру знаками дома
             //maproomHarkSizedT = Game.Renderer.PixelDumpRenderer.fb.Bind(true, Game.Renderer.PixelDumpRenderer.fb.size);
             //Game.Renderer.PixelDumpRenderer.fb.Unbind();
             //hark map
             //Game.Renderer.PixelDumpRenderer.fb.ReBind((ITextureInternal)maproomHarkT);
             //maproomSprite.FlipY = 1;
-            Game.Renderer.PixelDumpRenderer.AddDrawSpriteCommand(maproomSprite, new float3(0, 0, 0), new float3(320, 200, 0), prbase);
-            Game.Renderer.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage("harksign", "background"), new float3(2, 145, 0), new float3(53, 54, 0), prbase);
-            Game.Renderer.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage("harksign", "background"), new float3(266, 145, 0), new float3(53, 54, 0), prbase);
+            iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(maproomSprite, new float3(0, 0, 0), new float3(320, 200, 0), prbase);
+            iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage("harksign", "background"), new float3(2, 145, 0), new float3(53, 54, 0), prbase);
+            iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage("harksign", "background"), new float3(266, 145, 0), new float3(53, 54, 0), prbase);
             Game.Renderer.RgbaColorRenderer.FillRect(new float3(7, 24, 0), new float3(304 + 8, 119 + 24, 0), Color.Black); //пишет в SPriteRenderer
             Game.Renderer.SpriteRenderer.Flush();
-            Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
+            iternalFB.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
             iternalFB.Unbind();
 
             //FlipRectangle(s.Bounds, flipX, flipY)
@@ -642,13 +706,13 @@ namespace OpenRA.Mods.D2.Widgets
             //maproomAtrSizedT = Game.Renderer.PixelDumpRenderer.fb.Bind(true, Game.Renderer.PixelDumpRenderer.fb.size);
             //Game.Renderer.PixelDumpRenderer.fb.Unbind();
             //atr map
-            maproomAtrT = iternalFB.BindThisFrameBufferWithNewColorAttachment(true, iternalFB.size); //патчим оригинальную текстуру знаками дома
-            Game.Renderer.PixelDumpRenderer.AddDrawSpriteCommand(maproomSprite, new float3(0, 0, 0), new float3(320, 200, 0), prbase);
-            Game.Renderer.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage("atrsign", "background"), new float3(2, 145, 0), new float3(53, 54, 0), prbase);
-            Game.Renderer.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage("atrsign", "background"), new float3(266, 145, 0), new float3(53, 54, 0), prbase);
+            maproomAtrT = iternalFB.BindThisFrameBufferWithNewTexture(true, iternalFB.size); //патчим оригинальную текстуру знаками дома
+            iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(maproomSprite, new float3(0, 0, 0), new float3(320, 200, 0), prbase);
+            iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage("atrsign", "background"), new float3(2, 145, 0), new float3(53, 54, 0), prbase);
+            iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage("atrsign", "background"), new float3(266, 145, 0), new float3(53, 54, 0), prbase);
             Game.Renderer.RgbaColorRenderer.FillRect(new float3(7, 24, 0), new float3(304 + 8, 119 + 24, 0), Color.Black); //пишет в SPriteRenderer
             Game.Renderer.SpriteRenderer.Flush();
-            Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
+            iternalFB.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
 
             iternalFB.Unbind();
 
@@ -684,13 +748,13 @@ namespace OpenRA.Mods.D2.Widgets
             //maproomOrdosSizedT = Game.Renderer.PixelDumpRenderer.fb.Bind(true, Game.Renderer.PixelDumpRenderer.fb.size);
             //Game.Renderer.PixelDumpRenderer.fb.Unbind();
             //atr map
-            maproomOrdosT = iternalFB.BindThisFrameBufferWithNewColorAttachment(true, iternalFB.size); //патчим оригинальную текстуру знаками дома
-            Game.Renderer.PixelDumpRenderer.AddDrawSpriteCommand(maproomSprite, new float3(0, 0, 0), new float3(320, 200, 0), prbase);
-            Game.Renderer.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage("ordossign", "background"), new float3(2, 145, 0), new float3(53, 54, 0), prbase);
-            Game.Renderer.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage("ordossign", "background"), new float3(266, 145, 0), new float3(53, 54, 0), prbase);
+            maproomOrdosT = iternalFB.BindThisFrameBufferWithNewTexture(true, iternalFB.size); //патчим оригинальную текстуру знаками дома
+            iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(maproomSprite, new float3(0, 0, 0), new float3(320, 200, 0), prbase);
+            iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage("ordossign", "background"), new float3(2, 145, 0), new float3(53, 54, 0), prbase);
+            iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage("ordossign", "background"), new float3(266, 145, 0), new float3(53, 54, 0), prbase);
             Game.Renderer.RgbaColorRenderer.FillRect(new float3(7, 24, 0), new float3(304 + 8, 119 + 24, 0), Color.Black); //пишет в SPriteRenderer
             Game.Renderer.SpriteRenderer.Flush();
-            Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
+            iternalFB.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
 
             iternalFB.Unbind();
 
@@ -721,13 +785,13 @@ namespace OpenRA.Mods.D2.Widgets
         }
         public void PatchStatFameOrdosWindow()
         {
-            fameroomT = iternalFB.BindThisFrameBufferWithNewColorAttachment(true, iternalFB.size); //патчим оригинальную текстуру знаками дома
-            Game.Renderer.PixelDumpRenderer.AddDrawSpriteCommand(fameroomSprite, new float3(0, 0, 0), new float3(320, 200, 0), prbase);
-            Game.Renderer.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage("ordossign", "background"), new float3(2, 9, 0), new float3(53, 54, 0), prbase);
-            Game.Renderer.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage("ordossign", "background"), new float3(266, 9, 0), new float3(53, 54, 0), prbase);
+            fameroomT = iternalFB.BindThisFrameBufferWithNewTexture(true, iternalFB.size); //патчим оригинальную текстуру знаками дома
+            iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(fameroomSprite, new float3(0, 0, 0), new float3(320, 200, 0), prbase);
+            iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage("ordossign", "background"), new float3(2, 9, 0), new float3(53, 54, 0), prbase);
+            iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage("ordossign", "background"), new float3(266, 9, 0), new float3(53, 54, 0), prbase);
             Game.Renderer.RgbaColorRenderer.FillRect(new float3(9, 136, 0), new float3(167 + 9, 55 + 136, 0), Color.FromArgb(255, 182, 125, 12)); //пишет в SPriteRenderer
             Game.Renderer.SpriteRenderer.Flush();
-            Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
+            iternalFB.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
 
             Sheet shtemp = new Sheet(SheetType.BGRA, fameroomT); //делаем спрайт по патченной текстуре.
             Sprite stemp = new Sprite(shtemp, new Rectangle(0, 0, 320, 200), TextureChannel.RGBA); //указываем оригинальный размер спрайта, чтобы потом он адаптировался под разные рразрешения
@@ -737,13 +801,13 @@ namespace OpenRA.Mods.D2.Widgets
         }
         public void PatchStatFameHarkWindow()
         {
-            fameroom2T = iternalFB.BindThisFrameBufferWithNewColorAttachment(true, iternalFB.size); //патчим оригинальную текстуру знаками дома
-            Game.Renderer.PixelDumpRenderer.AddDrawSpriteCommand(fameroomSprite, new float3(0, 0, 0), new float3(320, 200, 0), prbase);
-            Game.Renderer.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage("harksign", "background"), new float3(2, 9, 0), new float3(53, 54, 0), prbase);
-            Game.Renderer.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage("harksign", "background"), new float3(266, 9, 0), new float3(53, 54, 0), prbase);
+            fameroom2T = iternalFB.BindThisFrameBufferWithNewTexture(true, iternalFB.size); //патчим оригинальную текстуру знаками дома
+            iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(fameroomSprite, new float3(0, 0, 0), new float3(320, 200, 0), prbase);
+            iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage("harksign", "background"), new float3(2, 9, 0), new float3(53, 54, 0), prbase);
+            iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage("harksign", "background"), new float3(266, 9, 0), new float3(53, 54, 0), prbase);
             Game.Renderer.RgbaColorRenderer.FillRect(new float3(9, 136, 0), new float3(167 + 9, 55 + 136, 0), Color.FromArgb(255, 182, 125, 12)); //пишет в SPriteRenderer
             Game.Renderer.SpriteRenderer.Flush();
-            Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
+            iternalFB.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
 
             Sheet shtemp = new Sheet(SheetType.BGRA, fameroom2T); //делаем спрайт по патченной текстуре.
             Sprite stemp = new Sprite(shtemp, new Rectangle(0, 0, 320, 200), TextureChannel.RGBA); //указываем оригинальный размер спрайта, чтобы потом он адаптировался под разные рразрешения
@@ -753,13 +817,13 @@ namespace OpenRA.Mods.D2.Widgets
         }
         public void PatchStatFameAtrWindow()
         {
-            fameroom3T = iternalFB.BindThisFrameBufferWithNewColorAttachment(true, iternalFB.size); //патчим оригинальную текстуру знаками дома
-            Game.Renderer.PixelDumpRenderer.AddDrawSpriteCommand(fameroomSprite, new float3(0, 0, 0), new float3(320, 200, 0), prbase);
-            Game.Renderer.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage("atrsign", "background"), new float3(2, 9, 0), new float3(53, 54, 0), prbase);
-            Game.Renderer.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage("atrsign", "background"), new float3(266, 9, 0), new float3(53, 54, 0), prbase);
+            fameroom3T = iternalFB.BindThisFrameBufferWithNewTexture(true, iternalFB.size); //патчим оригинальную текстуру знаками дома
+            iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(fameroomSprite, new float3(0, 0, 0), new float3(320, 200, 0), prbase);
+            iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage("atrsign", "background"), new float3(2, 9, 0), new float3(53, 54, 0), prbase);
+            iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage("atrsign", "background"), new float3(266, 9, 0), new float3(53, 54, 0), prbase);
             Game.Renderer.RgbaColorRenderer.FillRect(new float3(9, 136, 0), new float3(167 + 9, 55 + 136, 0), Color.FromArgb(255, 182, 125, 12)); //пишет в SPriteRenderer
             Game.Renderer.SpriteRenderer.Flush();
-            Game.Renderer.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
+            iternalFB.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
 
             Sheet shtemp = new Sheet(SheetType.BGRA, fameroom3T); //делаем спрайт по патченной текстуре.
             Sprite stemp = new Sprite(shtemp, new Rectangle(0, 0, 320, 200), TextureChannel.RGBA); //указываем оригинальный размер спрайта, чтобы потом он адаптировался под разные рразрешения
