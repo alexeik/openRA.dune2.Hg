@@ -563,12 +563,7 @@ namespace OpenRA.Mods.D2.Widgets
         {
 
             //Game.Renderer.Flush();
-            rgnclickT = iternalFB.BindThisFrameBufferWithNewTexture(true, iternalFB.size);
-
-            iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(dunergnclickSprite, new float3(0, 0, 0), new float3(RenderBounds.Width, RenderBounds.Height, 0), prbase);
-
-            iternalFB.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
-            //iternalFB.Unbind();
+           
 
             dunergnT = iternalFB.BindThisFrameBufferWithNewTexture(true, iternalFB.size);
             iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(dunergnSprite, new float3(0, 0, 0), new float3(RenderBounds.Width, RenderBounds.Height, 0), prbase);
@@ -603,12 +598,15 @@ namespace OpenRA.Mods.D2.Widgets
             iternalFB.Unbind();
 
 
-
-            sh1 = new Sheet(SheetType.BGRA, rgnclickT); //сохраняем ссылку на GL текстуру в CPU БД sheet. Но тут мы минуем свою БД SheetBuilder, которая содержит все данные текстуры.
-            // Поэтому если текстура в OGL БД поломается, ее придется заново восстанавливать своими руками.
-            MapRegionMaskSprite = new Sprite(sh1, new Rectangle(0, 0, RenderBounds.Width, RenderBounds.Height), TextureChannel.RGBA); // сохраняем координаты пикселей в Sprite
-            //После этого, у нас есть спрайт, который превращается в команду для рисования шейдеру. В спрайте есть текстура и координаты области, которые будут использоваться шейдером.
-            ChromeProvider.AddSprite("patched", "MapRegionMaskSprite", MapRegionMaskSprite);
+            //rgnclickT = iternalFB.BindThisFrameBufferWithNewTexture(true, iternalFB.size);
+            //iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(dunergnclickSprite, new float3(0, 0, 0), new float3(RenderBounds.Width, RenderBounds.Height, 0), prbase);
+            //iternalFB.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
+            //iternalFB.Unbind();
+            //sh1 = new Sheet(SheetType.BGRA, rgnclickT); //сохраняем ссылку на GL текстуру в CPU БД sheet. Но тут мы минуем свою БД SheetBuilder, которая содержит все данные текстуры.
+            //// Поэтому если текстура в OGL БД поломается, ее придется заново восстанавливать своими руками.
+            //MapRegionMaskSprite = new Sprite(sh1, new Rectangle(0, 0, RenderBounds.Width, RenderBounds.Height), TextureChannel.RGBA); // сохраняем координаты пикселей в Sprite
+            ////После этого, у нас есть спрайт, который превращается в команду для рисования шейдеру. В спрайте есть текстура и координаты области, которые будут использоваться шейдером.
+            //ChromeProvider.AddSprite("patched", "MapRegionMaskSprite", MapRegionMaskSprite);
 
 
             sh2 = new Sheet(SheetType.BGRA, housesMaskT);
@@ -617,25 +615,9 @@ namespace OpenRA.Mods.D2.Widgets
 
 
             mapchamhark = ChromeProvider.GetImage("patched", "mapchamhark");
-            if (mapchamhark == null)
-            {
-                PatchHarkMapChamber();
-                mapchamhark = ChromeProvider.GetImage("patched", "mapchamhark");
-            }
-
             mapchamatr = ChromeProvider.GetImage("patched", "mapchamatr");
-            if (mapchamatr == null)
-            {
-                PatchAtrMapChamber();
-                mapchamatr = ChromeProvider.GetImage("patched", "mapchamatr");
-            }
-
             mapchamord = ChromeProvider.GetImage("patched", "mapchamord");
-            if (mapchamord == null)
-            {
-                PatchOrdosMapChamber();
-                mapchamord = ChromeProvider.GetImage("patched", "mapchamord");
-            }
+
 
             fameatr = ChromeProvider.GetImage("patched", "fameatr");
             if (fameatr == null)
@@ -1167,6 +1149,7 @@ namespace OpenRA.Mods.D2.Widgets
             //Game.Renderer.PixelDumpRenderer.fb.Unbind();
 
             //return;
+            //DrawFrame = DrawFrameEnum.Fame;
             switch (DrawFrame)
             {
                 case DrawFrameEnum.Map:

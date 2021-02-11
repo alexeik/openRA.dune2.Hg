@@ -1,8 +1,4 @@
 refinery:
-    idle-flag: ICON.ICN
-		Start: 332
-		Offset: -16,-8
-		ZOffset: -2047
     idle: ICON.ICN
 		Frames: 333, 335
 		Length: 2
@@ -11,6 +7,7 @@ refinery:
 		Tick: 1000
 	idle-tileset: ICON.ICN
 		Frames: 332, 333, 334, 337, 338, 339
+        JoinFramesBy: 3
 		Length: 6
 		Offset: -8,0
 		ZOffset: -2047

@@ -281,10 +281,74 @@ namespace OpenRA.Mods.Common.Traits
 					continue;
 
 				var tileInfo = tileInfos[uv];
-				var shroudSprite = GetSprite(shroudSprites, GetEdges(puv, visibleUnderShroud), tileInfo.Variant);
+				Sprite shroudSprite;
+				Edges ed = GetEdges(puv, visibleUnderShroud);
+
+				if (Game.worldRenderer.World.RenderPlayer!=null)
+				{
+					
+					if (ed == Edges.None)
+					{
+						shroudSprite = null;
+					}
+					else if(ed != Edges.None && ed != Edges.All)
+					{
+						shroudSprite = GetSprite(shroudSprites, GetEdges(puv, visibleUnderShroud), tileInfo.Variant);
+					}
+					else
+					{
+						if (tileInfo.ScreenPosition.X ==8 ) //ScreenPosition указывает на цетнр спрайта = 8. Спрайт 16 на 16.
+						{
+							shroudSprite = ChromeProvider.GetImage("dune2stolbvert", "background"); 
+						}
+						else if (tileInfo.ScreenPosition.Y == 8)
+						{
+							shroudSprite = ChromeProvider.GetImage("dune2stolbvert90", "background");
+						}
+						else if (tileInfo.ScreenPosition.X == ((8 * 2 * map.MapSize.X) - 8))
+						{
+							shroudSprite = ChromeProvider.GetImage("dune2stolbvert", "background");
+						}
+						else if (tileInfo.ScreenPosition.Y == ((8 * 2 * map.MapSize.Y) - 8))
+						{
+							shroudSprite = ChromeProvider.GetImage("dune2stolbvert90", "background");
+						}
+						else
+						{
+							shroudSprite = Game.worldRenderer.World.RenderPlayer.ShroudSprite;
+						}
+
+					}
+				
+					
+				}
+				else
+
+				{
+					shroudSprite = GetSprite(shroudSprites, GetEdges(puv, visibleUnderShroud), tileInfo.Variant);
+				}
+				
+				
 				var shroudPos = tileInfo.ScreenPosition;
 				if (shroudSprite != null)
+				{
 					shroudPos += shroudSprite.Offset - 0.5f * shroudSprite.Size;
+					if (Game.worldRenderer.World.RenderPlayer != null)
+					{
+						if (tileInfo.ScreenPosition.X == 8 || tileInfo.ScreenPosition.Y == 8 || tileInfo.ScreenPosition.X == ((8 * 2 * map.MapSize.X) - 8) || tileInfo.ScreenPosition.Y == ((8 * 2 * map.MapSize.Y) - 8)) //ScreenPosition указывает на цетнр спрайта = 8. Спрайт 16 на 16.
+						{
+							
+						}
+						else if (ed != Edges.None && ed != Edges.All)
+						{
+							
+						}
+						else
+						{
+							shroudSprite.ReBound(shroudSprite, new Rectangle(Convert.ToInt32(shroudPos.X), Convert.ToInt32(shroudPos.Y), 16, 16));
+						}
+					}
+				}
 
 				var fogSprite = GetSprite(fogSprites, GetEdges(puv, visibleUnderFog), tileInfo.Variant);
 				var fogPos = tileInfo.ScreenPosition;
