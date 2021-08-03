@@ -364,7 +364,7 @@ namespace OpenRA.Mods.D2.Widgets.Logic
 				StopVideo(player);
 
 				playingVideo = pv;
-				player.Load(video);
+				player.Load(new FrameVideoLine() { WSAfilename = video });
 
 				// video playback runs asynchronously
 				player.PlayThen(() =>
