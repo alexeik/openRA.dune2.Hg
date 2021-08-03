@@ -1,6 +1,6 @@
 ^BaseWorld:
 	Inherits: ^Palettes
-    UIEndGameService:
+	UIEndGameService:
 	AlwaysVisible:
 	ScreenMap:
 	ActorMap:
@@ -100,15 +100,15 @@
 	Faction@Atreides:
 		Name: Atreides
 		InternalName: atreides
-		Description: House Atreides\nThe noble Atreides, from the water world of Caladan,\nrely on their ornithopters to ensure air superiority.\nThey have allied themselves with the Fremen, the fearsome\nnative warriors of Dune that can move undetected in battle.\n\nFaction Variations:\n    - Combat tanks are balanced in terms of speed and durability\n\nSpecial Units:\n    - Grenadier\n    - Fremen\n    - Sonic Tank\n\nSuperweapon:\n    - Airstrike
+		Description: House Atreides\nThe noble Atreides, from the water world of Caladan,\nrely on their ornithopters to ensure air superiority.\nThey have allied themselves with the Fremen, the fearsome\nnative warriors of Dune that can move undetected in battle.\n\nFaction Variations:\n	 - Combat tanks are balanced in terms of speed and durability\n\nSpecial Units:\n	 - Grenadier\n	  - Fremen\n	- Sonic Tank\n\nSuperweapon:\n	  - Airstrike
 	Faction@Harkonnen:
 		Name: Harkonnen
 		InternalName: harkonnen
-		Description: House Harkonnen\nThe evil Harkonnen will stop at nothing to gain control of the spice.\nThey rely on brute force and atomic weapons to achieve their goals:\nwealth, and the destruction of House Atreides.\n\nFaction Variations:\n    - Combat Tanks are more durable but slower \n\nSpecial Units:\n    - Sardaukar\n    - Devastator\n\nSuperweapon: \n    - Death Hand Missile
+		Description: House Harkonnen\nThe evil Harkonnen will stop at nothing to gain control of the spice.\nThey rely on brute force and atomic weapons to achieve their goals:\nwealth, and the destruction of House Atreides.\n\nFaction Variations:\n	 - Combat Tanks are more durable but slower \n\nSpecial Units:\n	- Sardaukar\n	 - Devastator\n\nSuperweapon: \n	- Death Hand Missile
 	Faction@Ordos:
 		Name: Ordos
 		InternalName: ordos
-		Description: House Ordos\nThe insidious Ordos of the icy planet Sigma Draconis IV\nare known for their wealth, greed and treachery.\nRelying heavily on mercenaries they often resort\nto sabotage and forbidden Ixian technologies.\n\nFaction Variations: \n    - Trikes are replaced by Raider Trikes\n    - Combat Tanks are faster but less durable\n\nSpecial Units:\n    - Raider Trike\n    - Stealth Raider Trike\n    - Saboteur\n    - Deviator
+		Description: House Ordos\nThe insidious Ordos of the icy planet Sigma Draconis IV\nare known for their wealth, greed and treachery.\nRelying heavily on mercenaries they often resort\nto sabotage and forbidden Ixian technologies.\n\nFaction Variations: \n	  - Trikes are replaced by Raider Trikes\n	  - Combat Tanks are faster but less durable\n\nSpecial Units:\n	- Raider Trike\n	- Stealth Raider Trike\n	- Saboteur\n	- Deviator
 	Faction@Corrino:
 		Name: Corrino
 		InternalName: corrino
@@ -148,19 +148,17 @@ World:
 	ScreenShaker:
 	BuildingInfluence:
 	D2ConcreteOwners:
-	ProductionQueueFromSelection:
-		ProductionPaletteWidget: PRODUCTION_PALETTE
 	ActorSpawnManager:
 		Actors: sandworm
-        Maximum: 5
+		Maximum: 5
 	AsteroidSpawnManager:
-		Actors: asteroid    
-        RemoveActorBeforeSpawn: true
-        SpawnInterval: 500
-        Maximum: 2
-        NeedsActorSpawner:false
-        LocationInit: 50,70
-        Altitude: 1098
+		Actors: asteroid	
+		RemoveActorBeforeSpawn: true
+		SpawnInterval: 500
+		Maximum: 2
+		NeedsActorSpawner:false
+		LocationInit: 50,70
+		Altitude: 1098
 	DomainIndex:
 	WarheadDebugOverlay:
 	D2TerrainLayer:
