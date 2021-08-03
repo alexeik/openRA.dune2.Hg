@@ -184,4 +184,17 @@ DrawNewSprite7:StatFameAtr
             RectangleTopLeft:9,136
             RectangleBottomRight:176,191
             PrimitivesColor:B67D0C
-            Palette:shroud               
+            Palette:shroud   
+DrawNewSprite8:ChaomRotated
+    CollectionName:patched
+    CollectionItem:bshop
+    RectangleTopLeft:0,400
+    RectangleBottomRight:200,320
+    SaveAsStandaloneTexture:false
+    Commands:
+        Rotate:
+            CollectionName:buildershopui
+            CollectionItem:background
+            RectangleTopLeft:0,0
+            RectangleBottomRight:200,320
+            Palette:shroud
