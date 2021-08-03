@@ -343,7 +343,7 @@ namespace OpenRA.Mods.D2.Widgets.Logic
 				if (Path.GetExtension(filename.ToLowerInvariant()) == ".ws1a")
 				{
 					player = panel.Get<WsaPlayerWidget>("PLAYER");
-					player.Load(prefix.ToString() + filename);
+					player.Load(new FrameVideoLine() { WSAfilename = prefix.ToString() + filename });
 					isVideoLoaded = true;
 					frameSlider.MaximumValue = (float)player.Video.Length - 1;
 					frameSlider.Ticks = 0;

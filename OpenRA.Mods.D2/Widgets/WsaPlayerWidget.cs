@@ -41,6 +41,7 @@ namespace OpenRA.Mods.D2.Widgets
         //FrameLine for VOC files. WSAName + FrameNumber + VOC file.
 
         string cachedVideo;
+        FrameVideoLine cachedVideoLine;
         float2 videoOrigin, videoSize;
         bool stopped;
         bool paused;
@@ -50,7 +51,7 @@ namespace OpenRA.Mods.D2.Widgets
         PaletteReference pr;
 
         Action onComplete;
-        public Queue<string> VideoStackList;
+        public Queue<FrameVideoLine> VideoStackList;
         public List<FrameSoundLine> frameSoundLine;
         public List<FrameTextLine> frameTextLine;
         Animation anim1, anim2;
@@ -60,22 +61,24 @@ namespace OpenRA.Mods.D2.Widgets
         {
             LoadPalette();
             world = Game.worldRenderer.World;
-            //anim1 = new Animation(world, "video1");
+            // anim1 = new Animation(world, "video1");
             //anim1.Play("play");
-            //  anim1 = new Animation(null, ""); // нужно иметь заполненым переменную world.Map.Rules.Sequences;
+            //anim1 = new Animation(null, ""); // нужно иметь заполненым переменную world.Map.Rules.Sequences;
 
         }
 
-        public void Load(string filename)
+        public void Load(FrameVideoLine videoLine)
         {
-            if (filename == cachedVideo)
+            if (videoLine.WSAfilename == cachedVideo)
                 return;
+
             image = null;
             video = null;
             prevSprite = null;
-            if (filename.Contains("WSA"))
+            cachedVideoLine = videoLine;
+            if (videoLine.WSAfilename.Contains("WSA"))
             {
-                if (filename.Contains("INTRO"))
+                if (videoLine.WSAfilename.Contains("INTRO"))
                 {
                     LoadPalette();
                 }
@@ -83,8 +86,10 @@ namespace OpenRA.Mods.D2.Widgets
                 {
                     LoadPaletteWSA();
                 }
-                anim1.ChangeSequenceGroup(filename.Replace(".", ""));
-                anim1.Play("play");
+                anim1 = new Animation(world, videoLine.WSAfilename);
+                cachedVideo = videoLine.WSAfilename;
+                anim1.ChangeSequenceGroup(videoLine.WSAfilename.Replace(".", ""));
+                anim1.Play("play", OnFrameTickAction);
                 SetSize(anim1.Image.Size.XY.ToInt2().X, anim1.Image.Size.XY.ToInt2().Y);
             }
             else
@@ -212,20 +217,25 @@ namespace OpenRA.Mods.D2.Widgets
 
         public void DrawWsaText(FrameTextLine ftl)
         {
-            var textSize = Game.Renderer.Fonts["Original"].Measure(ftl.Text);
-            Game.Renderer.Fonts["Original"].DrawText(ftl.Text, ftl.Pos, ftl.TextColor);
+           // var textSize = Game.Renderer.Fonts["BigBold"].Measure(ftl.Text);
+            Game.Renderer.Fonts["BigBold"].DrawText(ftl.Text, ftl.Pos, ftl.TextColor);
             // Game.Renderer.Fonts["Original"].DrawTextWithShadow(ftl.Text, ftl.Pos, ftl.TextColor, Color.FromArgb(150, 0, 0), Color.FromArgb(100,100, 0, 0), 2);
             //Game.Renderer.Fonts["Original"].DrawTextWithContrast(ftl.Text, ftl.Pos, ftl.TextColor, Color.FromArgb(150, 0, 0), Color.FromArgb(100, 255, 255, 255), 1);
         }
 
         public override void Draw()
         {
-            if (anim1.CurrentSequence.Length == anim1.CurrentFrame + 1)
+            if (anim1 == null)
+            {
+                return;
+            }
+
+            if (anim1.CurrentSequence.Length == anim1.CurrentFrame + 1 && cachedVideoLine.PauseInTicks<=0)
             {
                 if (VideoStackList.Count == 0)
                 {
                     Exit();
-                   
+
                 }
                 if (VideoStackList.Count > 0)
                 {
@@ -234,9 +244,86 @@ namespace OpenRA.Mods.D2.Widgets
 
             }
 
-            anim1.Tick();
+            if (anim1.CurrentSequence.Length == anim1.CurrentFrame + 1 && cachedVideoLine.PauseInTicks > 0)
+            {
+                //AnimationString pauseAnim = new AnimationString();
+                //cachedVideoLine.PauseInTicks -= anim1.CurrentSequenceTickOrDefault();
+            }
+
+
+            anim1.Tick(); //мы находимся внутри одного фрейм , какое то количество вызовов Draw!!!
+            //звук в структуре играет только 1 раз , видео повторяет прошлый кадр до следующего.
             Game.Renderer.SpriteRenderer.DrawSprite(anim1.Image, videoOrigin, pr, videoSize);
-          
+
+            if (prevText != null)
+            {
+                //prevText = new FrameTextLine() { Text = "" };
+               
+                DrawWsaText(prevText);
+
+            }
+
+
+        }
+
+        public void OnFrameTickAction()
+        {
+            ISound currentsound = null;
+
+
+
+            if (frameTextLine.Contains(new FrameTextLine() { WSAfilename = cachedVideo, FrameNumber = anim1.CurrentFrame }))
+            {
+                FrameTextLine ft = frameTextLine.Find(x => x.WSAfilename.Contains(cachedVideo) && x.FrameNumber == anim1.CurrentFrame);
+               
+                DrawWsaText(ft);
+                prevText = ft;
+            }
+
+            if (frameSoundLine == null)
+            {
+
+            }
+
+            else
+            {
+                if (frameSoundLine.Contains(new FrameSoundLine() { WSAfilename = cachedVideo, FrameNumber = anim1.CurrentFrame }))
+                {
+
+                    var vocfilename = frameSoundLine.Find(x => x.WSAfilename.Contains(cachedVideo) && x.FrameNumber == anim1.CurrentFrame).VOCfilename;
+                    if (vocfilename.Contains("ADL"))
+                    {
+                        IReadOnlyFileSystem fileSystem = Game.ModData.DefaultFileSystem;
+
+                        if (!fileSystem.Exists(vocfilename))
+                        {
+                            Log.Write("sound", "LoadSound, file does not exist: {0}", vocfilename);
+
+                        }
+                        DuneMusic.Quit();
+                        DuneMusic.Init(44100, "", DuneMusic.DuneMusicOplEmu.kOplEmuNuked);
+
+                        using (var stream = fileSystem.Open(vocfilename))
+                        {
+
+                            DuneMusic.InsertMemoryFile("test", stream.ReadAllBytes());
+                            byte[] temp = new byte[28106880];
+
+                            UIntPtr temp3;
+                            temp3 = (UIntPtr)1000000;
+                            temp3 = DuneMusic.SynthesizeAudio("test", 52, -1, temp, (UIntPtr)temp.Length);
+                            ISoundSource soundSource;
+                            soundSource = Game.Sound.soundEngine.AddSoundSourceFromMemory(temp, 2, 16, 44100);
+                            ISound temp2 = Game.Sound.soundEngine.Play2D(Game.LocalTick, soundSource, false, true, WPos.Zero, Game.Sound.SoundVolume * Game.Sound.SoundVolumeModifier, false);
+                        }
+                    }
+                    else
+                    {
+                        currentsound = Game.Sound.Play(SoundType.UI, vocfilename);
+                    }
+
+                }
+            }
         }
         public void Draw2()
         {
@@ -494,13 +581,16 @@ namespace OpenRA.Mods.D2.Widgets
 
         public void Stop()
         {
-            if (stopped || video == null)
-                return;
+            //if (stopped || (video == null && anim1 =null))
+            //    return;
 
 
             stopped = true;
             paused = true;
-            video.Reset();
+            if (video != null)
+            {
+                video.Reset();
+            }
             Game.RunAfterTick(onComplete);
         }
         public void Exit()
