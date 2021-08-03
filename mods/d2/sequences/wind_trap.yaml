@@ -13,6 +13,9 @@ wind_trap:
 		Offset: 8,8
 		ZOffset: -2047
 		Tick: 1000
-	icon: SHAPES.SHP
+	icon2: SHAPES.SHP
 		Start: 61
 		Offset: 0,0
+	icon: WINDTRAP.WSA
+		Length: 1
+		Offset: 0,0 
