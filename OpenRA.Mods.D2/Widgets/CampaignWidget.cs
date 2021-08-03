@@ -146,7 +146,7 @@ namespace OpenRA.Mods.D2.Widgets
         {
             base.Initialize(args);
             //InitializePixelPatcher(Game.ModData);
-            iternalFB = FrameBuffer.SetupOrGetOneMoreFrameBuffer(new Size(Game.Renderer.Resolution.Width, Game.Renderer.Resolution.Height), "fbCampaign");
+            iternalFB = FrameBuffer.SetupOrGetOneMoreFrameBuffer(new Size(Game.Renderer.Resolution.Width, Game.Renderer.Resolution.Height), "fbCampaign",8);
             iternalFB.PixelDumpRenderer.SetViewportParams(new Size(Game.Renderer.Resolution.Width, Game.Renderer.Resolution.Height), 0f, 0f, 1f, int2.Zero);
             //переинициализация этих переменных происходит только  на 2+N раз
             //housesT = iternalFB.Texture[2];
@@ -171,10 +171,10 @@ namespace OpenRA.Mods.D2.Widgets
             var ppnodes = MiniYaml.Merge(modData.Manifest.PixelPatcher
                 .Select(s => MiniYaml.FromStream(fileSystem.Open(s), s)));
 
-            FrameBuffer iternalFB = FrameBuffer.SetupOrGetOneMoreFrameBuffer(new Size(Game.Renderer.Resolution.Width, Game.Renderer.Resolution.Height), "fbCampaign");
+            FrameBuffer iternalFB = FrameBuffer.SetupOrGetOneMoreFrameBuffer(new Size(Game.Renderer.Resolution.Width, Game.Renderer.Resolution.Height), "fbCampaign",8);
             iternalFB.PixelDumpRenderer.SetViewportParams(new Size(Game.Renderer.Resolution.Width, Game.Renderer.Resolution.Height), 0f, 0f, 1f, int2.Zero);
             //Game.Renderer.SpriteRenderer.Flush();
-            ITexture maproomHarkT = iternalFB.BindThisFrameBufferWithNewTexture(true, iternalFB.size);
+            ITexture maproomHarkT = iternalFB.BindThisFrameBufferWithNewTexture(true, iternalFB.size,8);
             foreach (var kvp in ppnodes)
             {
                 PixelPatcherAdapter(kvp.Value, kvp.Value.Nodes[0].Value.Value.ToString(), kvp.Value.Nodes[1].Value.Value.ToString(), iternalFB, maproomHarkT);
@@ -565,23 +565,23 @@ namespace OpenRA.Mods.D2.Widgets
             //Game.Renderer.Flush();
            
 
-            dunergnT = iternalFB.BindThisFrameBufferWithNewTexture(true, iternalFB.size);
+            dunergnT = iternalFB.BindThisFrameBufferWithNewTexture(true, iternalFB.size,8);
             iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(dunergnSprite, new float3(0, 0, 0), new float3(RenderBounds.Width, RenderBounds.Height, 0), prbase);
             iternalFB.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
             //iternalFB.Unbind();
 
-            housesT = iternalFB.BindThisFrameBufferWithNewTexture(true, iternalFB.size);
+            housesT = iternalFB.BindThisFrameBufferWithNewTexture(true, iternalFB.size,8);
             iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(housesSprite, new float3(0, 0, 0), new float3(RenderBounds.Width, RenderBounds.Height, 0), prbase);
             iternalFB.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
             //iternalFB.Unbind();
 
-            housesMaskT = iternalFB.BindThisFrameBufferWithNewTexture(true, iternalFB.size);
+            housesMaskT = iternalFB.BindThisFrameBufferWithNewTexture(true, iternalFB.size,8);
             iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(housesmaskSprite, new float3(0, 0, 0), new float3(RenderBounds.Width, RenderBounds.Height, 0), prbase);
             iternalFB.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
             //iternalFB.Unbind();
 
             //переходим в размеры текстур как у игры! 
-            textemp = iternalFB.BindThisFrameBufferWithNewTexture(true, iternalFB.size);
+            textemp = iternalFB.BindThisFrameBufferWithNewTexture(true, iternalFB.size,8);
             iternalFB.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
             //iternalFB.Unbind();
 
@@ -592,7 +592,7 @@ namespace OpenRA.Mods.D2.Widgets
 
 
 
-            maproomMaskT = iternalFB.BindThisFrameBufferWithNewTexture(true, iternalFB.size);
+            maproomMaskT = iternalFB.BindThisFrameBufferWithNewTexture(true, iternalFB.size,8);
             iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(maproommaskSprite, new float3(0, 0, 0), new float3(RenderBounds.Width, RenderBounds.Height, 0), prbase);
             iternalFB.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
             iternalFB.Unbind();
@@ -659,7 +659,7 @@ namespace OpenRA.Mods.D2.Widgets
 
         public void PatchHarkMapChamber()
         {
-            maproomHarkT = iternalFB.BindThisFrameBufferWithNewTexture(true, iternalFB.size); //патчим оригинальную текстуру знаками дома
+            maproomHarkT = iternalFB.BindThisFrameBufferWithNewTexture(true, iternalFB.size,8); //патчим оригинальную текстуру знаками дома
             //maproomHarkSizedT = Game.Renderer.PixelDumpRenderer.fb.Bind(true, Game.Renderer.PixelDumpRenderer.fb.size);
             //Game.Renderer.PixelDumpRenderer.fb.Unbind();
             //hark map
@@ -688,7 +688,7 @@ namespace OpenRA.Mods.D2.Widgets
             //maproomAtrSizedT = Game.Renderer.PixelDumpRenderer.fb.Bind(true, Game.Renderer.PixelDumpRenderer.fb.size);
             //Game.Renderer.PixelDumpRenderer.fb.Unbind();
             //atr map
-            maproomAtrT = iternalFB.BindThisFrameBufferWithNewTexture(true, iternalFB.size); //патчим оригинальную текстуру знаками дома
+            maproomAtrT = iternalFB.BindThisFrameBufferWithNewTexture(true, iternalFB.size,8); //патчим оригинальную текстуру знаками дома
             iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(maproomSprite, new float3(0, 0, 0), new float3(320, 200, 0), prbase);
             iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage("atrsign", "background"), new float3(2, 145, 0), new float3(53, 54, 0), prbase);
             iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage("atrsign", "background"), new float3(266, 145, 0), new float3(53, 54, 0), prbase);
@@ -730,7 +730,7 @@ namespace OpenRA.Mods.D2.Widgets
             //maproomOrdosSizedT = Game.Renderer.PixelDumpRenderer.fb.Bind(true, Game.Renderer.PixelDumpRenderer.fb.size);
             //Game.Renderer.PixelDumpRenderer.fb.Unbind();
             //atr map
-            maproomOrdosT = iternalFB.BindThisFrameBufferWithNewTexture(true, iternalFB.size); //патчим оригинальную текстуру знаками дома
+            maproomOrdosT = iternalFB.BindThisFrameBufferWithNewTexture(true, iternalFB.size,8); //патчим оригинальную текстуру знаками дома
             iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(maproomSprite, new float3(0, 0, 0), new float3(320, 200, 0), prbase);
             iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage("ordossign", "background"), new float3(2, 145, 0), new float3(53, 54, 0), prbase);
             iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage("ordossign", "background"), new float3(266, 145, 0), new float3(53, 54, 0), prbase);
@@ -767,7 +767,7 @@ namespace OpenRA.Mods.D2.Widgets
         }
         public void PatchStatFameOrdosWindow()
         {
-            fameroomT = iternalFB.BindThisFrameBufferWithNewTexture(true, iternalFB.size); //патчим оригинальную текстуру знаками дома
+            fameroomT = iternalFB.BindThisFrameBufferWithNewTexture(true, iternalFB.size,8); //патчим оригинальную текстуру знаками дома
             iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(fameroomSprite, new float3(0, 0, 0), new float3(320, 200, 0), prbase);
             iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage("ordossign", "background"), new float3(2, 9, 0), new float3(53, 54, 0), prbase);
             iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage("ordossign", "background"), new float3(266, 9, 0), new float3(53, 54, 0), prbase);
@@ -783,7 +783,7 @@ namespace OpenRA.Mods.D2.Widgets
         }
         public void PatchStatFameHarkWindow()
         {
-            fameroom2T = iternalFB.BindThisFrameBufferWithNewTexture(true, iternalFB.size); //патчим оригинальную текстуру знаками дома
+            fameroom2T = iternalFB.BindThisFrameBufferWithNewTexture(true, iternalFB.size,8); //патчим оригинальную текстуру знаками дома
             iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(fameroomSprite, new float3(0, 0, 0), new float3(320, 200, 0), prbase);
             iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage("harksign", "background"), new float3(2, 9, 0), new float3(53, 54, 0), prbase);
             iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage("harksign", "background"), new float3(266, 9, 0), new float3(53, 54, 0), prbase);
@@ -799,7 +799,7 @@ namespace OpenRA.Mods.D2.Widgets
         }
         public void PatchStatFameAtrWindow()
         {
-            fameroom3T = iternalFB.BindThisFrameBufferWithNewTexture(true, iternalFB.size); //патчим оригинальную текстуру знаками дома
+            fameroom3T = iternalFB.BindThisFrameBufferWithNewTexture(true, iternalFB.size,8); //патчим оригинальную текстуру знаками дома
             iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(fameroomSprite, new float3(0, 0, 0), new float3(320, 200, 0), prbase);
             iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage("atrsign", "background"), new float3(2, 9, 0), new float3(53, 54, 0), prbase);
             iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage("atrsign", "background"), new float3(266, 9, 0), new float3(53, 54, 0), prbase);
