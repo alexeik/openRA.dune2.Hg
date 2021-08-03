@@ -52,7 +52,7 @@ namespace OpenRA.Mods.D2.Traits
 		readonly World world;
 	
 		bool initialized = false;
-		bool singleSelection = true;
+		bool singleSelection = false;
 		public bool SingleSelection { get { return singleSelection; } }
 		
 		public D2Selection(World world, D2SelectionInfo info) : base(new SelectionInfo())
@@ -65,9 +65,9 @@ namespace OpenRA.Mods.D2.Traits
 		{
 			if (!initialized)
 			{
-				var gs = world.LobbyInfo.GlobalSettings;
-				singleSelection = gs.OptionOrDefault("singleselection", info.CheckboxEnabled);
-				initialized = true;
+				//var gs = world.LobbyInfo.GlobalSettings;
+				//singleSelection = gs.OptionOrDefault("singleselection", info.CheckboxEnabled);
+				//initialized = true;
 			}
 		}
 
