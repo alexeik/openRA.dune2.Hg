@@ -42,9 +42,13 @@
 		Palette: d2
 		Type: Cell
 		TerrainTypes: Sand, Dune, Spice
-        SpawnAtLastPosition: False
-        MovingInterval:40
+		SpawnAtLastPosition: False
+		MovingInterval:40
+        StartDelay:60
 	WithSpriteControlGroupDecoration:
 	HitShape:
 	MapEditorData:
 		Categories: Vehicle
+	WidgetActivationList:
+		ContextWidgetList:ACTOR_INFO
+		TrackWidgetList:ACTOR_INFO

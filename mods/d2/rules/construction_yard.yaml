@@ -3,6 +3,9 @@ construction_yard:
 	Buildable:
 		Description: Produces structures.
 	-DamagedByTerrain:
+	WidgetActivationList:
+		ContextWidgetList:PRODUCTION_PALETTE,ACTOR_INFO
+		TrackWidgetList:SIDEBAR_PRODUCTION,ACTOR_INFO
 	D2Building:
 		Footprint: xx xx
 		Dimensions: 2,2
