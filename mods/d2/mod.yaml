@@ -38,6 +38,7 @@ Packages:
 	d2k|uibits
 	d2|bits/scripts
 	d2|tilesets
+    d2|audio
 
 MapFolders:
 	d2|maps: System
