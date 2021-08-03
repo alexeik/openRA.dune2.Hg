@@ -137,7 +137,17 @@ housestitle:
 screenui:
     idle: SCREEN.CPS
         Length: *
-        RotateStep: 1
+
+screenui90:
+    idle: SCREEN.CPS
+        Length: *
+        RotateStep:1
+
+buildershop:
+    idle: CHOAM.CPS
+        Length: *
+        RotateStep:1
+        
 title:
     idle: TITLE.ENG
         Length: *
@@ -211,6 +221,18 @@ intro8cwsa:
     play: INTRO8C.WSA
         Length: *
         Tick: 500       
+intro9wsa:
+    play: INTRO9.WSA
+        Length: *
+        Tick: 500 
+intro10wsa:
+    play: INTRO10.WSA
+        Length: *
+        Tick: 500
+intro11wsa:
+    play: INTRO11.WSA
+        Length: *
+        Tick: 500         
 cashnums:
     nums: SHAPES.SHP
         Length:10
