@@ -3,7 +3,11 @@ Container@PLAYER_WIDGETS:
 		LogicKeyListener@CONTROLGROUP_KEYHANDLER:
 			Logic: ControlGroupLogic
 		LogicTicker@SIDEBAR_TICKER:
-		
+		D2IG@igui:
+			X: 300
+			Y: 200
+			Width: 500
+			Height: 400
 		Container@RADAR:
 			Logic: IngameRadarDisplayLogic
 			Children:
@@ -30,10 +34,11 @@ Container@PLAYER_WIDGETS:
 							Skippable: false
 		Container@SIDEBAR_PRODUCTION:
 			Logic: ClassicProductionLogic
-			X: WINDOW_RIGHT - 226
-			Y: 290
-			Width: 226
-			Height: 250
+			Visible: false
+			X: 226
+			Y: WINDOW_BOTTOM - 65
+			Width: 500
+			Height: 61
 			Children:
 				Container@PALETTE_BACKGROUND:
 					Children:
@@ -51,17 +56,17 @@ Container@PLAYER_WIDGETS:
 							ImageName: background-bottom
 				LogicTicker@PRODUCTION_TICKER:
 				ProductionPalette@PRODUCTION_PALETTE:
-					X: 39
+					X: 1
 					Y: 1
 					TooltipContainer: TOOLTIP_CONTAINER
 					ReadyText: READY
 					HoldText: ON HOLD
 					IconSize: 58, 48
-                    StretchOriginalIcons : true
+					StretchOriginalIcons: true
 					IconMargin: 2, 0
 					IconSpriteOffset: 0, 0
-					MinimumRows: 5
-					MaximumRows: 6
+					MinimumRows: 1
+					MaximumRows: 1
 					HotkeyPrefix: Production
 					HotkeyCount: 24
 					ClickSound: TabClick
@@ -69,77 +74,77 @@ Container@PLAYER_WIDGETS:
 					X: 6
 					Y: 2
 					Width: 25
-					Height: 274
-        Container@D2GameScreenUI
-            ClickThrough: true
-            Logic:D2GameScreenLogic
-            Children:
-                D2GameScreen@dune2ui:
-                    X: 600
-                    Y: 0
-                    Width: 11
-                    Height: 768
-                Background@dune2cashimage
-                    X:WINDOW_RIGHT-174
-                    Y:8
-                    Width:118
-                    Height:15
-                    Background:dune2cash
-                Cash@d2cash
-                    Logic: D2IngameCashCounterLogic  
-                    X:WINDOW_RIGHT-174
-                    Y:8
-                    Width:118
-                    Height:15
-                Button@mentat
-                    X:WINDOW_RIGHT-474
-                    Y:8
-                    Width:78
-                    Height:15
-                    Background:dune2btnmentat
-                Button@options
-                    X:WINDOW_RIGHT-374
-                    Y:8
-                    Width:78
-                    Height:15
-                    Background:dune2btnoptions 
-                Background@mentatabkg
-                    X:300
-                    Y:300
-                    Width:640
-                    Height:400
-                    Background:mentata
-                WorldButton@REPAIR_BUTTON:
-                    Logic: RepairOrderButtonLogic
-                    X: WINDOW_RIGHT-50
-                    Y:0
-                    Key: Repair
-                    TooltipText: Repair
-                    TooltipContainer: TOOLTIP_CONTAINER
-                    Width: 34
-                    Height: 27 
-                    LeftMargin:0
-                    RightMargin:0
-                    Children:
-                        Image@ICON:
-                            ImageCollection: order-repair    
-                MenuButton@DEBUG_BUTTON:
-                    Logic: MenuButtonsChromeLogic
-                    X: 4
-                    Width: 34
-                    Height: 35
-                    Background:
-                    Key: escape Shift
-                    TooltipText: Debug Menu
-                    TooltipContainer: TOOLTIP_CONTAINER
-                    DisableWorldSounds: true
-                    VisualHeight: 0
-                    Children:
-                        Image@ICON:
-                            X: 0
-                            Y: 0
-                            ImageCollection: order-icons
-                            ImageName: debug
+					Height: 0
+		Container@D2GameScreenUI
+			ClickThrough: true
+			Logic:D2GameScreenLogic
+			Children:
+				D2GameScreen@dune2ui:
+					X: 600
+					Y: 0
+					Width: 11
+					Height: 768
+				Background@dune2cashimage
+					X:WINDOW_RIGHT-174
+					Y:8
+					Width:118
+					Height:15
+					Background:dune2cash
+				Cash@d2cash
+					Logic: D2IngameCashCounterLogic	 
+					X:WINDOW_RIGHT-174
+					Y:8
+					Width:118
+					Height:15
+				Button@mentat
+					X:WINDOW_RIGHT-474
+					Y:8
+					Width:78
+					Height:15
+					Background:dune2btnmentat
+				Button@options
+					X:WINDOW_RIGHT-374
+					Y:8
+					Width:78
+					Height:15
+					Background:dune2btnoptions 
+				Background@mentatabkg
+					X:300
+					Y:300
+					Width:640
+					Height:400
+					Background:mentata
+				WorldButton@REPAIR_BUTTON:
+					Logic: RepairOrderButtonLogic
+					X: WINDOW_RIGHT-50
+					Y:0
+					Key: Repair
+					TooltipText: Repair
+					TooltipContainer: TOOLTIP_CONTAINER
+					Width: 34
+					Height: 27 
+					LeftMargin:0
+					RightMargin:0
+					Children:
+						Image@ICON:
+							ImageCollection: order-repair	 
+				MenuButton@DEBUG_BUTTON:
+					Logic: MenuButtonsChromeLogic
+					X: 4
+					Width: 34
+					Height: 35
+					Background:
+					Key: escape Shift
+					TooltipText: Debug Menu
+					TooltipContainer: TOOLTIP_CONTAINER
+					DisableWorldSounds: true
+					VisualHeight: 0
+					Children:
+						Image@ICON:
+							X: 0
+							Y: 0
+							ImageCollection: order-icons
+							ImageName: debug
 		Container@ACTOR_INFO:
 			Logic: D2IngameActorInfoDisplayLogic
 			X: WINDOW_RIGHT - 218
@@ -211,4 +216,4 @@ Container@PLAYER_WIDGETS:
 					Width: 88
 					Height: 16
 					Visible: false
-        
+		
