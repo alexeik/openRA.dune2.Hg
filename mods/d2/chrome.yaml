@@ -20,7 +20,12 @@ dune2stolbvertbot: screenui
     background: 241,182,12,5
 dune2cash: screenui
     background: 201,1,118,15
-    
+dune2ui: screenui
+    background : 0,0,320,200
+dune2ui90: screenui90
+    background : 0,0,200,320
+buildershopui: buildershop
+    background : 0,0,200,320
 dune2title: title
     background : 0,0,320,200
     
@@ -287,8 +292,8 @@ dialog2: dialog.png
 # Same as a pressed button
 dialog3: dialog.png
 	background: 641,1,126,126
-	border-r: 767,1,1,126
-	border-l: 640,1,1,126
+	border-r: 766,1,1,126
+	border-l: 641,1,1,126
 	border-b: 641,127,126,1
 	border-t: 641,0,126,1
 	corner-tl: 640,0,1,1
@@ -531,9 +536,9 @@ textfield-focused: dialog.png
 # A copy of dialog3 (pressed button)
 scrollpanel-bg: dialog.png
 	background: 641,1,126,126
-	border-r: 767,1,1,126
-	border-l: 640,1,1,126
-	border-b: 641,127,126,1
+	border-r: 766,1,1,126
+	border-l: 641,1,1,126
+	border-b: 640,127,126,1
 	border-t: 641,0,126,1
 	corner-tl: 640,0,1,1
 	corner-tr: 767,0,1,1
