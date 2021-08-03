@@ -41,8 +41,9 @@ sandworm:
 		Palette: effect
 		Type: CenterPosition
 		TerrainTypes: Sand, Dune, Spice
-		MovingInterval: 3
 		RequiresCondition: !attacking
+		SpawnAtLastPosition: False
+		MovingInterval:3
 	ConditionManager:
 	RevealOnFire:
 		Duration: 50
