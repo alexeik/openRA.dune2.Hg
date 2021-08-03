@@ -82,7 +82,7 @@ namespace OpenRA.Mods.D2.Widgets
             //seqsheet = Game.ModData.DefaultSequences["arrakis2"].SpriteCache.SheetBuilder2D.Current;
             seqsheet = Game.SheetBuilder2D.Current;
             Sprite sp = new Sprite(seqsheet, new Rectangle() { Width = seqsheet.Size.Width, Height = seqsheet.Size.Height }, channel); //чтобы прочитать все 4 канала seqsheet
-                                                                                                                                       //нужно использовать 4 итерации, где нужно менять канал в спрайте.
+            sp.TextureArrayIndex = 0;    //указать номер текстуры для дампа внутри Texture2dArray, обычно в номере 5 всё интересное                                                                                                                 //нужно использовать 4 итерации, где нужно менять канал в спрайте.
             //так как sp.SpriteType не задан, то будет запущено DrawMode =0 , что отрисует только пиксели из палитры.
             //Нужно запустить и в режиме RGBA - сделать...
             fb.PixelDumpRenderer.DrawSprite(sp, new float3(0, 0, 0));
@@ -97,9 +97,10 @@ namespace OpenRA.Mods.D2.Widgets
             Sprite sp2 = new Sprite(sh1, new Rectangle(0, 0, 2048, 2048), TextureChannel.Red); //тут канал не важен, он будет подавлен через SPriteType
             //Создаем связку спрайт+текстура, чтобы передать текстуру в шейдер. и потом через SpriteType вызываем нужный код в шейдере.
             sp2.SpriteType = 5;
+            sp2.TextureArrayIndex = 5; //Играет роль. Он просто берет текстуру Texture2D0 для сэмплинга.
             fb.PixelDumpRenderer.DrawSprite(sp2, new float3(0, 0, 0)); //рисуем каждый пиксель из Texture0 в текстуру FB0 по алгоритму DrawMode=9
 
-            
+
             sp.SpriteType = 0;
             fb.PixelDumpRenderer.Flush();
 
