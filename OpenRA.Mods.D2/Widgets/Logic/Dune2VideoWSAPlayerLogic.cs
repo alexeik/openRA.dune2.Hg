@@ -91,7 +91,7 @@ namespace OpenRA.Mods.D2.Widgets.Logic
             fsPlayer.VideoStackList.Enqueue(new FrameVideoLine() { WSAfilename = "AND.ENG" });
             fsPlayer.VideoStackList.Enqueue(new FrameVideoLine() { WSAfilename = "VIRGIN.CPS" });
             fsPlayer.VideoStackList.Enqueue(new FrameVideoLine() { WSAfilename = "SCREEN.CPS" });
-            
+            fsPlayer.VideoStackList.Enqueue(new FrameVideoLine() { WSAfilename = "INTRO1.WSA" });
             fsPlayer.VideoStackList.Enqueue(new FrameVideoLine() { WSAfilename = "INTRO2.WSA" });
             fsPlayer.VideoStackList.Enqueue(new FrameVideoLine() { WSAfilename = "INTRO3.WSA" });
             fsPlayer.VideoStackList.Enqueue(new FrameVideoLine() { WSAfilename = "INTRO9.WSA" });
@@ -105,7 +105,7 @@ namespace OpenRA.Mods.D2.Widgets.Logic
             fsPlayer.VideoStackList.Enqueue(new FrameVideoLine() { WSAfilename = "INTRO8B.WSA" });
             fsPlayer.VideoStackList.Enqueue(new FrameVideoLine() { WSAfilename = "INTRO8C.WSA" });
             fsPlayer.VideoStackList.Enqueue(new FrameVideoLine() { WSAfilename = "INTRO5.WSA" });
-            fsPlayer.VideoStackList.Enqueue(new FrameVideoLine() { WSAfilename = "INTRO1.WSA" });
+            //fsPlayer.VideoStackList.Enqueue(new FrameVideoLine() { WSAfilename = "INTRO1.WSA" });
             //fsPlayer.VideoStackList.Enqueue(new FrameVideoLine() { WSAfilename = "INTRO10.WSA");
             //fsPlayer.VideoStackList.Enqueue(new FrameVideoLine() { WSAfilename = "INTRO11.WSA");
 
