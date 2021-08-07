@@ -1,4 +1,7 @@
 # requires Dune 2000/DATA/Music copied to $PlatformSupportDir/Content/d2k/Music
+DUNE0: Intro
+	Extension: ADL
+    SubSong:2
 DUNE7: Attack on Arrakis
 	Extension: ADL
     SubSong:6
