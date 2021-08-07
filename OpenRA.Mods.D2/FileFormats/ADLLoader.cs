@@ -48,7 +48,7 @@ namespace OpenRA.Mods.D2.FileFormats
 		public float LengthInSeconds 
 		{ 
 			get { 
-				return (float)35; 
+				return (float)235; 
 			}
 		}
 		public Stream GetPCMInputStream() 
@@ -69,12 +69,12 @@ namespace OpenRA.Mods.D2.FileFormats
 			DuneMusic.Init(44100, "", DuneMusic.DuneMusicOplEmu.kOplEmuNuked);
 
 		
-				DuneMusic.InsertMemoryFile("test", stream.ReadAllBytes());
-				buffer = new byte[10106880];
+				DuneMusic.InsertMemoryFile("test" + SubSong, stream.ReadAllBytes());
+				buffer = new byte[20106880];
 
 				UIntPtr temp3;
 				temp3 = (UIntPtr)1000000;
-				temp3 = DuneMusic.SynthesizeAudio("test", Convert.ToInt32(SubSong), -1, buffer, (UIntPtr)buffer.Length);
+				temp3 = DuneMusic.SynthesizeAudio("test"+ SubSong, Convert.ToInt32(SubSong), -1, buffer, (UIntPtr)buffer.Length);
 				//ISoundSource soundSource;
 				//soundSource = Game.Sound.soundEngine.AddSoundSourceFromMemory(buffer, 2, 16, 44100);
 				//ISound temp2 = Game.Sound.soundEngine.Play2D(Game.LocalTick, soundSource, false, true, WPos.Zero, 100, false);
