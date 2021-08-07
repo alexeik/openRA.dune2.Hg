@@ -52,7 +52,10 @@ namespace OpenRA.Mods.D2.Widgets
 
 
             }
+            if (ImGui.Button("DrawMMPX"))
+            {
 
+            }
             if (ar == null)
             { }
             else
@@ -88,11 +91,14 @@ namespace OpenRA.Mods.D2.Widgets
             fb.PixelDumpRenderer.DrawSprite(sp, new float3(0, 0, 0));
             fb.PixelDumpRenderer.Flush(); // тут произойдет сброс всех пикселей в текстуру у FB1.
             fb.Unbind();
-            //нарисовали в текстуру в свой фреймбуфер.
+            //нарисовали в текстуру из 2d_array в отдельную текстуру fb.texture[0].
+            //Далее делаем спрайт на эту текстуру sp2
+            //Далее спрайт идет в аргумент шейдеру.
+            //Далее пишем уже текстуру FB0, так как нельзя писать в fb.texture[0], когда она является аргументом!!
 
 
             //теперь нужно запустить еще раз рендер, где эта текстура будет как аргумент у шейдера и он нарисует все пиксели в фреймбуфер главный.
-
+            Game.Renderer.Flush();
             Sheet sh1 = new Sheet(SheetType.BGRA, fb.Texture[0]); //тут ставим текстуру от FB1 в аргумент шейдера Texture0
             Sprite sp2 = new Sprite(sh1, new Rectangle(0, 0, 2048, 2048), TextureChannel.Red); //тут канал не важен, он будет подавлен через SPriteType
             //Создаем связку спрайт+текстура, чтобы передать текстуру в шейдер. и потом через SpriteType вызываем нужный код в шейдере.
@@ -102,6 +108,7 @@ namespace OpenRA.Mods.D2.Widgets
 
 
             sp.SpriteType = 0;
+          
             fb.PixelDumpRenderer.Flush();
 
             Game.TakeTextureInner(fb.Texture[0]);
