@@ -38,6 +38,7 @@ namespace OpenRA.Mods.D2.SpriteLoaders
 
         public class CpsD2Tile : ISpriteFrame
         {
+            public string SequenceName { get; set; }
             public Size Size { get; set; }
             public Size FrameSize { get { return Size; }  set { Size = value; } }
             public float2 Offset { get { return float2.Zero; } }

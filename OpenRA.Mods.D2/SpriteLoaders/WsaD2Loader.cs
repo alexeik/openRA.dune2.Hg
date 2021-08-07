@@ -29,6 +29,7 @@ namespace OpenRA.Mods.D2.SpriteLoaders
 
         class WsaD2Tile : ISpriteFrame
         {
+            public string SequenceName { get; set; }
             public Size Size { get; set; }
             public Size FrameSize { get { return Size; }  set { } }
             public float2 Offset { get { return float2.Zero; } }
