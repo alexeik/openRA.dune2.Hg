@@ -15,6 +15,7 @@ using System.Runtime.InteropServices;
 using OpenRA;
 using OpenRA.FileSystem;
 using OpenRA.Graphics;
+using OpenRA.Mods.Common.Traits;
 using OpenRA.Mods.D2.FileFormats;
 using OpenRA.Mods.D2.SpriteLoaders;
 using OpenRA.Mods.D2.Widgets.Logic;
@@ -300,22 +301,26 @@ namespace OpenRA.Mods.D2.Widgets
                             Log.Write("sound", "LoadSound, file does not exist: {0}", vocfilename);
 
                         }
-                        DuneMusic.Quit();
-                        DuneMusic.Init(44100, "", DuneMusic.DuneMusicOplEmu.kOplEmuNuked);
 
-                        using (var stream = fileSystem.Open(vocfilename))
-                        {
+                        TraitPair<MusicPlaylist> playList = world.ActorsWithTrait<MusicPlaylist>().FirstEnabledTraitOrDefault();
+                        //DuneMusic.Quit();
+                        playList.Trait.Play(playList.Trait.AvailablePlaylist()[0]);
+                        //playList.Trait.Play(playList.Trait.AvailablePlaylist()[1]);
+                        //DuneMusic.Init(44100, "", DuneMusic.DuneMusicOplEmu.kOplEmuNuked);
 
-                            DuneMusic.InsertMemoryFile("test", stream.ReadAllBytes());
-                            byte[] temp = new byte[28106880];
+                        //using (var stream = fileSystem.Open(vocfilename))
+                        //{
 
-                            UIntPtr temp3;
-                            temp3 = (UIntPtr)1000000;
-                            temp3 = DuneMusic.SynthesizeAudio("test", 52, -1, temp, (UIntPtr)temp.Length);
-                            ISoundSource soundSource;
-                            soundSource = Game.Sound.soundEngine.AddSoundSourceFromMemory(temp, 2, 16, 44100);
-                            ISound temp2 = Game.Sound.soundEngine.Play2D(Game.LocalTick, soundSource, false, true, WPos.Zero, Game.Sound.SoundVolume * Game.Sound.SoundVolumeModifier, false);
-                        }
+                        //    DuneMusic.InsertMemoryFile("test", stream.ReadAllBytes());
+                        //    byte[] temp = new byte[10106880];
+
+                        //    UIntPtr temp3;
+                        //    temp3 = (UIntPtr)10106880;
+                        //    temp3 = DuneMusic.SynthesizeAudio("test", 3, -1, temp, (UIntPtr)temp.Length);
+                        //    ISoundSource soundSource;
+                        //    soundSource = Game.Sound.soundEngine.AddSoundSourceFromMemory(temp, 2, 16, 44100);
+                        //    ISound temp2 = Game.Sound.soundEngine.Play2D(Game.LocalTick, soundSource, false, true, WPos.Zero, Game.Sound.SoundVolume * Game.Sound.SoundVolumeModifier, false);
+                        //}
                     }
                     else
                     {
