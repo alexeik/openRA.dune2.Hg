@@ -12,6 +12,7 @@
 	MusicPlaylist:
 		VictoryMusic: score
 		DefeatMusic: score
+        AutoPlay: false
 	TerrainGeometryOverlay:
 	DebugVisualizations:
 	TerrainRenderer:
