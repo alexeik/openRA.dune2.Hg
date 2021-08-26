@@ -134,35 +134,7 @@ namespace OpenRA.Mods.D2.Widgets.Logic
             Ui.CloseWindow();
             Game.LoadWidget(world, "MAINMENU", Ui.Root, new WidgetArgs());
         }
-        void PlayVideo(WsaPlayerWidget player, FrameVideoLine video,  Action onComplete = null)
-        {
-            if (!modData.DefaultFileSystem.Exists(video.WSAfilename))
-            {
-                ConfirmationDialogs.ButtonPrompt(
-                    title: "Video not installed",
-                    text: "The game videos can be installed from the\n\"Manage Content\" menu in the mod chooser.",
-                    cancelText: "Back",
-                    onCancel: () => { });
-            }
-            else
-            {
-                StopVideo(player);
-
-                // = pv;
-                player.Load(video);
-
-                // video playback runs asynchronously
-                player.PlayThen(() =>
-                {
-                    //StopVideo(player);
-                    if (onComplete != null)
-                        onComplete();
-                });
-
-                // Mute other distracting sounds
-                //MuteSounds();
-            }
-        }
+        
         void PlayVideoStack(WsaPlayerWidget player, Action onComplete = null)
         {
             if (player.VideoStackList.Count==0)
@@ -207,6 +179,34 @@ namespace OpenRA.Mods.D2.Widgets.Logic
             player.Stop();
             //playingVideo = PlayingVideo.None;
         }
-        
+        void PlayVideo(WsaPlayerWidget player, FrameVideoLine video, Action onComplete = null)
+        {
+            if (!modData.DefaultFileSystem.Exists(video.WSAfilename))
+            {
+                ConfirmationDialogs.ButtonPrompt(
+                    title: "Video not installed",
+                    text: "The game videos can be installed from the\n\"Manage Content\" menu in the mod chooser.",
+                    cancelText: "Back",
+                    onCancel: () => { });
+            }
+            else
+            {
+                StopVideo(player);
+
+                // = pv;
+                player.Load(video);
+
+                // video playback runs asynchronously
+                player.PlayThen(() =>
+                {
+                    //StopVideo(player);
+                    if (onComplete != null)
+                        onComplete();
+                });
+
+                // Mute other distracting sounds
+                //MuteSounds();
+            }
+        }
     }
 }

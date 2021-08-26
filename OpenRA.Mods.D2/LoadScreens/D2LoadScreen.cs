@@ -9,6 +9,7 @@
  */
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using OpenRA.Graphics;
@@ -23,6 +24,9 @@ namespace OpenRA.Mods.D2
 	{
 		Stopwatch lastUpdate = Stopwatch.StartNew();
 		Renderer r;
+
+		public int srcBuffer = Game.Renderer.Context.CreateSSBOBuffer();
+		public int dstBuffer = Game.Renderer.Context.CreateSSBOBuffer();
 
 		float2 logoPos;
 		SheetBuilder sheetBuilder;
@@ -108,13 +112,120 @@ namespace OpenRA.Mods.D2
 				if (frames.Length == 0)
 					return;
 
-				sheetBuilder = new SheetBuilder(SheetType.Indexed, 512);
+				sheetBuilder = new SheetBuilder(SheetType.Indexed, 1024);
+				frames[0].Data = ResizeByMMPX(frames[0]);
 				logo = sheetBuilder.Add(frames[0]);
 
 				logoPos = new float2((r.Resolution.Width - logo.Size.X) / 2, (r.Resolution.Height - logo.Size.Y) / 2);
 			}
 		}
+		private byte[] ResizeByMMPX(ISpriteFrame inputSprite)
+		{
+			float3 groupSize = new float3(64, 1, 1);
+			float scale = 1f;
+			int outputCoof = 2;
+			Size dest_dims = new Size();
 
+			Size source_dims = new Size(inputSprite.Size.Width * scale, inputSprite.Size.Height * scale);
+			//два блока if наращивают размер до кратного числу 64=8*8, 8*8 из compute.cmp шейдера
+			if (source_dims.Width % (int)groupSize.X != 0)
+			{
+				int m = (source_dims.Width * outputCoof) % (int)groupSize.X;
+				dest_dims = new Size(source_dims.Width * outputCoof + (int)groupSize.X - m, source_dims.Height);
+
+			}
+			else
+			{
+				dest_dims = new Size(source_dims.Width * outputCoof, source_dims.Height);
+			}
+			if (source_dims.Height % (int)groupSize.X != 0)
+			{
+				int m = (source_dims.Height * outputCoof) % (int)groupSize.X;
+				dest_dims = new Size(dest_dims.Width, source_dims.Height * outputCoof + (int)groupSize.X - m);
+			}
+			else
+			{
+				dest_dims = new Size(dest_dims.Width, source_dims.Height * outputCoof);
+			}
+
+
+			dest_dims = new Size(dest_dims.Width, dest_dims.Height);
+
+			int len = dest_dims.Width * dest_dims.Height;
+
+			//expand input data to ARGB
+
+			var dataex = new uint[inputSprite.Size.Width * inputSprite.Size.Height];
+			for (var y = 0; y < inputSprite.Size.Height; y++)
+			{
+				for (var x = 0; x < inputSprite.Size.Width; x++)
+				{
+					var iData = (y * inputSprite.Size.Width + x);
+					var iRaw = (y * inputSprite.Size.Width + x);
+					dataex[iData] = BitConverter.ToUInt32(new byte[] { 0, 0, 0, inputSprite.Data[iRaw] }, 0); //ABGR
+
+				}
+			}
+
+
+			Game.Renderer.cmproc.SetViewportParams(new Size(), 0f, 0f, 1f, int2.Zero); // Size тут не важен, так как CS шейдер
+
+			Game.Renderer.Context.BindSSBOBuffer(srcBuffer, 1);
+			Game.Renderer.Context.SetSSBOData(dataex, 0, dataex.Length);
+			Game.Renderer.Context.UnbindSSBO();
+
+			Game.Renderer.Context.BindSSBOBuffer(dstBuffer, 0);
+			Game.Renderer.Context.SetSSBOData(new uint[len], 0, len);
+			Game.Renderer.Context.UnbindSSBO();
+
+			Game.Renderer.cmproc.SetVec("dst_size", dest_dims.Width, dest_dims.Height);
+			Game.Renderer.cmproc.SetVec("src_size", source_dims.Width, source_dims.Height);
+			Game.Renderer.cmproc.SetVec("src_max", source_dims.Width - 1, source_dims.Height - 1);
+
+			Game.Renderer.Context.DispatchCompute(source_dims.Width / 8, source_dims.Height / 8, 1);
+
+			uint[] dataOut = new uint[len];
+			Game.Renderer.Context.BindSSBOBuffer(dstBuffer, 0);
+			Game.Renderer.Context.GetBufferData(dataOut, dstBuffer, 0, len); //ABGR
+			Game.Renderer.Context.UnbindSSBO();
+
+
+
+			int destSkipX = (dest_dims.Width - source_dims.Width * 2);
+			int destTakeX = source_dims.Width * 2;
+			int destSkipY = dest_dims.Height - source_dims.Height * 2;
+			int destTakeY = source_dims.Height * 2;
+			int destCursor = 0;
+			int destCursorStep = 0;
+
+			var data = new byte[source_dims.Height * 2 * source_dims.Width * 2];
+
+			for (var y = 0; y < destTakeY; y++)
+			{
+				for (destCursor = 0; destCursor < destTakeX; destCursor++) //тут надо ограничить физ.размерами картинки
+				{
+					var iData = (y * destTakeX + destCursor);
+					//var iRaw = 4 * ((s.Height - y - 1) * s.Width + x);
+					var iRaw = (y * dest_dims.Width + destCursor);
+					byte[] conv = BitConverter.GetBytes(dataOut[iRaw]);
+
+					data[iData] = conv[3]; //R оставим тоже массив из одного байта в BGRA структуре.
+										   //data[iData + 1] = 0; //G
+										   //data[iData + 2] = conv[1]; //R
+										   //data[iData + 3] = 0; //A
+				}
+				//*после достижения ограничения физ.размеров, нужно сделать пропуск до следующего ряда пикселей.
+				//destCursorStep += destSkipX;
+			}
+			if (data.Length == 0)
+			{
+
+			}
+
+			//inputSprite.Size = dest_dims;
+			inputSprite.Size = new Size(source_dims.Width * 2, source_dims.Height * 2);
+			return data;
+		}
 		public override void Display()
 		{
 			if (r == null)

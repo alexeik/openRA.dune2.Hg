@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using OpenRA;
 using OpenRA.FileSystem;
@@ -57,6 +58,16 @@ namespace OpenRA.Mods.D2.Widgets
         public List<FrameTextLine> frameTextLine;
         Animation anim1, anim2;
         World world;
+        private TraitPair<MusicPlaylist> playList;
+        long lastDrawTime = 0;
+        long CountForWaitNextFrameMs = 0;
+        long CountForPause = 0;
+        Sprite prevSprite = null;
+        FrameTextLine[] prevText = new FrameTextLine[3];
+        long PauseInSeconds = 5;
+        long DrawPrevFrameEveryXMs = 300;
+        int seconds = 0;
+        Stopwatch stopWatch = new Stopwatch();
 
         public WsaPlayerWidget() //этот виджет, загрузиться, когда загрузиться shellmap, поэтому метод WorldLoaded заполнит нам world
         {
@@ -65,6 +76,7 @@ namespace OpenRA.Mods.D2.Widgets
             // anim1 = new Animation(world, "video1");
             //anim1.Play("play");
             //anim1 = new Animation(null, ""); // нужно иметь заполненым переменную world.Map.Rules.Sequences;
+           playList = world.ActorsWithTrait<MusicPlaylist>().FirstEnabledTraitOrDefault();
 
         }
 
@@ -90,8 +102,8 @@ namespace OpenRA.Mods.D2.Widgets
                 anim1 = new Animation(world, videoLine.WSAfilename);
                 cachedVideo = videoLine.WSAfilename;
                 anim1.ChangeSequenceGroup(videoLine.WSAfilename.Replace(".", ""));
-                anim1.Play("play", OnFrameTickAction);
-                SetSize(anim1.Image.Size.XY.ToInt2().X, anim1.Image.Size.XY.ToInt2().Y);
+                anim1.Play("play", OnBeginFrameTickAction);
+                SetSize(anim1.Sprite.Size.XY.ToInt2().X, anim1.Sprite.Size.XY.ToInt2().Y);
             }
             else
             {
@@ -100,7 +112,7 @@ namespace OpenRA.Mods.D2.Widgets
                 //Open(video1);
 
             }
-
+            stopWatch.Start();
         }
 
         void LoadPalette()
@@ -207,22 +219,10 @@ namespace OpenRA.Mods.D2.Widgets
             videoSize = new float2((int)Math.Ceiling(imwidth * scale), (int)Math.Ceiling(imheight * AspectRatio * scale));
         }
 
-        long lastDrawTime = 0;
-        long CountForWaitNextFrameMs = 0;
-        long CountForPause = 0;
-        Sprite prevSprite = null;
-        FrameTextLine prevText = null;
-        long PauseInSeconds = 5;
-        long DrawPrevFrameEveryXMs = 300;
 
 
-        public void DrawWsaText(FrameTextLine ftl)
-        {
-           // var textSize = Game.Renderer.Fonts["BigBold"].Measure(ftl.Text);
-            Game.Renderer.Fonts["BigBold"].DrawText(ftl.Text, ftl.Pos, ftl.TextColor);
-            // Game.Renderer.Fonts["Original"].DrawTextWithShadow(ftl.Text, ftl.Pos, ftl.TextColor, Color.FromArgb(150, 0, 0), Color.FromArgb(100,100, 0, 0), 2);
-            //Game.Renderer.Fonts["Original"].DrawTextWithContrast(ftl.Text, ftl.Pos, ftl.TextColor, Color.FromArgb(150, 0, 0), Color.FromArgb(100, 255, 255, 255), 1);
-        }
+
+      
 
         public override void Draw()
         {
@@ -254,31 +254,43 @@ namespace OpenRA.Mods.D2.Widgets
 
             anim1.Tick(); //мы находимся внутри одного фрейм , какое то количество вызовов Draw!!!
             //звук в структуре играет только 1 раз , видео повторяет прошлый кадр до следующего.
-            Game.Renderer.SpriteRenderer.DrawSprite(anim1.Image, videoOrigin, pr, videoSize);
+            Game.Renderer.SpriteRenderer.DrawSprite(anim1.Sprite, videoOrigin, pr, videoSize);
 
-            if (prevText != null)
+            if (prevText.Length >0)
             {
                 //prevText = new FrameTextLine() { Text = "" };
-               
-                DrawWsaText(prevText);
+
+                for (int i = 0; i < prevText.Length; i++)
+                {
+                    if (prevText[i] != null)
+                    {
+                        DrawWsaText(prevText[i]);
+                    }
+                }
+              
 
             }
 
 
         }
-
-        public void OnFrameTickAction()
+        /// <summary>
+        /// Тут накладывается текст и звук
+        /// </summary>
+        public void OnBeginFrameTickAction()
         {
             ISound currentsound = null;
-
-
-
+            
+            //рисуем номер кадра анимации всегда
+            //Game.Renderer.Fonts["BigBold"].DrawText(cachedVideo + anim1.CurrentFrame.ToString(),Center() , Color.White);
+            prevText[1] = new FrameTextLine() { Text = cachedVideo + " Frame - "+ anim1.CurrentFrame.ToString(), TextColor = Color.White, Pos = Center() - new float2(0,-500) };
+            prevText[2] = new FrameTextLine() { Text = "Minutes: " + stopWatch.Elapsed.Minutes.ToString()  + " Seconds   " + stopWatch.Elapsed.Seconds.ToString() , TextColor = Color.White, Pos = Center() - new float2(-600, -500) };
+            seconds += 1;
             if (frameTextLine.Contains(new FrameTextLine() { WSAfilename = cachedVideo, FrameNumber = anim1.CurrentFrame }))
             {
                 FrameTextLine ft = frameTextLine.Find(x => x.WSAfilename.Contains(cachedVideo) && x.FrameNumber == anim1.CurrentFrame);
                
                 DrawWsaText(ft);
-                prevText = ft;
+                prevText[0] = ft;
             }
 
             if (frameSoundLine == null)
@@ -302,7 +314,7 @@ namespace OpenRA.Mods.D2.Widgets
 
                         }
 
-                        TraitPair<MusicPlaylist> playList = world.ActorsWithTrait<MusicPlaylist>().FirstEnabledTraitOrDefault();
+                       
                         //DuneMusic.Quit();
                         playList.Trait.Play(playList.Trait.AvailablePlaylist()[0]);
                         //playList.Trait.Play(playList.Trait.AvailablePlaylist()[1]);
@@ -329,6 +341,21 @@ namespace OpenRA.Mods.D2.Widgets
 
                 }
             }
+        }
+
+        public void DrawWsaText(FrameTextLine ftl)
+        {
+            // var textSize = Game.Renderer.Fonts["BigBold"].Measure(ftl.Text);
+            Game.Renderer.Fonts["BigBold"].DrawText(ftl.Text, ftl.Pos, ftl.TextColor);
+            // Game.Renderer.Fonts["Original"].DrawTextWithShadow(ftl.Text, ftl.Pos, ftl.TextColor, Color.FromArgb(150, 0, 0), Color.FromArgb(100,100, 0, 0), 2);
+            //Game.Renderer.Fonts["Original"].DrawTextWithContrast(ftl.Text, ftl.Pos, ftl.TextColor, Color.FromArgb(150, 0, 0), Color.FromArgb(100, 255, 255, 255), 1);
+        }
+        public float2 Center()
+        {
+            float2 videoOrigin2 = new float2(
+                RenderBounds.X + (RenderBounds.Width ) / 2,
+                RenderBounds.Y + (RenderBounds.Height) / 2);
+            return videoOrigin2;
         }
         public void Draw2()
         {
@@ -381,7 +408,7 @@ namespace OpenRA.Mods.D2.Widgets
                 }
                 if (prevText != null)
                 {
-                    DrawWsaText(prevText);
+                    DrawWsaText(prevText[0]);
                 }
                 return;
             }
@@ -398,7 +425,7 @@ namespace OpenRA.Mods.D2.Widgets
                         lastDrawTime = Game.RunTime;
                         if (prevText != null)
                         {
-                            DrawWsaText(prevText);
+                            DrawWsaText(prevText[0]);
                         }
 
                         return;
@@ -419,7 +446,7 @@ namespace OpenRA.Mods.D2.Widgets
 
                 if (prevText != null)
                 {
-                    DrawWsaText(prevText);
+                    DrawWsaText(prevText[0]);
                 }
                 //||
                 //\/               
@@ -477,8 +504,8 @@ namespace OpenRA.Mods.D2.Widgets
                 }
                 if (frameTextLine == null)
                 {
-                    prevText = new FrameTextLine() { Text = "" };
-                    DrawWsaText(prevText);
+                    prevText[0] = new FrameTextLine() { Text = "" };
+                    DrawWsaText(prevText[0]);
 
                 }
 
@@ -489,7 +516,7 @@ namespace OpenRA.Mods.D2.Widgets
                         FrameTextLine ft = frameTextLine.Find(x => x.WSAfilename.Contains(cachedVideo) && x.FrameNumber == video.CurrentFrame);
 
                         DrawWsaText(ft);
-                        prevText = ft;
+                        prevText[0] = ft;
                     }
 
                 }
@@ -589,7 +616,7 @@ namespace OpenRA.Mods.D2.Widgets
             //if (stopped || (video == null && anim1 =null))
             //    return;
 
-
+            playList.Trait.Stop();
             stopped = true;
             paused = true;
             if (video != null)

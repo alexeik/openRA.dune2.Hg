@@ -163,7 +163,7 @@ namespace OpenRA.Mods.D2.Widgets
                                       //Game.Renderer.SpriteRenderer.DrawSprite(anim1.Image, new float3(videoOrigin.X - 15, videoOrigin.Y, 0), Game.worldRenderer.Palette("d2"), videoSize);
                                       //Game.Renderer.Flush();
             Game.Renderer.sproc.SetTexture("Texture4", text28); //отадем точки-text28 в шейдер 11
-            Game.Renderer.sproc.AddCommand(14, 0, 0, 0, 0, new int2(0, 0), new float3(0, 0, 0), new int2(textsize.Width, textsize.Height), anim1.Image, Game.worldRenderer.Palette("d2"));
+            Game.Renderer.sproc.AddCommand(14, 0, 0, 0, 0, new int2(0, 0), new float3(0, 0, 0), new int2(textsize.Width, textsize.Height), anim1.Sprite, Game.worldRenderer.Palette("d2"));
             Game.Renderer.sproc.ExecCommandBuffer2();
 
 

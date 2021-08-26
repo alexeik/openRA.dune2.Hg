@@ -10,6 +10,7 @@ carryall:
 				FlipY: true
 			UNITS.SHP:
 				Start: 46
+                Length: 1
 				FlipX: true
 				FlipY: true
 			UNITS.SHP:
@@ -32,6 +33,7 @@ carryall:
 				FlipY: true
 			UNITS.SHP:
 				Start: 46
+                Length: 1
 				FlipX: true
 				FlipY: true
 			UNITS.SHP:

@@ -961,7 +961,7 @@ namespace OpenRA.Mods.D2.Widgets
 
 
 
-            Game.Renderer.SpriteRenderer.DrawSprite(AnimList[0].Image, new float3(RenderBounds.X + 128 * ratio, RenderBounds.Y + 48 * ratio, 0), 0, new float3(184 * ratio, 112 * ratio, 0));
+            Game.Renderer.SpriteRenderer.DrawSprite(AnimList[0].Sprite, new float3(RenderBounds.X + 128 * ratio, RenderBounds.Y + 48 * ratio, 0), 0, new float3(184 * ratio, 112 * ratio, 0));
         }
         public void SetupSubMentat(string seqname, string subseqname, int dbIndex, AnimationDirectionEnum AnimationDirection)
         {

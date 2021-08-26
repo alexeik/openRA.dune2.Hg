@@ -223,7 +223,7 @@ namespace OpenRA.Mods.D2.Widgets.Logic
 
 				if (preview != null)
 				{
-					preview.Sprite = icon.Image;
+					preview.Sprite = icon.Sprite;
 					preview.Palette = worldRenderer.Palette(bi.IconPalette);
 					preview.Scale = 3.0f;
 					preview.Offset = float2.Zero;

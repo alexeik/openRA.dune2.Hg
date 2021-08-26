@@ -30,6 +30,7 @@
       <HintPath>../engine/thirdparty/download/Eluant.dll</HintPath>
     </Reference>
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.118" />
+    <PackageReference Include="Veldrid.RenderDoc" Version="1.0.1" />
     <AdditionalFiles Include="../engine/stylecop.json" />
   </ItemGroup>
   <ItemGroup>

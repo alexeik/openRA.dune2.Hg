@@ -14,7 +14,7 @@ using OpenRA.Primitives;
 
 namespace OpenRA.Mods.D2.Graphics
 {
-	public struct D2BuildingPlacementRenderable : IRenderable, IFinalizedRenderable
+	public class D2BuildingPlacementRenderable : IRenderable, IFinalizedRenderable
 	{
 		readonly WPos pos;
 		readonly Rectangle bounds;
@@ -32,18 +32,18 @@ namespace OpenRA.Mods.D2.Graphics
 			this.crossEnabled = crossEnabled;
 		}
 
-		public WPos Pos { get { return pos; } }
+		public override WPos Pos { get { return pos; } }
 
-		public PaletteReference Palette { get { return null; } }
-		public int ZOffset { get { return 0; } }
-		public bool IsDecoration { get { return true; } }
+		public override PaletteReference Palette { get { return null; } }
+		public override int ZOffset { get { return 0; } }
+		public override bool IsDecoration { get { return true; } }
 
-		public IRenderable WithPalette(PaletteReference newPalette) { return this; }
-		public IRenderable WithZOffset(int newOffset) { return this; }
-		public IRenderable OffsetBy(WVec vec) { return new D2BuildingPlacementRenderable(pos + vec, bounds, color, crossEnabled); }
-		public IRenderable AsDecoration() { return this; }
+		public override IRenderable WithPalette(PaletteReference newPalette) { return this; }
+		public override IRenderable WithZOffset(int newOffset) { return this; }
+		public override IRenderable OffsetBy(WVec vec) { return new D2BuildingPlacementRenderable(pos + vec, bounds, color, crossEnabled); }
+		public override IRenderable AsDecoration() { return this; }
 
-		public IFinalizedRenderable PrepareRender(WorldRenderer wr) { return this; }
+		public override IFinalizedRenderable PrepareRender(WorldRenderer wr) { return this; }
 
 		public void Render(WorldRenderer wr)
 		{
@@ -72,5 +72,15 @@ namespace OpenRA.Mods.D2.Graphics
 
 			return new Rectangle(tlOffset.X, tlOffset.Y, brOffset.X - tlOffset.X, brOffset.Y - tlOffset.Y);
 		}
-	}
+
+        public override void RenderCustomLocation(float3 location, PaletteReference pr)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void Render(WorldRenderer wr, int spriteType)
+        {
+            throw new System.NotImplementedException();
+        }
+    }
 }

@@ -75,6 +75,12 @@ Background@ASSETBROWSER_PANEL:
 			Width: 150
 			Height: 25
 			Font: Bold
+		DropDownButton@MAGNIFICATION_SELECTOR:
+			X: PARENT_RIGHT - WIDTH - 350
+			Y: 60
+			Width: 150
+			Height: 25
+			Font: Bold
 		DropDownButton@COLOR:
 			X: PARENT_RIGHT - WIDTH - 20
 			Y: 60
@@ -100,6 +106,10 @@ Background@ASSETBROWSER_PANEL:
 					Width: PARENT_RIGHT
 					Height: PARENT_BOTTOM
 					AspectRatio: 1
+				ActorPreview@ACTOR_PREVIEW:
+                    Width: PARENT_RIGHT
+					Height: PARENT_BOTTOM
+					Visible: false
 				Label@ERROR:
 					X: 5
 					Width: 490 - 10
@@ -202,3 +212,17 @@ Background@ASSETBROWSER_PANEL:
 			Height: 25
 			Font: Bold
 			Text: Close
+		Background@MAGNIFICATION_BG:
+			X: PARENT_RIGHT - WIDTH - 350
+			Y: 150
+			Width: 150
+			Height: 150
+			Visible: false
+			Children:
+				PixelMagnification@MAGNIFICATION_WIDGET
+					Width: PARENT_RIGHT
+					Height: PARENT_BOTTOM
+					Children:
+						Sprite@SPRITE:
+							Width: PARENT_RIGHT
+							Height: PARENT_BOTTOM

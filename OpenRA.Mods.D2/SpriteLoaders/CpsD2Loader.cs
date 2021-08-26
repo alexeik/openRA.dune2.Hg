@@ -38,12 +38,12 @@ namespace OpenRA.Mods.D2.SpriteLoaders
 
         public class CpsD2Tile : ISpriteFrame
         {
-            public string SequenceName { get; set; }
-            public Size Size { get; set; }
-            public Size FrameSize { get { return Size; }  set { Size = value; } }
-            public float2 Offset { get { return float2.Zero; } }
-            public byte[] Data { get; set; }
-            public bool DisableExportPadding { get { return false; } }
+            public override string SequenceName { get; set; }
+            public override Size Size { get; set; }
+            public override Size FrameSize { get { return Size; }  set { Size = value; } }
+            public override float2 Offset { get { return float2.Zero; } }
+            public override byte[] Data { get; set; }
+            public override bool DisableExportPadding { get { return false; } }
 
             public CpsD2Tile(Stream s)
             {

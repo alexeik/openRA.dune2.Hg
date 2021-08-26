@@ -15,7 +15,9 @@ Bounds: 1,1,128,128
 Visibility: Shellmap
 
 Categories: Conquest
+
 LoadResourceLayer: False
+
 Players:
 	PlayerReference@Neutral:
 		Name: Neutral
@@ -196,3 +198,6 @@ Actors:
 	Actor58: wormspawner
 		Owner: Neutral
 		Location: 52,56
+	Actor59: high_tech_factory
+		Owner: Neutral
+		Location: 53,68

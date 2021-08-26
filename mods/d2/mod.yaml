@@ -174,7 +174,7 @@ TileSets:
 	d2|tilesets/arrakis2.yaml
 
 MapGrid:
-	TileSize: 16,16
+	TileSize: 32,32
 	Type: Rectangular
 	SubCellOffsets: 0,0,0, -256,-256,0, 256,-256,0, 0,256,0
 	DefaultSubCell: 1

@@ -42,7 +42,7 @@ namespace OpenRA.Mods.D2.Widgets
         public override void Draw()
         {
             animation1.Tick();
-            Game.Renderer.SpriteRenderer.DrawSprite(animation1.Image,new float3(RenderBounds.X,RenderBounds.Y,0), pr,new float3(RenderBounds.Width,RenderBounds.Height,0));
+            Game.Renderer.SpriteRenderer.DrawSprite(animation1.Sprite,new float3(RenderBounds.X,RenderBounds.Y,0), pr,new float3(RenderBounds.Width,RenderBounds.Height,0));
         }
 
     }

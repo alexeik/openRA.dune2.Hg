@@ -66,6 +66,12 @@ namespace OpenRA.Mods.D2.Traits
 
 	public class WithTilesetBody
 	{
+		/// <summary>
+		/// строка спрайтов, переводится в прямоугольник. Притом вызов этого Trait произойдет когда будет создан Actor в мире: либо постройка, либо предустановка
+		/// Каждому frameIndex внутри Animation назначается свой спрайт.
+		/// </summary>
+		/// <param name="self"></param>
+		/// <param name="info"></param>
 		public WithTilesetBody(Actor self, WithTilesetBodyInfo info)
 		{
 			var rs = self.Trait<RenderSprites>();
@@ -76,7 +82,8 @@ namespace OpenRA.Mods.D2.Traits
 
 			for (var index = 0; index < (cols * rows); index++)
 			{
-				if (info.SkipFrames == null || !info.SkipFrames.Contains(index)) {
+				if (info.SkipFrames == null || !info.SkipFrames.Contains(index)) 
+				{
 					var y = index / cols;
 					var x = index % cols;
 
@@ -84,7 +91,7 @@ namespace OpenRA.Mods.D2.Traits
 					var cellOffset = new WVec(x * 1024 - 512, y * 1024 - 512, 0);
 
 					var frameIndex = index;
-					anim.PlayFetchIndex(info.Sequence, () => frameIndex);
+					anim.PlayFetchIndex(info.Sequence, () => frameIndex); //типа seq idle-tileset и frameIndex это индекс внутри idle-tileset
 					anim.IsDecoration = true;
 
 					var awo = new AnimationWithOffset(anim, () => cellOffset, null, 0);
