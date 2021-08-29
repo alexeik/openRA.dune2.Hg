@@ -85,6 +85,10 @@ namespace OpenRA.Mods.D2.Widgets
             if (videoLine.WSAfilename == cachedVideo)
                 return;
 
+            if (videoLine.WSAfilename == "INTRO10.WSA")
+            {
+
+            }
             image = null;
             video = null;
             prevSprite = null;
@@ -230,9 +234,26 @@ namespace OpenRA.Mods.D2.Widgets
             {
                 return;
             }
-
-            if (anim1.CurrentSequence.Length == anim1.CurrentFrame + 1 && cachedVideoLine.PauseInTicks<=0)
+            
+            if (anim1.CurrentSequence.Length == anim1.CurrentFrame + 1 && anim1.CurrentSequence.Length != 1)
             {
+                
+
+                if (VideoStackList.Count == 0)
+                {
+                    Exit();
+
+                }
+                if (VideoStackList.Count > 0)
+                {
+                    Load(VideoStackList.Dequeue());
+                }
+
+            }
+            if (anim1.CurrentSequence.Length == anim1.CurrentFrame && anim1.CurrentSequence.Length == 1)
+            {
+
+
                 if (VideoStackList.Count == 0)
                 {
                     Exit();
@@ -245,17 +266,16 @@ namespace OpenRA.Mods.D2.Widgets
 
             }
 
-            if (anim1.CurrentSequence.Length == anim1.CurrentFrame + 1 && cachedVideoLine.PauseInTicks > 0)
-            {
-                //AnimationString pauseAnim = new AnimationString();
-                //cachedVideoLine.PauseInTicks -= anim1.CurrentSequenceTickOrDefault();
-            }
-
-
             anim1.Tick(); //мы находимся внутри одного фрейм , какое то количество вызовов Draw!!!
+
+
+
+
+
+           
             //звук в структуре играет только 1 раз , видео повторяет прошлый кадр до следующего.
             Game.Renderer.SpriteRenderer.DrawSprite(anim1.Sprite, videoOrigin, pr, videoSize);
-
+            prevText[2] = new FrameTextLine() { Text = "Minutes: " + stopWatch.Elapsed.Minutes.ToString() + " Seconds   " + stopWatch.Elapsed.Seconds.ToString(), TextColor = Color.White, Pos = Center() - new float2(-600, -500) };
             if (prevText.Length >0)
             {
                 //prevText = new FrameTextLine() { Text = "" };
@@ -271,7 +291,7 @@ namespace OpenRA.Mods.D2.Widgets
 
             }
 
-
+            
         }
         /// <summary>
         /// Тут накладывается текст и звук
@@ -283,16 +303,28 @@ namespace OpenRA.Mods.D2.Widgets
             //рисуем номер кадра анимации всегда
             //Game.Renderer.Fonts["BigBold"].DrawText(cachedVideo + anim1.CurrentFrame.ToString(),Center() , Color.White);
             prevText[1] = new FrameTextLine() { Text = cachedVideo + " Frame - "+ anim1.CurrentFrame.ToString(), TextColor = Color.White, Pos = Center() - new float2(0,-500) };
-            prevText[2] = new FrameTextLine() { Text = "Minutes: " + stopWatch.Elapsed.Minutes.ToString()  + " Seconds   " + stopWatch.Elapsed.Seconds.ToString() , TextColor = Color.White, Pos = Center() - new float2(-600, -500) };
-            seconds += 1;
+            
+
             if (frameTextLine.Contains(new FrameTextLine() { WSAfilename = cachedVideo, FrameNumber = anim1.CurrentFrame }))
             {
                 FrameTextLine ft = frameTextLine.Find(x => x.WSAfilename.Contains(cachedVideo) && x.FrameNumber == anim1.CurrentFrame);
-               
-                DrawWsaText(ft);
-                prevText[0] = ft;
+                if (ft != null)
+                {
+                    //DrawWsaText(ft);
+                    prevText[0] = ft;
+                }
             }
+            if (prevText[0] != null)
+            {
 
+                    prevText[0].Duration -= 1;
+                    if (prevText[0].Duration == 0)
+                    {
+                        prevText[0] = null;
+                    }
+
+                
+            }
             if (frameSoundLine == null)
             {
 
@@ -306,33 +338,14 @@ namespace OpenRA.Mods.D2.Widgets
                     var vocfilename = frameSoundLine.Find(x => x.WSAfilename.Contains(cachedVideo) && x.FrameNumber == anim1.CurrentFrame).VOCfilename;
                     if (vocfilename.Contains("ADL"))
                     {
-                        IReadOnlyFileSystem fileSystem = Game.ModData.DefaultFileSystem;
+                        //IReadOnlyFileSystem fileSystem = Game.ModData.DefaultFileSystem;
 
-                        if (!fileSystem.Exists(vocfilename))
-                        {
-                            Log.Write("sound", "LoadSound, file does not exist: {0}", vocfilename);
-
-                        }
-
-                       
-                        //DuneMusic.Quit();
-                        playList.Trait.Play(playList.Trait.AvailablePlaylist()[0]);
-                        //playList.Trait.Play(playList.Trait.AvailablePlaylist()[1]);
-                        //DuneMusic.Init(44100, "", DuneMusic.DuneMusicOplEmu.kOplEmuNuked);
-
-                        //using (var stream = fileSystem.Open(vocfilename))
+                        //if (!fileSystem.Exists(vocfilename))
                         //{
+                        //    Log.Write("sound", "LoadSound, file does not exist: {0}", vocfilename);
 
-                        //    DuneMusic.InsertMemoryFile("test", stream.ReadAllBytes());
-                        //    byte[] temp = new byte[10106880];
-
-                        //    UIntPtr temp3;
-                        //    temp3 = (UIntPtr)10106880;
-                        //    temp3 = DuneMusic.SynthesizeAudio("test", 3, -1, temp, (UIntPtr)temp.Length);
-                        //    ISoundSource soundSource;
-                        //    soundSource = Game.Sound.soundEngine.AddSoundSourceFromMemory(temp, 2, 16, 44100);
-                        //    ISound temp2 = Game.Sound.soundEngine.Play2D(Game.LocalTick, soundSource, false, true, WPos.Zero, Game.Sound.SoundVolume * Game.Sound.SoundVolumeModifier, false);
                         //}
+                        playList.Trait.Play(playList.Trait.AvailablePlaylist()[0]);
                     }
                     else
                     {

@@ -180,7 +180,7 @@ westwoodwsa:
 intro1wsa:
     play: INTRO1.WSA
         Length: *
-        Tick: 500
+        Duration: 50000
 intro2wsa:
     play: INTRO2.WSA
         Length: *
@@ -196,7 +196,7 @@ intro4wsa:
 intro5wsa:
     play: INTRO5.WSA
         Length: *
-        Tick: 500
+        Duration: 35000
 intro6wsa:
     play: INTRO6.WSA
         Length: *
@@ -228,7 +228,7 @@ intro9wsa:
 intro10wsa:
     play: INTRO10.WSA
         Length: *
-        Tick: 500
+        Duration: 12000
 intro11wsa:
     play: INTRO11.WSA
         Length: *

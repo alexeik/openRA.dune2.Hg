@@ -249,8 +249,8 @@ namespace OpenRA.Mods.D2.Widgets.Logic
 
             assetList = panel.Get<ScrollPanelWidget>("ASSET_LIST");
             template = panel.Get<ScrollItemWidget>("ASSET_TEMPLATE");
-            //PopulateAssetList();
-            PopulateActorList();
+            PopulateAssetList();
+            //PopulateActorList();
             var closeButton = panel.GetOrNull<ButtonWidget>("CLOSE_BUTTON");
             if (closeButton != null)
                 closeButton.OnClick = () =>

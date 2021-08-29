@@ -9,11 +9,13 @@
  */
 #endregion
 
+using OpenRA.Mods.Common.Traits;
 using OpenRA.Mods.Common.Widgets;
 using OpenRA.Primitives;
 using OpenRA.Widgets;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace OpenRA.Mods.D2.Widgets.Logic
 {
@@ -54,6 +56,7 @@ namespace OpenRA.Mods.D2.Widgets.Logic
     {
         public string WSAfilename;
         public int FrameNumber;
+        public int Duration;
         public string Text;
         public float2 Pos;
         public Color TextColor;
@@ -62,11 +65,22 @@ namespace OpenRA.Mods.D2.Widgets.Logic
         public bool Equals(FrameTextLine other)
         {
             if (other == null) return false;
-
-            if (this.WSAfilename == other.WSAfilename && this.FrameNumber == other.FrameNumber)
+            if (other.FrameNumber ==0)
             {
-                return true;
+                if (this.WSAfilename == other.WSAfilename)
+                {
+                    return true;
+                }
             }
+            else
+            {
+                if (this.WSAfilename == other.WSAfilename && this.FrameNumber == other.FrameNumber)
+                {
+                    return true;
+                }
+            }
+           
+
             return false;
         }
 
@@ -76,7 +90,9 @@ namespace OpenRA.Mods.D2.Widgets.Logic
         //static bool promptAccepted = false;
         private ModData modData;
         private BackgroundWidget fullscreenVideoPlayer;
-        
+        List<MiniYamlNode> ppnodes;
+        List<FrameTextLine> ftl = new List<FrameTextLine>();
+
         [ObjectCreator.UseCtor]
         public Dune2VideoWSAPlayerLogic(Widget widget, World world, ModData modData)
         {
@@ -86,7 +102,9 @@ namespace OpenRA.Mods.D2.Widgets.Logic
             var fsPlayer = fullscreenVideoPlayer.Get<WsaPlayerWidget>("PLAYER");
             fullscreenVideoPlayer.Visible = true;
             fsPlayer.VideoStackList = new System.Collections.Generic.Queue<FrameVideoLine>();
-         
+
+            LoadYaml();
+
             fsPlayer.VideoStackList.Enqueue(new FrameVideoLine() { WSAfilename = "WESTWOOD.WSA" });
             fsPlayer.VideoStackList.Enqueue(new FrameVideoLine() { WSAfilename = "AND.ENG" });
             fsPlayer.VideoStackList.Enqueue(new FrameVideoLine() { WSAfilename = "VIRGIN.CPS" });
@@ -105,25 +123,85 @@ namespace OpenRA.Mods.D2.Widgets.Logic
             fsPlayer.VideoStackList.Enqueue(new FrameVideoLine() { WSAfilename = "INTRO8B.WSA" });
             fsPlayer.VideoStackList.Enqueue(new FrameVideoLine() { WSAfilename = "INTRO8C.WSA" });
             fsPlayer.VideoStackList.Enqueue(new FrameVideoLine() { WSAfilename = "INTRO5.WSA" });
-            //fsPlayer.VideoStackList.Enqueue(new FrameVideoLine() { WSAfilename = "INTRO1.WSA" });
-            //fsPlayer.VideoStackList.Enqueue(new FrameVideoLine() { WSAfilename = "INTRO10.WSA");
-            //fsPlayer.VideoStackList.Enqueue(new FrameVideoLine() { WSAfilename = "INTRO11.WSA");
+
 
             List<FrameSoundLine> fl = new List<FrameSoundLine>();
             fl.Add(new FrameSoundLine() { WSAfilename = "INTRO1.WSA", FrameNumber = 1, VOCfilename = "DUNE0.ADL" });
-            fl.Add(new FrameSoundLine() { WSAfilename = "INTRO3.WSA", FrameNumber = 0, VOCfilename = "123.WAV" });
+            fl.Add(new FrameSoundLine() { WSAfilename = "INTRO2.WSA", FrameNumber = 1, VOCfilename = "123.WAV" });
             fl.Add(new FrameSoundLine() { WSAfilename = "INTRO1.WSA", FrameNumber = 30, VOCfilename = "DUNE.VOC" });
             fl.Add(new FrameSoundLine() { WSAfilename = "INTRO1.WSA", FrameNumber =37, VOCfilename = "BLDING.VOC" });
-            fl.Add(new FrameSoundLine() { WSAfilename = "INTRO1.WSA", FrameNumber = 48, VOCfilename = "DYNASTY.VOC" });
+            fl.Add(new FrameSoundLine() { WSAfilename = "INTRO1.WSA", FrameNumber = 40, VOCfilename = "DYNASTY.VOC" });
             fsPlayer.frameSoundLine = fl;
 
-            List<FrameTextLine> ftl = new List<FrameTextLine>();
-            ftl.Add(new FrameTextLine() { WSAfilename = "INTRO1.WSA", FrameNumber = 37, FrameDuration=15 , Text="The Building of A Dynasty",Pos=new float2(400,560) ,TextColor=Color.FromArgb(250,0,32)});
-            ftl.Add(new FrameTextLine() { WSAfilename = "INTRO2.WSA", FrameNumber = 0, Text = "", Pos = new float2(230, 560), TextColor = Color.FromArgb(250, 0, 32) });
+            TraitPair<MusicPlaylist> playList = world.ActorsWithTrait<MusicPlaylist>().FirstEnabledTraitOrDefault();
+            //playList.Trait.Play(playList.Trait.AvailablePlaylist()[0]);
+
+            foreach (var i in fl)
+            {
+                if (!i.VOCfilename.Contains(".ADL"))
+                {
+                    Game.Sound.PrecacheSound(i.VOCfilename);
+                }
+                if (i.VOCfilename.Contains(".ADL"))
+                {
+                    Game.Sound.PrecacheMusic(playList.Trait.AvailablePlaylist()[0]);
+                }
+            }
+
+            //ftl.Add(new FrameTextLine() { WSAfilename = "INTRO1.WSA", FrameNumber = 37, FrameDuration=15 , Text="The Building of A Dynasty",Pos=new float2(400,560) ,TextColor=Color.FromArgb(250,0,32)});
+            //ftl.Add(new FrameTextLine() { WSAfilename = "INTRO2.WSA", FrameNumber = 0, Text = "", Pos = new float2(230, 560), TextColor = Color.FromArgb(250, 0, 32) });
             fsPlayer.frameTextLine = ftl;
-           // PlayVideoStack(fsPlayer, () => { });
+            // PlayVideoStack(fsPlayer, () => { });
             PlayVideoStack(fsPlayer, () => ShowMainMenu(world));
 
+        }
+        void LoadYaml()
+        {
+            var fileSystem = Game.worldRenderer.World.Map;
+            try
+            {
+                ppnodes = MiniYaml.Merge(modData.Manifest.Timelines
+               .Select(s => MiniYaml.FromStream(fileSystem.Open(s), s)));
+            }
+            catch (Exception)
+            {
+
+
+            }
+
+            foreach (MiniYamlNode kvp in ppnodes)
+            {
+               
+                Dictionary<string,MiniYaml> timeline = kvp.Value.ToDictionary();
+                int2 Resolution = LoadField<int2>(timeline, "Resolution",new int2(0,0));
+               
+
+                foreach (MiniYamlNode fr2 in timeline["Sequences"].Nodes)
+                {
+                    string WSA = fr2.Key;
+                    Dictionary<string, MiniYaml> frames = fr2.Value.ToDictionary();
+                    foreach (MiniYamlNode fr in frames["Frames"].Nodes)
+                    {
+                        Dictionary<string, MiniYaml> item = fr.Value.ToDictionary();
+                        float2 Pos = LoadField<float2>(item, "TextPosition", new float2(0, 0));
+                        int Duration = LoadField<int>(item, "Duration", 0);
+                        ftl.Add(new FrameTextLine() { WSAfilename = WSA, Duration = Duration, FrameNumber = Convert.ToInt32(fr.Key), FrameDuration = 15, Text = item["Text"].Value, Pos = Pos, TextColor = Color.FromArgb(250, 0, 32) });
+                    }
+
+                }
+
+               
+               
+            }
+        }
+
+        protected static T LoadField<T>(Dictionary<string, MiniYaml> d, string key, T fallback)
+        {
+            MiniYaml value;
+            if (d.TryGetValue(key, out value))
+                return FieldLoader.GetValue<T>(key, value.Value);
+
+            return fallback;
         }
 
         void ShowMainMenu(World world)

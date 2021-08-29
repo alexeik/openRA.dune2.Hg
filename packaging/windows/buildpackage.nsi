@@ -123,6 +123,7 @@ Section "Game" GAME
 	SetOutPath "$INSTDIR\glsl"
 	File "${SRCDIR}\glsl\*.frag"
 	File "${SRCDIR}\glsl\*.vert"
+	File "${SRCDIR}\glsl\*.cmp"
 
 	; Estimated install size for the control panel properties
 	${GetSize} "$INSTDIR" "/S=0K" $0 $1 $2
@@ -185,6 +186,7 @@ Function ${UN}Clean
 	Delete $INSTDIR\OpenRA.Game.exe
 	Delete $INSTDIR\OpenRA.Game.exe.config
 	Delete $INSTDIR\OpenRA.Utility.exe
+	Delete $INSTDIR\imgui.ini
 	Delete $INSTDIR\OpenRA.Server.exe
 	Delete $INSTDIR\OpenRA.Platforms.Default.dll
 	Delete $INSTDIR\ICSharpCode.SharpZipLib.dll

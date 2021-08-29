@@ -1,0 +1,132 @@
+TimelineName: IntroENG
+	Resolution:1920,1080
+	Sequences:
+        INTRO1.WSA:
+            Frames:
+                37:
+                    Slot: 1
+                    Text: The Building of A Dynasty
+                    TextColor:050505
+                    TextPosition: 700,1000
+                    TextRectSize: 500,50
+                    Duration:-1    
+        INTRO2.WSA:
+            Frames:
+                1:
+                    Slot: 1
+                    Text: The planet Arrakis, known as Dune.
+                    TextColor:050505
+                    TextPosition: 700,1000
+                    TextRectSize: 500,50
+                    Duration:30
+        INTRO3.WSA:
+            Frames:
+                1:
+                    Slot: 1
+                    Text: Land of sand.
+                    TextColor:050505
+                    TextPosition: 700,1000
+                    TextRectSize: 500,50
+                    Duration:10
+                20:
+                    Slot: 1
+                    Text: Home of the Spice Melange.
+                    TextColor:050505
+                    TextPosition: 700,1000
+                    TextRectSize: 500,50
+                    Duration:10                      
+        INTRO9.WSA:
+            Frames:
+                1:
+                    Slot: 1
+                    Text: The Spice controls the Empire.
+                    TextColor:050505
+                    TextPosition: 700,1000
+                    TextRectSize: 500,50
+                    Duration:10                         
+                35:
+                    Slot: 1
+                    Text: Whoever controls Dune controls the Spice.
+                    TextColor:050505
+                    TextPosition: 700,1000
+                    TextRectSize: 500,50
+                    Duration:10     
+        INTRO10.WSA:
+            Frames:
+                1:
+                    Slot: 1
+                    Text: -
+                    TextColor:050505
+                    TextPosition: 700,1000
+                    TextRectSize: 500,50
+                    Duration:10  
+        INTRO11.WSA:
+            Frames:
+                1:
+                    Slot: 1
+                    Text:  The House that produces the most Spice will control Dune.
+                    TextColor:050505
+                    TextPosition: 700,1000
+                    TextRectSize: 500,50
+                    Duration:10  
+                30:
+                    Slot: 1
+                    Text:  There are no set territories.And no rules of engagement.
+                    TextColor:050505
+                    TextPosition: 700,1000
+                    TextRectSize: 500,50
+                    Duration:10       
+        INTRO4.WSA:
+            Frames:
+                1:
+                    Slot: 1
+                    Text: Vast armies have arrived.
+                    TextColor:050505
+                    TextPosition: 700,1000
+                    TextRectSize: 500,50
+                    Duration:15                     
+        INTRO6.WSA:
+            Frames:
+                1:
+                    Slot: 1
+                    Text: Now three Houses fight for control of Dune.
+                    TextColor:050505
+                    TextPosition: 700,1000
+                    TextRectSize: 500,50
+                    Duration:10    
+        INTRO6.WSA:
+            Frames:
+                10:
+                    Slot: 1
+                    Text: The noble Atreides.
+                    TextColor:050505
+                    TextPosition: 700,1000
+                    TextRectSize: 500,50
+                    Duration:15      
+        INTRO7A.WSA:
+            Frames:
+                1:
+                    Slot: 1
+                    Text: The insidious Ordos.
+                    TextColor:050505
+                    TextPosition: 700,1000
+                    TextRectSize: 500,50
+                    Duration:15       
+        INTRO8A.WSA:
+            Frames:
+                1:
+                    Slot: 1
+                    Text: And the evil Harkonnen.
+                    TextColor:050505
+                    TextPosition: 700,1000
+                    TextRectSize: 500,50
+                    Duration:15    
+        INTRO5.WSA:
+            Frames:
+                1:
+                    Slot: 1
+                    Text: Only one House will prevail. Your battle for Dune begins
+                    TextColor:050505
+                    TextPosition: 700,1000
+                    TextRectSize: 500,50
+                    Duration:15                    

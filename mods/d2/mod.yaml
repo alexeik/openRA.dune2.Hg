@@ -335,6 +335,8 @@ CampaignDB:
 
 PixelPatcher:
 	d2|PixelPatcher/1.yaml
+Timelines:
+	d2|Timelines/intro.yaml
     
 SupportsMapsFrom: d2
 
