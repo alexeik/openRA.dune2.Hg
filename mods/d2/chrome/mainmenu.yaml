@@ -317,10 +317,10 @@ Container@MAINMENU:
 			X: 5
 			Y: 5
 		Background@dunetitle
-			X:300
-			Y:500
-			Width:320
-			Height:200
+			X:500
+			Y:800
+			Width:640
+			Height:400
 			Background:dune2title
 		Sequence@artr
 			X:200

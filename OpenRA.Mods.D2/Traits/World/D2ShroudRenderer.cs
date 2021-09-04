@@ -274,6 +274,7 @@ namespace OpenRA.Mods.Common.Traits
 					cellsAndNeighborsDirty.Add((PPos)(cell + direction).ToMPos(map));
 			}
 
+			var tileSize = Game.worldRenderer.TileSize;
 			foreach (var puv in cellsAndNeighborsDirty)
 			{
 				var uv = (MPos)puv;
@@ -297,19 +298,19 @@ namespace OpenRA.Mods.Common.Traits
 					}
 					else
 					{
-						if (tileInfo.ScreenPosition.X ==8 ) //ScreenPosition указывает на цетнр спрайта = 8. Спрайт 16 на 16.
+						if (tileInfo.ScreenPosition.X == tileSize.Width/2) //ScreenPosition указывает на цетнр спрайта = 8. Спрайт 16 на 16.
 						{
 							shroudSprite = ChromeProvider.GetImage("dune2stolbvert", "background"); 
 						}
-						else if (tileInfo.ScreenPosition.Y == 8)
+						else if (tileInfo.ScreenPosition.Y == tileSize.Width/2)
 						{
 							shroudSprite = ChromeProvider.GetImage("dune2stolbvert90", "background");
 						}
-						else if (tileInfo.ScreenPosition.X == ((8 * 2 * map.MapSize.X) - 8))
+						else if (tileInfo.ScreenPosition.X == ((tileSize.Width/2 * 2 * map.MapSize.X) - tileSize.Width/2))
 						{
 							shroudSprite = ChromeProvider.GetImage("dune2stolbvert", "background");
 						}
-						else if (tileInfo.ScreenPosition.Y == ((8 * 2 * map.MapSize.Y) - 8))
+						else if (tileInfo.ScreenPosition.Y == ((tileSize.Width/2 * 2 * map.MapSize.Y) - tileSize.Width/2))
 						{
 							shroudSprite = ChromeProvider.GetImage("dune2stolbvert90", "background");
 						}
@@ -335,7 +336,7 @@ namespace OpenRA.Mods.Common.Traits
 					shroudPos += shroudSprite.Offset - 0.5f * shroudSprite.Size;
 					if (Game.worldRenderer.World.RenderPlayer != null)
 					{
-						if (tileInfo.ScreenPosition.X == 8 || tileInfo.ScreenPosition.Y == 8 || tileInfo.ScreenPosition.X == ((8 * 2 * map.MapSize.X) - 8) || tileInfo.ScreenPosition.Y == ((8 * 2 * map.MapSize.Y) - 8)) //ScreenPosition указывает на цетнр спрайта = 8. Спрайт 16 на 16.
+						if (tileInfo.ScreenPosition.X == tileSize.Width/2 || tileInfo.ScreenPosition.Y == tileSize.Height/2 || tileInfo.ScreenPosition.X == ((tileSize.Width / 2 * 2 * map.MapSize.X) - tileSize.Width / 2) || tileInfo.ScreenPosition.Y == ((tileSize.Height / 2 * 2 * map.MapSize.Y) - tileSize.Height / 2)) //ScreenPosition указывает на цетнр спрайта = 8. Спрайт 16 на 16.
 						{
 							
 						}
@@ -345,7 +346,7 @@ namespace OpenRA.Mods.Common.Traits
 						}
 						else
 						{
-							shroudSprite.ReBound(shroudSprite, new Rectangle(Convert.ToInt32(shroudPos.X), Convert.ToInt32(shroudPos.Y), 16, 16));
+							shroudSprite.ReBound(shroudSprite, new Rectangle(Convert.ToInt32(shroudPos.X), Convert.ToInt32(shroudPos.Y), tileSize.Width, tileSize.Height));
 						}
 					}
 				}

@@ -34,7 +34,7 @@ namespace OpenRA.Mods.D2.Widgets.Logic
 		int nextCashTickTime = 0;
 		int displayResources;
 		string displayLabel;
-		ISoundSource soundSource;
+		ISoundFileBuffer soundSource;
 		
 		Stream stclick;
 
@@ -71,7 +71,7 @@ namespace OpenRA.Mods.D2.Widgets.Logic
 				temp3 = (UIntPtr)1000000;
 				temp3 = DuneMusic.SynthesizeAudio("test", 52, -1, temp, (UIntPtr)temp.Length);
 				//stclick = new MemoryStream(temp);
-				soundSource = Game.Sound.soundEngine.AddSoundSourceFromMemory(temp, 2, 16, 44100);
+				soundSource = Game.Sound.soundEngine.SaveToBufferFromMemory(temp, 2, 16, 44100);
 				//ISound temp2 = Game.Sound.soundEngine.Play2D(Game.LocalTick, soundSource, false, true, WPos.Zero, 100, false);
 				
 			}

@@ -441,8 +441,12 @@ namespace OpenRA.Mods.D2.Widgets.Logic
 		{
 			//selectedMap = allPreviews.Where(f => f.Title == "scene002").ToList()[0];
 			int lev = CampaignWidget.CurrentCampaignData.CurrentLevel;
-			string mapname;
-			mapname= CampaignWidget.CurrentCampaignData.Levels.Where(f=>f.Num==lev).ToList()[0].PickRegions.Where(d=>d.Key==new float3(r,g,b)).ToList()[0].Value;
+			string mapname="";
+			var l = CampaignWidget.CurrentCampaignData.Levels.Where(f => f.Num == lev).ToList()[0].PickRegions.Where(d => d.Key == new float3(r, g, b)).ToList();
+			if (l.Count > 0)
+			{
+				mapname = l[0].Value;
+			}
 			string mapcode = "Uknown";
 			selectedMap = allPreviews.Where(f => f.Package.Name.Contains(mapname)).ToList()[0];
 			//if (r == 170 && g == 0 & b == 170)

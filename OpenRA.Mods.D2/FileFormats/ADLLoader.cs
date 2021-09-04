@@ -12,11 +12,11 @@ namespace OpenRA.Mods.D2.FileFormats
 {
 	public class ADLLoader : SoundLoader
 	{
-		public override bool TryParseSound(Stream stream, out ISoundFormat sound, MusicInfo m)
+		public override bool TryParseSound(Stream streamFromFile, out ISoundFormatProxy sound, MusicInfo m)
 		{
 			try
 			{
-				sound = new ADLFormat(stream, m.SubSong);
+				sound = new ADLFormat(streamFromFile, m.SubSong, m.Filename);
 				return true;
 			}
 			catch
@@ -28,58 +28,90 @@ namespace OpenRA.Mods.D2.FileFormats
 			return false;
 		}
 
-		public override bool TryParseSound(Stream stream, out ISoundFormat sound)
+		public override bool TryParseSound(Stream stream, out ISoundFormatProxy sound)
 		{
-		
 			sound = null;
 			return false;
+			
 		}
+
 	}
-	public sealed class ADLFormat : ISoundFormat
+	public sealed class ADLFormat : ISoundFormatProxy
 	{
 		public int SubSong;
-		public int SampleBits { get { return 16; } }
-		public int Channels { get { return 2; } }
-		public int SampleRate 
+		public override int SampleBits { get { return 16; } }
+		public override int Channels { get { return 2; } }
+		public override int SampleRate 
 		{
 			get { return 44100; }
-			private set { }
+			set { }
 		}
-		public float LengthInSeconds 
+		public override float LengthInSeconds 
 		{ 
 			get { 
 				return (float)235; 
 			}
 		}
-		public Stream GetPCMInputStream() 
-		{ 
+		public override Stream GetPCMInputStream() 
+		{
+			GetWholeChunk();
 			return new MemoryStream(buffer); 
 		}
-		public void Dispose() {  }
+		public override void Dispose() {  }
 
-		readonly byte[] buffer = new byte[1];
+		 byte[] buffer = new byte[1];
+		 byte[] buffer1 = new byte[1];
 		readonly Stream stream;
-
-		public ADLFormat(Stream stream,string SubSong)
+		
+		//Only setup track music , no generation
+		public ADLFormat(Stream stream1,string SubSong1,string filename)
 		{
 			if (buffer.Length>10)
 			{
 				return;
 			}
-			DuneMusic.Init(44100, "", DuneMusic.DuneMusicOplEmu.kOplEmuNuked);
+			buffer1 = stream1.ReadAllBytes();
+			DuneMusic.Init(44100, @"D:\work\alexei\OpenRA\Content\d2", DuneMusic.DuneMusicOplEmu.kOplEmuNuked);
+			//DuneMusic.Init(44100, "", DuneMusic.DuneMusicOplEmu.kOplEmuNuked);
+			SubSong = Convert.ToInt32(SubSong1);
+			DuneMusic.SetMusicEnabled(true);
+			DuneMusic.ChangeMusicEx(DuneMusic.DuneMusicType.kMusicIntro, filename , SubSong);
+            //DuneMusic.SetKnownMusicIndex(2);
+            
+            //uint m = DuneMusic.GetKnownMusicCount();
+            //DuneMusic.ChangeMusic(DuneMusic.DuneMusicType.kMusicIntro);
+            //DuneMusic.SetKnownMusicIndex(2);
+        }
 
-		
-				DuneMusic.InsertMemoryFile("test" + SubSong, stream.ReadAllBytes());
-				buffer = new byte[20106880];
+		public override void GetNextChunk(byte[] byteChunkSize)
+		{
+            try
+            {
+				DuneMusic.GetSamples(byteChunkSize);
+			}
+            catch (Exception ex)
+            {
 
-				UIntPtr temp3;
-				temp3 = (UIntPtr)1000000;
-				temp3 = DuneMusic.SynthesizeAudio("test"+ SubSong, Convert.ToInt32(SubSong), -1, buffer, (UIntPtr)buffer.Length);
-				//ISoundSource soundSource;
-				//soundSource = Game.Sound.soundEngine.AddSoundSourceFromMemory(buffer, 2, 16, 44100);
-				//ISound temp2 = Game.Sound.soundEngine.Play2D(Game.LocalTick, soundSource, false, true, WPos.Zero, 100, false);
+                throw;
+            }	
+		}
 
+		public override byte[] GetWholeChunk()
+        {
 			
+            try
+            {
+				buffer = new byte[5000000];
+				DuneMusic.InsertMemoryFile("test" + SubSong, buffer1);
+				DuneMusic.SynthesizeAudio("test" + SubSong, Convert.ToInt32(SubSong), -1, buffer, (UIntPtr)buffer.Length);
+			}
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+			
+			return buffer;
 		}
 	}
 }

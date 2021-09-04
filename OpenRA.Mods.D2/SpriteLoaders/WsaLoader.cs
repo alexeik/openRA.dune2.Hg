@@ -99,6 +99,7 @@ namespace OpenRA.Mods.D2.SpriteLoaders
 			for (var i = 0; i < numTiles; i++)
 			{
 				s.Position = offsets[i];
+				
 				if ((prevwsafilename.Contains("7B") || prevwsafilename.Contains("8B") || prevwsafilename.Contains("8C")) && prevwsaframe!=null)
 				{
 					tiles[i] = new WsaTile(s, new Size(tileWidth, tileHeight), prevwsaframe);
@@ -134,7 +135,13 @@ namespace OpenRA.Mods.D2.SpriteLoaders
 			if (filename.Contains("WSA"))
 			{
 				prevwsafilename = filename;
-				return TryParseSprite(s, out frames, out metadata);
+				
+				TryParseSprite(s, out frames, out metadata);
+				if (filename.Contains("8A") || filename.Contains("7A"))
+				{
+					frames[0].MMPXNextTime = true;
+				}
+				return true;
 			}
 			else
 			{

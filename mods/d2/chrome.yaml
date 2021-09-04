@@ -21,19 +21,19 @@ dune2stolbvertbot: screenui
 dune2cash: screenui
     background: 201,1,118,15
 dune2ui: screenui
-    background : 0,0,320,200
+    background : 0,0,640,400
 dune2ui90: screenui90
-    background : 0,0,200,320
+    background : 0,0,400,640
 buildershopui: buildershop
-    background : 0,0,200,320
+    background : 0,0,400,640
 dune2title: title
-    background : 0,0,320,200
+    background : 0,0,640,400
     
 logos: title
-    logo : 0,0,320,200
+    logo : 0,0,640,400
     
 fame: housessign
-    background : 0,0,320,200
+    background : 0,0,640,400
     
 ordostitle: housestitle
     background : 123,117,74,28
@@ -54,13 +54,13 @@ atrsign: housessign
     background : 66,137,53,54  
         
 mentata: mentatascreen
-    background : 0,0,320,200
+    background : 0,0,640,400
         stretched: true
 mentath: mentathscreen
-    background : 0,0,320,200
+    background : 0,0,640,400
         stretched: true
 mentato: mentatoscreen
-    background : 0,0,320,200
+    background : 0,0,640,400
         stretched: true
 mentatbtnnext: buttonmentatnext
     background : 0,0,63,23
@@ -77,28 +77,28 @@ mentatbtnrepeat-hover: buttonmentatrepeathover
         stretched: true
         
 dunemap: dunemapcps
-    background : 0,0,320,200
+    background : 0,0,640,400
         stretched: true
 housestitle: housestitle
-    background : 0,0,320,200
+    background : 0,0,640,400
         stretched: true
 heraldmask: heraldmask
-    background : 0,0,320,200
+    background : 0,0,640,400
         stretched: true
         
 dunergn: dunergncps
-    background : 0,0,320,200
+    background : 0,0,640,400
         stretched: true
 maproom: maproomcps
-    background : 0,0,320,200
+    background : 0,0,640,400
         stretched: true
         
 maproommask: maproommaskcps
-    background : 0,0,320,200
+    background : 0,0,640,400
         stretched: true        
         
 dunergnclk: dunergnclkcps
-    background : 0,0,320,200
+    background : 0,0,640,400
         stretched: true
         
 sidebar: chrome.png

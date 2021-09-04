@@ -2,51 +2,68 @@
 DUNE0: Intro
 	Extension: ADL
     SubSong:2
+    Pump: ADL
 DUNE7: Attack on Arrakis
 	Extension: ADL
     SubSong:6
+    Pump: ADL
 DUNE10: Enter the Ordos
 	Extension: ADL
     SubSong:7
+    Pump: ADL
 DUNE11: Fight for Power
 	Extension: ADL
     SubSong:7
+    Pump: ADL
 DUNE12: Harkonnen Battle
 	Extension: ADL
     SubSong:7
+    Pump: ADL
 DUNE13: Land of Sand
 	Extension: ADL
     SubSong:7
+    Pump: ADL
 DUNE14: Options
 	Extension: ADL
 	Hidden: true
+    Pump: ADL
 DUNE15: Plotting
 	Extension: ADL
     SubSong:7
+    Pump: ADL
 DUNE1: Rise of Harkonnen
 	Extension: ADL
     SubSong:6
+    Pump: ADL
 DUNE2: Robotix
 	Extension: ADL
     SubSong:6
+    Pump: ADL
 DUNE3: Score
 	Extension: ADL
 	SubSong:6
+    Pump: ADL
 DUNE4: Spice Scouting
 	Extension: ADL
     SubSong:6
+    Pump: ADL
 DUNE5: The Ambush
 	Extension: ADL
     SubSong:6
+    Pump: ADL
 DUNE6: The Atreides Gain
 	Extension: ADL
     SubSong:6
+    Pump: ADL
 DUNE9: The Fremen
 	Extension: ADL
     SubSong:4
+    Pump: ADL
 DUNE9: The Soldiers Approach
 	Extension: ADL
     SubSong:5
+    Pump: ADL
 DUNE18: The Waiting Game
 	Extension: ADL
     SubSong:6
+    Pump: ADL

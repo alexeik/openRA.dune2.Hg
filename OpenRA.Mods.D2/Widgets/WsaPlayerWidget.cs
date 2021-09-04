@@ -499,8 +499,8 @@ namespace OpenRA.Mods.D2.Widgets
                                 UIntPtr temp3;
                                 temp3 = (UIntPtr)1000000;
                                 temp3 = DuneMusic.SynthesizeAudio("test", 52, -1, temp, (UIntPtr)temp.Length);
-                                ISoundSource soundSource;
-                                soundSource = Game.Sound.soundEngine.AddSoundSourceFromMemory(temp, 2, 16, 44100);
+                                ISoundFileBuffer soundSource;
+                                soundSource = Game.Sound.soundEngine.SaveToBufferFromMemory(temp, 2, 16, 44100);
                                 ISound temp2 = Game.Sound.soundEngine.Play2D(Game.LocalTick, soundSource, false, true, WPos.Zero, 100, false);
 
                             }
