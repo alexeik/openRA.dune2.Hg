@@ -298,6 +298,7 @@ namespace OpenRA.Mods.Common.Traits
 					}
 					else
 					{
+						//когда Edges. разные стороны то от 
 						if (tileInfo.ScreenPosition.X == tileSize.Width/2) //ScreenPosition указывает на цетнр спрайта = 8. Спрайт 16 на 16.
 						{
 							shroudSprite = ChromeProvider.GetImage("dune2stolbvert", "background"); 

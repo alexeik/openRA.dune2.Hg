@@ -93,9 +93,9 @@ namespace OpenRA.Mods.D2.Widgets
             video = null;
             prevSprite = null;
             cachedVideoLine = videoLine;
-            if (videoLine.WSAfilename.Contains("WSA"))
+            if (videoLine.WSAfilename.Contains("WSA") || videoLine.WSAfilename.Contains("CPS") || videoLine.WSAfilename.Contains("ENG"))
             {
-                if (videoLine.WSAfilename.Contains("INTRO"))
+                if (videoLine.WSAfilename.Contains("INTRO") || videoLine.WSAfilename.Contains("CPS") || videoLine.WSAfilename.Contains("ENG"))
                 {
                     LoadPalette();
                 }
@@ -111,8 +111,8 @@ namespace OpenRA.Mods.D2.Widgets
             }
             else
             {
-                //var video1 = new CpsD2Loader(filename);
-                //cachedVideo = filename;
+                //var video1 = new CpsD2Loader(videoLine.WSAfilename);
+                //cachedVideo = videoLine.WSAfilename;
                 //Open(video1);
 
             }

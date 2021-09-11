@@ -45,13 +45,13 @@ atrtitle: housestitle
     background : 25,117,74,28
 
 ordossign: housessign
-    background : 122,137,53,54
+    background : 244,274,106,108
     
 harksign: housessign
-    background : 10,137,53,54  
+    background : 20,274,106,108
     
 atrsign: housessign
-    background : 66,137,53,54  
+    background : 132,276,106,108
         
 mentata: mentatascreen
     background : 0,0,640,400
@@ -63,17 +63,17 @@ mentato: mentatoscreen
     background : 0,0,640,400
         stretched: true
 mentatbtnnext: buttonmentatnext
-    background : 0,0,63,23
+    background : 0,0,126,46
         stretched: true
 mentatbtnnext-hover: buttonmentatnexthover
-    background : 0,0,63,23
+    background : 0,0,126,46
         stretched: true
         
 mentatbtnrepeat: buttonmentatrepeat
-    background : 0,0,63,23
+    background : 0,0,126,46
         stretched: true
 mentatbtnrepeat-hover: buttonmentatrepeathover
-    background : 0,0,63,23
+    background : 0,0,126,46
         stretched: true
         
 dunemap: dunemapcps

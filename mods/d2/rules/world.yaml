@@ -155,7 +155,7 @@ World:
 	AsteroidSpawnManager:
 		Actors: asteroid	
 		RemoveActorBeforeSpawn: true
-		SpawnInterval: 500
+		SpawnInterval: 12000
 		Maximum: 2
 		NeedsActorSpawner:false
 		LocationInit: 50,70

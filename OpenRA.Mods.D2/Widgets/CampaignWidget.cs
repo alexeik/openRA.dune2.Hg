@@ -165,62 +165,62 @@ namespace OpenRA.Mods.D2.Widgets
             //mentatHarkSprite = ChromeProvider.GetImage("mentath", "background");
             //mentatOrdosSprite = ChromeProvider.GetImage("mentato", "background");
         }
-        public void InitializePixelPatcher(ModData modData)
-        {
-            var fileSystem = Game.worldRenderer.World.Map;
-            var ppnodes = MiniYaml.Merge(modData.Manifest.PixelPatcher
-                .Select(s => MiniYaml.FromStream(fileSystem.Open(s), s)));
+        //public void InitializePixelPatcher(ModData modData)
+        //{
+        //    var fileSystem = Game.worldRenderer.World.Map;
+        //    var ppnodes = MiniYaml.Merge(modData.Manifest.PixelPatcher
+        //        .Select(s => MiniYaml.FromStream(fileSystem.Open(s), s)));
 
-            FrameBuffer iternalFB = FrameBuffer.SetupOrGetOneMoreFrameBuffer(new Size(Game.Renderer.Resolution.Width, Game.Renderer.Resolution.Height), "fbCampaign",8);
-            iternalFB.PixelDumpRenderer.SetViewportParams(new Size(Game.Renderer.Resolution.Width, Game.Renderer.Resolution.Height), 0f, 0f, 1f, int2.Zero);
-            //Game.Renderer.SpriteRenderer.Flush();
-            ITexture maproomHarkT = iternalFB.BindThisFrameBufferWithNewTexture(true, iternalFB.size,8);
-            foreach (var kvp in ppnodes)
-            {
-                PixelPatcherAdapter(kvp.Value, kvp.Value.Nodes[0].Value.Value.ToString(), kvp.Value.Nodes[1].Value.Value.ToString(), iternalFB, maproomHarkT);
-            }
-        }
-        public void PixelPatcherAdapter(MiniYaml commands, string CollectionName, string CollectionItemName, FrameBuffer iternalFB, ITexture text)
-        {
-            PaletteReference prbase = null;
-            Sheet sh3;
-            Sprite sp3;
-            var d = commands.Nodes[2].Value.ToDictionary();
+        //    FrameBuffer iternalFB = FrameBuffer.SetupOrGetOneMoreFrameBuffer(new Size(Game.Renderer.Resolution.Width, Game.Renderer.Resolution.Height), "fbCampaign",8);
+        //    iternalFB.PixelDumpRenderer.SetViewportParams(new Size(Game.Renderer.Resolution.Width, Game.Renderer.Resolution.Height), 0f, 0f, 1f, int2.Zero);
+        //    //Game.Renderer.SpriteRenderer.Flush();
+        //    ITexture maproomHarkT = iternalFB.BindThisFrameBufferWithNewTexture(true, iternalFB.size,8);
+        //    foreach (var kvp in ppnodes)
+        //    {
+        //        PixelPatcherAdapter(kvp.Value, kvp.Value.Nodes[0].Value.Value.ToString(), kvp.Value.Nodes[1].Value.Value.ToString(), iternalFB, maproomHarkT);
+        //    }
+        //}
+        //public void PixelPatcherAdapter(MiniYaml commands, string CollectionName, string CollectionItemName, FrameBuffer iternalFB, ITexture text)
+        //{
+        //    PaletteReference prbase = null;
+        //    Sheet sh3;
+        //    Sprite sp3;
+        //    var d = commands.Nodes[2].Value.ToDictionary();
 
-            Regex re = new Regex("DrawSprite?");
-            foreach (var node in d)
-            {
-                var f = node.Value.ToDictionary();
-                if (re.Match(node.Key).Success)
-                {
-                    string ColName = LoadField(f, "CollectionName", "");
-                    string ColItem = LoadField(f, "CollectionItem", "");
-                    string PaletteName = LoadField(f, "Palette", "");
-                    prbase = Game.worldRenderer.Palette(PaletteName);
-                    float2 topleft2 = LoadField(f, "RectangleTopLeft", new float2(0, 1));
-                    float2 topleft3 = LoadField(f, "RectangleBottomRight", new float2(0, 1));
+        //    Regex re = new Regex("DrawSprite?");
+        //    foreach (var node in d)
+        //    {
+        //        var f = node.Value.ToDictionary();
+        //        if (re.Match(node.Key).Success)
+        //        {
+        //            string ColName = LoadField(f, "CollectionName", "");
+        //            string ColItem = LoadField(f, "CollectionItem", "");
+        //            string PaletteName = LoadField(f, "Palette", "");
+        //            prbase = Game.worldRenderer.Palette(PaletteName);
+        //            float2 topleft2 = LoadField(f, "RectangleTopLeft", new float2(0, 1));
+        //            float2 topleft3 = LoadField(f, "RectangleBottomRight", new float2(0, 1));
 
-                    iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage(ColName, ColItem), new float3(topleft2.X, topleft2.Y, 0), new float3(topleft3.X, topleft3.Y, 0), prbase);
-                }
+        //            iternalFB.PixelDumpRenderer.AddDrawSpriteCommand(ChromeProvider.GetImage(ColName, ColItem), new float3(topleft2.X, topleft2.Y, 0), new float3(topleft3.X, topleft3.Y, 0), prbase);
+        //        }
 
-                if (node.Key == "FillRect")
-                {
-                    float2 topleft2 = LoadField(f, "RectangleTopLeft", new float2(0, 1));
-                    float2 topleft3 = LoadField(f, "RectangleBottomRight", new float2(0, 1));
-                    OpenRA.Primitives.Color color = LoadField(f, "PrimitivesColor", Color.Black);
-                    iternalFB.RgbaColorRenderer.FillRect(new float3(topleft2.X, topleft2.Y, 0), new float3(topleft3.X, topleft3.Y, 0), color);
+        //        if (node.Key == "FillRect")
+        //        {
+        //            float2 topleft2 = LoadField(f, "RectangleTopLeft", new float2(0, 1));
+        //            float2 topleft3 = LoadField(f, "RectangleBottomRight", new float2(0, 1));
+        //            OpenRA.Primitives.Color color = LoadField(f, "PrimitivesColor", Color.Black);
+        //            iternalFB.RgbaColorRenderer.FillRect(new float3(topleft2.X, topleft2.Y, 0), new float3(topleft3.X, topleft3.Y, 0), color);
 
-                }
-            }
+        //        }
+        //    }
 
-            iternalFB.PixelDumpRenderer.Flush();
+        //    iternalFB.PixelDumpRenderer.Flush();
 
-            sh3 = new Sheet(SheetType.BGRA, text);
-            sp3 = new Sprite(sh3, new Rectangle(0, 0, 320, 200), TextureChannel.RGBA); //указываем оригинальный размер спрайта, чтобы потом он адаптировался под разные рразрешения
+        //    sh3 = new Sheet(SheetType.BGRA, text);
+        //    sp3 = new Sprite(sh3, new Rectangle(0, 0, 320, 200), TextureChannel.RGBA); //указываем оригинальный размер спрайта, чтобы потом он адаптировался под разные рразрешения
 
-            ChromeProvider.AddSprite(CollectionName, CollectionItemName, Game.SheetBuilder2D.AddSprite(sp3));
-            iternalFB.Unbind();
-        }
+        //    ChromeProvider.AddSprite(CollectionName, CollectionItemName, Game.SheetBuilder2D.AddSprite(sp3));
+        //    iternalFB.Unbind();
+        //}
 
         protected static T LoadField<T>(Dictionary<string, MiniYaml> d, string key, T fallback)
         {
@@ -823,8 +823,8 @@ namespace OpenRA.Mods.D2.Widgets
 
             float normX, normY;
             //соблюдаем размерность между источником текстур SeqProv и фреймбуфером.
-            normX = -1 * (float)MouseLocationInWidget.X / 1024; //2048 на 2048 это размер текстуры в которой хранятся пиксели от фреймбуфера
-            normY = 1 + (float)MouseLocationInWidget.Y / 768;
+            normX = -1 * (float)MouseLocationInWidget.X / Game.Renderer.Resolution.Width; //2048 на 2048 это размер текстуры в которой хранятся пиксели от фреймбуфера
+            normY = 1 + (float)MouseLocationInWidget.Y / Game.Renderer.Resolution.Height;
 
             Game.Renderer.SpriteRenderer.SetMouseLocation(new float2(normX, normY));
             Game.Renderer.SpriteRenderer.SetAlphaFlag(true);
@@ -864,8 +864,8 @@ namespace OpenRA.Mods.D2.Widgets
 
             float normX, normY;
             //соблюдаем размерность между источником текстур SeqProv и фреймбуфером.
-            normX = -1 * (float)MouseLocationInWidget.X / 1024; //2048 на 2048 это размер текстуры в которой хранятся пиксели от фреймбуфера
-            normY = 1 + (float)MouseLocationInWidget.Y / 768;
+            normX = -1 * (float)MouseLocationInWidget.X / Game.Renderer.Resolution.Width; //2048 на 2048 это размер текстуры в которой хранятся пиксели от фреймбуфера
+            normY = 1 + (float)MouseLocationInWidget.Y / Game.Renderer.Resolution.Height;
             //Game.Renderer.SpriteRenderer.SetAlphaFlag(false);
             // Game.Renderer.SpriteRenderer.SetAlphaConstantRegion(-1, 255, 85, 255);
             Game.Renderer.SpriteRenderer.SetMouseLocation(new float2(normX, normY));

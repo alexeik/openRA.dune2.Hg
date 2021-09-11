@@ -147,6 +147,15 @@ buildershop:
     idle: CHOAM.CPS
         Length: *
         RotateStep:1
+
+virgincps:
+    play: VIRGIN.CPS
+        Length: *
+        Tick: 700
+andeng:
+    play: AND.ENG
+        Length: *
+        Tick: 700
         
 title:
     idle: TITLE.ENG

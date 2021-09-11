@@ -65,27 +65,27 @@ Background@MISSIONBROWSER_PANEL:
 			Width: 120
 			Height: 25
 			Font: Regular
-        Button@StartCampaign:
+		Button@StartCampaign:
 			X: 220
 			Y: PARENT_BOTTOM - 45
 			Width: 120
 			Height: 25
 			Font: Regular
-            Text: Start Campaign
-        Button@CampaignPrevLevel:
+			Text: Start Campaign
+		Button@CampaignPrevLevel:
 			X: 350
 			Y: PARENT_BOTTOM - 45
 			Width: 120
 			Height: 25
 			Font: Regular
-            Text: Prev Level
-        Button@CampaignNextLevel:
+			Text: Prev Level
+		Button@CampaignNextLevel:
 			X: 470
 			Y: PARENT_BOTTOM - 45
 			Width: 120
 			Height: 25
 			Font: Regular
-            Text: Next Level
+			Text: Next Level
 		Container@MISSION_INFO:
 			X: 220
 			Y: 50
@@ -97,39 +97,39 @@ Background@MISSIONBROWSER_PANEL:
 					Height: 327+73
 					Background: dialog3
 					Children:
-                        Campaign@campaigndune
-                            X:0
-                            Y:0
-                            Width:640
-                            Height:400
-                            Children:
-                                Container@mentatstage
-                                    Width:640
-                                    Height:400
-                                    Visible:false
-                                    Children:
-                                        Label@mentatinfo
-                                            X:5*2
-                                            Y:1*2
-                                            Width:600
-                                            Height:50
-                                            Font: BigBold
-                                            WordWrap: true
-                                            TextColor:ffd689
-                                        Button@proceed
-                                            X:171*2
-                                            Y:170*2
-                                            Width:63*2
-                                            Height:23*2
-                                            Background:mentatbtnnext
-                                        Button@repeat
-                                            X:242*2
-                                            Y:170*2
-                                            Width:63*2
-                                            Height:23*2
-                                            Background:mentatbtnrepeat
-                                            
-                                   
+						Campaign@campaigndune
+							X:0
+							Y:0
+							Width:640
+							Height:400
+							Children:
+								Container@mentatstage
+									Width:640
+									Height:400
+									Visible:false
+									Children:
+										Label@mentatinfo
+											X:5*2
+											Y:1*2
+											Width:600
+											Height:50
+											Font: BigBold
+											WordWrap: true
+											TextColor:ffd689
+										Button@proceed
+											X:171*2
+											Y:170*2
+											Width:63*2
+											Height:23*2
+											Background:mentatbtnnext
+										Button@repeat
+											X:242*2
+											Y:170*2
+											Width:63*2
+											Height:23*2
+											Background:mentatbtnrepeat
+											
+								   
 				ScrollPanel@MISSION_DESCRIPTION_PANEL:
 					Y: 337+73
 					Width: PARENT_RIGHT

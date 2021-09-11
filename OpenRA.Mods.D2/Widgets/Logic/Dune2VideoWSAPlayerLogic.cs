@@ -108,7 +108,6 @@ namespace OpenRA.Mods.D2.Widgets.Logic
             fsPlayer.VideoStackList.Enqueue(new FrameVideoLine() { WSAfilename = "WESTWOOD.WSA" });
             fsPlayer.VideoStackList.Enqueue(new FrameVideoLine() { WSAfilename = "AND.ENG" });
             fsPlayer.VideoStackList.Enqueue(new FrameVideoLine() { WSAfilename = "VIRGIN.CPS" });
-            fsPlayer.VideoStackList.Enqueue(new FrameVideoLine() { WSAfilename = "SCREEN.CPS" });
             fsPlayer.VideoStackList.Enqueue(new FrameVideoLine() { WSAfilename = "INTRO1.WSA" });
             fsPlayer.VideoStackList.Enqueue(new FrameVideoLine() { WSAfilename = "INTRO2.WSA" });
             fsPlayer.VideoStackList.Enqueue(new FrameVideoLine() { WSAfilename = "INTRO3.WSA" });

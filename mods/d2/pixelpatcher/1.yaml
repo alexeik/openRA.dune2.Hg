@@ -2,29 +2,29 @@ DrawNewSprite1:AtrMapChamber
     CollectionName:patched
     CollectionItem:mapchamatr
     RectangleTopLeft:0,0
-    RectangleBottomRight:320,200
+    RectangleBottomRight:640,400
     Commands:
         DrawSprite:
             CollectionName:maproom
             CollectionItem:background
             RectangleTopLeft:0,0
-            RectangleBottomRight:320,200
+            RectangleBottomRight:640,400
             Palette:shroud
         DrawSprite1:
             CollectionName:atrsign
             CollectionItem:background
-            RectangleTopLeft:2,145
-            RectangleBottomRight:53,54
+            RectangleTopLeft:4,290
+            RectangleBottomRight:106,108
             Palette:shroud
         DrawSprite2:
             CollectionName:atrsign
             CollectionItem:background
-            RectangleTopLeft:266,145
-            RectangleBottomRight:53,54
+            RectangleTopLeft:532,290
+            RectangleBottomRight:106,108
             Palette:shroud
         FillRect:
-            RectangleTopLeft:7,24
-            RectangleBottomRight:312,143
+            RectangleTopLeft:14,48
+            RectangleBottomRight:624,286
             PrimitivesColor:000000
             Palette:shroud
 DrawNewSprite2:HarkMapChamber
