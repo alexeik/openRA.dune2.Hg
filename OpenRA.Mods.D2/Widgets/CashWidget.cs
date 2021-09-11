@@ -31,7 +31,7 @@ namespace OpenRA.Mods.D2.Widgets
         Player player;
         PlayerResources playerResources;
         int2 prevnextoffset = new int2(0, 0);
-        int2 verticalOffset = new int2(0, 1);
+        float2 verticalOffset = new float2(0, 0.5f);
         int drawcallSkip = 0;
         bool decrease = true;
         string prevbalance;
@@ -136,7 +136,7 @@ namespace OpenRA.Mods.D2.Widgets
             }
             if(prevbalance!=newbalance  )
             {
-                verticalOffset += new int2(0, 1); //пока балансы разные, то продолжаем анимацию
+                verticalOffset += new float2(0, 1.5f); //пока балансы разные, то продолжаем анимацию
             }
            
             if (verticalOffset.Y>10)
@@ -176,7 +176,7 @@ namespace OpenRA.Mods.D2.Widgets
                     if (decrease)
                     {
                         Game.Renderer.Flush(); // делаем, это  тут, так как рисуем вне очереди, то управляем очередью.
-                        Game.Renderer.sproc.AddCommand(4, 0, 0, 0, 0, new int2(0, 0), offsetNewNumberXY2 + new int2(0, -(int)numsprites[newindex].Size.Y) + verticalOffset, numsprites[newindex].Size, numsprites[newindex], pr);
+                        Game.Renderer.sproc.AddCommand(4, 0, 0, 0, 0, new int2(0, 0), offsetNewNumberXY2 - new int2(0, (int)numsprites[previndex].Size.Y) + verticalOffset, numsprites[newindex].Size, numsprites[newindex], pr);
                         //Game.Renderer.sproc.ExecCommandBuffer();
 
                         //Game.Renderer.Flush(); // делаем, это  тут, так как рисуем вне очереди, то управляем очередью.
@@ -190,7 +190,7 @@ namespace OpenRA.Mods.D2.Widgets
                        //Game.Renderer.sproc.ExecCommandBuffer();
 
                         //Game.Renderer.Flush(); // делаем, это  тут, так как рисуем вне очереди, то управляем очередью.
-                        Game.Renderer.sproc.AddCommand(4, 0, 0, 0, 0, new int2(0, 0), offsetNewNumberXY2 - new int2(0, -(int)numsprites[newindex].Size.Y) - verticalOffset, numsprites[newindex].Size, numsprites[newindex], pr);
+                        Game.Renderer.sproc.AddCommand(4, 0, 0, 0, 0, new int2(0, 0), offsetNewNumberXY2 + new int2(0, (int)numsprites[previndex].Size.Y) - verticalOffset, numsprites[newindex].Size, numsprites[newindex], pr);
                        
 
                        
