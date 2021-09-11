@@ -31,7 +31,7 @@ namespace OpenRA.Mods.D2.Widgets
         Player player;
         PlayerResources playerResources;
         int2 prevnextoffset = new int2(0, 0);
-        int2 aOffset = new int2(0, 1);
+        int2 verticalOffset = new int2(0, 1);
         int drawcallSkip = 0;
         bool decrease = true;
         string prevbalance;
@@ -136,12 +136,12 @@ namespace OpenRA.Mods.D2.Widgets
             }
             if(prevbalance!=newbalance  )
             {
-                aOffset += new int2(0, 1); //пока балансы разные, то продолжаем анимацию
+                verticalOffset += new int2(0, 1); //пока балансы разные, то продолжаем анимацию
             }
            
-            if (aOffset.Y>10)
+            if (verticalOffset.Y>10)
             {
-                aOffset = new int2(0, 0);
+                verticalOffset = new int2(0, 0);
                 prevbalance = newbalance; //когда прошла анимация, то равняем балансы, это 8 шагов по пикселям.
            
             }
@@ -151,14 +151,14 @@ namespace OpenRA.Mods.D2.Widgets
             int previndex = 0;
             int2 offset1stnum = new int2(260 - 201, 5 - 1);
             //258x 4y
-            int2 offsetXY = RenderOrigin + offset1stnum;
-            int2 offsetnext=new int2(10, 0);
+            int2 offsetOldNumberXY = RenderOrigin + offset1stnum;
+            int2 offsetnext=new int2((int)numsprites[0].Size.X+2, 0);
 
             
             int newindex = 0;
             bool flagDiffIndex = false;
 
-            int2 offsetXY2= offsetXY;
+            int2 offsetNewNumberXY2= offsetOldNumberXY;
 
             int animationOffset = 1;
            
@@ -170,31 +170,32 @@ namespace OpenRA.Mods.D2.Widgets
                 previndex = GetIndexFromChar(prevbalance[i]);
                 if (newbalance[i] != prevbalance[i])
                 {
-                    Game.Renderer.EnableScissor(new Rectangle(RenderOrigin + offset1stnum + new int2(0,-1), new Size(60, 8)));
+                    Game.Renderer.EnableScissor(new Rectangle(RenderOrigin + offset1stnum + new int2(0,-1), new Size(60, (int)numsprites[newindex].Size.Y)));
                     //рисуем переходную анимацию из двух спрайтов в одном слоте, один спрайт снизу поднимается, другой вверх поднимается.
 
                     if (decrease)
                     {
                         Game.Renderer.Flush(); // делаем, это  тут, так как рисуем вне очереди, то управляем очередью.
-                        Game.Renderer.sproc.AddCommand(4, 0, 0, 0, 0, new int2(0, 0), offsetXY2 + new int2(0, -8) + aOffset, numsprites[newindex].Size, numsprites[newindex], pr);
-                        Game.Renderer.sproc.ExecCommandBuffer();
+                        Game.Renderer.sproc.AddCommand(4, 0, 0, 0, 0, new int2(0, 0), offsetNewNumberXY2 + new int2(0, -(int)numsprites[newindex].Size.Y) + verticalOffset, numsprites[newindex].Size, numsprites[newindex], pr);
+                        //Game.Renderer.sproc.ExecCommandBuffer();
 
                         //Game.Renderer.Flush(); // делаем, это  тут, так как рисуем вне очереди, то управляем очередью.
-                        Game.Renderer.sproc.AddCommand(4, 0, 0, 0, 0, new int2(0, 0), offsetXY + aOffset, numsprites[previndex].Size, numsprites[previndex], pr);
-                        Game.Renderer.sproc.ExecCommandBuffer();
+                        Game.Renderer.sproc.AddCommand(4, 0, 0, 0, 0, new int2(0, 0), offsetOldNumberXY + verticalOffset, numsprites[previndex].Size, numsprites[previndex], pr);
+                        //Game.Renderer.sproc.ExecCommandBuffer();
                     }
                     else
                     {
                         Game.Renderer.Flush(); // делаем, это  тут, так как рисуем вне очереди, то управляем очередью.
-                        Game.Renderer.sproc.AddCommand(4, 0, 0, 0, 0, new int2(0, 0), offsetXY - aOffset, numsprites[previndex].Size, numsprites[previndex], pr);
-                       Game.Renderer.sproc.ExecCommandBuffer();
+                        Game.Renderer.sproc.AddCommand(4, 0, 0, 0, 0, new int2(0, 0), offsetOldNumberXY - verticalOffset, numsprites[previndex].Size, numsprites[previndex], pr);
+                       //Game.Renderer.sproc.ExecCommandBuffer();
 
                         //Game.Renderer.Flush(); // делаем, это  тут, так как рисуем вне очереди, то управляем очередью.
-                        Game.Renderer.sproc.AddCommand(4, 0, 0, 0, 0, new int2(0, 0), offsetXY2 - new int2(0, -8) - aOffset, numsprites[newindex].Size, numsprites[newindex], pr);
-                        Game.Renderer.sproc.ExecCommandBuffer();
+                        Game.Renderer.sproc.AddCommand(4, 0, 0, 0, 0, new int2(0, 0), offsetNewNumberXY2 - new int2(0, -(int)numsprites[newindex].Size.Y) - verticalOffset, numsprites[newindex].Size, numsprites[newindex], pr);
+                       
 
                        
                     }
+                    Game.Renderer.sproc.ExecCommandBuffer();
                     Game.Renderer.DisableScissor();
                 }
                 else
@@ -202,14 +203,14 @@ namespace OpenRA.Mods.D2.Widgets
                 {
                     //рисуем один спрайт числа
                     Game.Renderer.Flush(); // делаем, это  тут, так как рисуем вне очереди, то управляем очередью.
-                    Game.Renderer.sproc.AddCommand(4, 0, 0, 0, 0, new int2(0, 0), offsetXY, numsprites[newindex].Size, numsprites[newindex], pr);
+                    Game.Renderer.sproc.AddCommand(4, 0, 0, 0, 0, new int2(0, 0), offsetOldNumberXY, numsprites[newindex].Size, numsprites[newindex], pr);
 
                     Game.Renderer.sproc.ExecCommandBuffer();
                 }
                
 
-                offsetXY += offsetnext;
-                offsetXY2 = offsetXY;
+                offsetOldNumberXY += offsetnext;
+                offsetNewNumberXY2 = offsetOldNumberXY;
             }
 
           
