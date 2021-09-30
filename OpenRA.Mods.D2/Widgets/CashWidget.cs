@@ -170,7 +170,7 @@ namespace OpenRA.Mods.D2.Widgets
                 previndex = GetIndexFromChar(prevbalance[i]);
                 if (newbalance[i] != prevbalance[i])
                 {
-                    Game.Renderer.EnableScissor(new Rectangle(RenderOrigin + offset1stnum + new int2(0,-1), new Size(60, (int)numsprites[newindex].Size.Y)));
+                    Game.Renderer.EnableScissor(new Rectangle(RenderOrigin + offset1stnum + new int2(0,-1), new Size(6 * (offsetnext.X), (int)numsprites[newindex].Size.Y)));
                     //рисуем переходную анимацию из двух спрайтов в одном слоте, один спрайт снизу поднимается, другой вверх поднимается.
 
                     if (decrease)
