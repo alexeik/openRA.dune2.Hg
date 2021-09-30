@@ -19,7 +19,7 @@ namespace OpenRA.Mods.D2.FileFormats
 				sound = new ADLFormat(streamFromFile, m.SubSong, m.Filename);
 				return true;
 			}
-			catch
+			catch (Exception e)
 			{
 				// Not a (supported) WAV
 			}
@@ -71,7 +71,7 @@ namespace OpenRA.Mods.D2.FileFormats
 				return;
 			}
 			buffer1 = stream1.ReadAllBytes();
-			DuneMusic.Init(44100, @"D:\work\alexei\OpenRA\Content\d2", DuneMusic.DuneMusicOplEmu.kOplEmuNuked);
+			DuneMusic.Init(44100, Path.Combine(Platform.SupportDir,@"Content\d2"), DuneMusic.DuneMusicOplEmu.kOplEmuNuked);
 			//DuneMusic.Init(44100, "", DuneMusic.DuneMusicOplEmu.kOplEmuNuked);
 			SubSong = Convert.ToInt32(SubSong1);
 			DuneMusic.SetMusicEnabled(true);
