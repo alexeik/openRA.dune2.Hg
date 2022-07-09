@@ -232,7 +232,7 @@ namespace OpenRA.Mods.D2.MapUtils
 
 			if (tile == RockTile)
 			{
-				ClearSides clear = ClearSides.None;
+				ClearSides blendSprite = ClearSides.None;
 
 				if (pos.U > 0)
 				{
@@ -241,7 +241,7 @@ namespace OpenRA.Mods.D2.MapUtils
 					if (!(leftTile.Type >= 126 && leftTile.Type <= 143) &&
 					    !(leftTile.Type >= 160 && leftTile.Type <= 175))
 					{
-						clear |= ClearSides.Left;
+						blendSprite |= ClearSides.Left;
 					}
 				}
 
@@ -252,7 +252,7 @@ namespace OpenRA.Mods.D2.MapUtils
 					if (!(topTile.Type >= 126 && topTile.Type <= 143) &&
 					    !(topTile.Type >= 160 && topTile.Type <= 175))
 					{
-						clear |= ClearSides.Top;
+						blendSprite |= ClearSides.Top;
 					}
 				}
 
@@ -263,7 +263,7 @@ namespace OpenRA.Mods.D2.MapUtils
 					if (!(rightTile.Type >= 126 && rightTile.Type <= 143) &&
 					    !(rightTile.Type >= 160 && rightTile.Type <= 175))
 					{
-						clear |= ClearSides.Right;
+						blendSprite |= ClearSides.Right;
 					}
 				}
 
@@ -274,13 +274,13 @@ namespace OpenRA.Mods.D2.MapUtils
 					if (!(bottomTile.Type >= 126 && bottomTile.Type <= 143) &&
 					    !(bottomTile.Type >= 160 && bottomTile.Type <= 175))
 					{
-						clear |= ClearSides.Bottom;
+						blendSprite |= ClearSides.Bottom;
 					}
 				}
 
-				if (clear != ClearSides.None)
+				if (blendSprite != ClearSides.None)
 				{
-					return SpriteMap[clear];
+					return SpriteMap[blendSprite];
 				}
 			}
 
