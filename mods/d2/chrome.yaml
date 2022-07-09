@@ -36,14 +36,15 @@ fame: housessign
     background : 0,0,640,400
     
 ordostitle: housestitle
-    background : 123,117,74,28
-    
+    background : 246,236,146,56
+        stretched: true   
 harktitle: housestitle
-    background : 219,117,74,28
-    
+    background : 438,236,146,56
+        stretched: true    
 atrtitle: housestitle
-    background : 25,117,74,28
-
+    background : 50,236,146,56
+        stretched: true
+        
 ordossign: housessign
     background : 244,274,106,108
     
@@ -276,7 +277,18 @@ dialog: dialog.png
 	corner-tr: 200,480,9,9
 	corner-bl: 191,489,9,9
 	corner-br: 200,489,9,9
-
+    
+dialog22: ui1.png
+	background: 24,24,216,444
+	border-r: 232,24,24,448
+	border-l: 0,24,24,448
+	border-b: 44,496,168,16
+	border-t: 32,0,192,17
+	corner-tl: 0,0,24,24
+	corner-tr: 232,0,24,24
+	corner-bl: 0,472,44,40
+	corner-br: 212,468,44,44
+    
 # Same as a normal button
 dialog2: dialog.png
 	background: 513,1,126,126
