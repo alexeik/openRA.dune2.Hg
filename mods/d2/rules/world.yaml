@@ -12,7 +12,7 @@
 	MusicPlaylist:
 		VictoryMusic: score
 		DefeatMusic: score
-        AutoPlay: false
+		AutoPlay: false
 	TerrainGeometryOverlay:
 	DebugVisualizations:
 	TerrainRenderer:
@@ -28,71 +28,71 @@
 		Crushes: crate, spicebloom
 		SharesCell: true
 		TerrainSpeeds:
-			Sand: 100
-			Rock: 100
-			Transition: 100
-			Concrete: 100
-			SpiceSand: 100
-			Spice: 100
-			SpiceBlobs: 100
+			Sand: 128
+			Rock: 128
+			Transition: 128
+			Concrete: 128
+			SpiceSand: 128
+			Spice: 128
+			SpiceBlobs: 128
 			Dune: 80
 			Rough: 80
 	Locomotor@SQUAD:
 		Name: squad
 		Crushes: crate, spicebloom
 		TerrainSpeeds:
-			Sand: 100
-			Rock: 100
-			Transition: 100
-			Concrete: 100
-			SpiceSand: 100
-			Spice: 100
-			SpiceBlobs: 100
+			Sand: 128
+			Rock: 128
+			Transition: 128
+			Concrete: 128
+			SpiceSand: 128
+			Spice: 128
+			SpiceBlobs: 128
 			Dune: 80
 			Rough: 80
 	Locomotor@VEHICLE:
 		Name: vehicle
 		Crushes: crate, spicebloom
 		TerrainSpeeds:
-			Sand: 100
-			Rock: 100
-			Transition: 100
-			Concrete: 100
-			SpiceSand: 100
-			Spice: 100
-			SpiceBlobs: 100
+			Sand: 128
+			Rock: 128
+			Transition: 128
+			Concrete: 128
+			SpiceSand: 128
+			Spice: 128
+			SpiceBlobs: 128
 			Dune: 50
 	Locomotor@TANK:
 		Name: tank
 		Crushes: crate, infantry, spicebloom
 		TerrainSpeeds:
-			Sand: 100
-			Rock: 100
-			Transition: 100
-			Concrete: 100
-			SpiceSand: 100
-			Spice: 100
-			SpiceBlobs: 100
+			Sand: 128
+			Rock: 128
+			Transition: 128
+			Concrete: 128
+			SpiceSand: 128
+			Spice: 128
+			SpiceBlobs: 128
 			Dune: 50
 	Locomotor@DEVASTATOR:
 		Name: devastator
 		Crushes: crate, infantry, spicebloom, wall
 		TerrainSpeeds:
-			Sand: 100
-			Rock: 100
-			Transition: 100
-			Concrete: 100
-			SpiceSand: 100
-			Spice: 100
-			SpiceBlobs: 100
+			Sand: 128
+			Rock: 128
+			Transition: 128
+			Concrete: 128
+			SpiceSand: 128
+			Spice: 128
+			SpiceBlobs: 128
 			Dune: 50
 	Locomotor@WORM:
 		Name: worm
 		TerrainSpeeds:
-			Sand: 100
-			Dune: 100
-			SpiceSand: 100
-			Spice: 100
+			Sand: 128
+			Dune: 128
+			SpiceSand: 128
+			Spice: 128
 	Faction@Random:
 		Name: Any
 		InternalName: Random
@@ -155,7 +155,7 @@ World:
 	AsteroidSpawnManager:
 		Actors: asteroid	
 		RemoveActorBeforeSpawn: true
-		SpawnInterval: 12000
+		SpawnInterval: 5000
 		Maximum: 2
 		NeedsActorSpawner:false
 		LocationInit: 50,70
