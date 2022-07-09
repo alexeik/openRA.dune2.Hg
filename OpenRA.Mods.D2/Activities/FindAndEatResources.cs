@@ -91,7 +91,7 @@ namespace OpenRA.Mods.D2.Activities
 			{
 				//var moveTo = mobile.NearestMoveableCell(unblockCell, 1, 5);
 				//QueueChild(self, mobile.MoveTo(moveTo, 1), true);
-				//QueueChild(self, new Wait(200), true);
+				QueueChild(self, new Wait(200), true);
 				hasWaited = true;
 				return this;
 			}
