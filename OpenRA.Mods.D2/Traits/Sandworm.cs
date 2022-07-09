@@ -101,6 +101,7 @@ namespace OpenRA.Mods.D2.Traits
 			self.QueueActivity(new FindAndEatResources(self));
 
 			return;
+
 			if (IsMovingTowardTarget)
 				return;
 
