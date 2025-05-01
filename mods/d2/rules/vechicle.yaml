@@ -10,7 +10,7 @@
 		PauseOnCondition: notmobile
 	SelectionDecorations:
 	Selectable:
-		Bounds: 16,16
+		Bounds: 32,32
 	Targetable:
 		TargetTypes: Ground, Vehicle, C4
 	Passenger:

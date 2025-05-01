@@ -8,7 +8,7 @@ refinery:
 		BuildDurationModifier: 40
 		Description: Harvesters unload Spice here for processing
 	Selectable:
-		Bounds: 48,32
+		Bounds: 96,64
 	Valued:
 		Cost: 400
 	Tooltip:
@@ -40,7 +40,7 @@ refinery:
 		DeliveryOffset: 2,1
 		DeliveringActor: carryall.reinforce
 		Facing: 120
-    WithSpriteBody:
+	WithSpriteBody:
 	WithTilesetBody:
 
 	RenderSprites:
@@ -48,8 +48,8 @@ refinery:
 	Power:
 		Amount: -30
 
-    WithHarvestWaitOverlay@DOCK1:
-        SequenceWaitDelivery: idle-dock-bottom
-    WithHarvestWaitOverlay@DOCK2:
-        SequenceWaitDelivery: idle-dock-top
+	WithHarvestWaitOverlay@DOCK1:
+		SequenceWaitDelivery: idle-dock-bottom
+	WithHarvestWaitOverlay@DOCK2:
+		SequenceWaitDelivery: idle-dock-top
 	ProvidesPrerequisite@buildingname:

@@ -22,6 +22,7 @@ Container@MAINMENU:
 			Height: 320
 			Children:
 				Background@MAIN_MENU:
+					Background: dialog22
 					Param: Y
 					Start: -320
 					End: WINDOW_BOTTOM / 2 - HEIGHT / 2 - PARENT_BOTTOM-15

@@ -42,6 +42,8 @@ harvester:
 		OwnerType: InternalName
 		EffectiveOwnerFromOwner: true
 	WithHarvestOverlay:
+		Sequence: harvest
+		LocalOffset: -512,1,0
 	WithDockingAnimation:
 	AttractsWorms:
 		Intensity: 700

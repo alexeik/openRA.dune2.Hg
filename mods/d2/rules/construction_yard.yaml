@@ -13,7 +13,7 @@ construction_yard:
 		TerrainTypes: Rock
 		Template: 127
 	Selectable:
-		Bounds: 32,32
+		Bounds: 64,64
 	Health:
 		HP: 400
 	HitShape:
