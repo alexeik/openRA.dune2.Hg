@@ -23,7 +23,7 @@ namespace OpenRA.Mods.D2.Traits.Render
     {
         [SequenceReference]
         [Desc("Sequence name to use")]
-        public readonly string Sequence = "harvest";
+        public readonly string Sequence = "";
 
         [SequenceReference]
         [Desc("Sequence name to use")]
