@@ -3,10 +3,9 @@
     <TargetFramework>net8.0</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
-    <LangVersion>5</LangVersion>
     <DebugSymbols>true</DebugSymbols>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <OutputPath>bin\debug</OutputPath>
+    <OutputPath>..\..\..\engine\mods\d2</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
@@ -39,8 +38,6 @@
     <Reference Include="Eluant">
       <HintPath>../engine/thirdparty/download/Eluant.dll</HintPath>
     </Reference>
-    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118" />
-    <PackageReference Include="Veldrid.RenderDoc" Version="1.0.1" />
     <!--<AdditionalFiles Include="../engine/stylecop.json" />-->
   </ItemGroup>
   <ItemGroup>
@@ -49,14 +46,8 @@
       <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
     </ProjectReference>
     <ProjectReference Include="..\engine\OpenRA.Mods.Common\OpenRA.Mods.Common.csproj">
-      <Private>true</Private>
-      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
     </ProjectReference>
     <ProjectReference Include="..\engine\OpenRA.Platforms.Default\OpenRA.Platforms.Default.csproj">
-      <Private>true</Private>
-      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
     </ProjectReference>
   </ItemGroup>
   <Target Name="DisableAnalyzers" BeforeTargets="CoreCompile">
@@ -111,6 +102,6 @@
     </Reference>
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="copy  $(TargetPath) $(SolutionDir)mods\d2\" />
+    <Exec Command="copy  $(TargetPath) $(SolutionDir)engine\mods\d2\" />
   </Target>
 </Project>

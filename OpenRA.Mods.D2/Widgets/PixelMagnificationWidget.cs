@@ -17,7 +17,6 @@ using OpenRA.Mods.Common.Graphics;
 using OpenRA.Mods.Common.Widgets;
 using OpenRA.Mods.Common.Traits;
 using OpenRA.Platforms.Default;
-using Veldrid;
 using OpenRA.FileFormats;
 using System.IO;
 using System.Collections.Generic;
@@ -40,7 +39,6 @@ namespace OpenRA.Mods.D2.Widgets
         int srcBuffer;
         int dstBuffer;
         private ssboBuf[] src1;
-        private RenderDoc Rnd;
         public bool onceFlag;
         private Size source_dims;
         float3 groupSize = new float3(64, 1, 1);
@@ -95,7 +93,7 @@ namespace OpenRA.Mods.D2.Widgets
         [ObjectCreator.UseCtor]
         public PixelMagnificationWidget(World world)
         {
-            Veldrid.RenderDoc.Load(out Rnd);
+            //Veldrid.RenderDoc.Load(out Rnd);
             w = world;
             ISpriteFrame[] spriteFrames = w.Map.Rules.Sequences.SpriteCache.ParsedFramesStorage["SHAPES.SHP"];
             srcBuffer = Game.Renderer.Context.CreateSSBOBuffer();
@@ -165,7 +163,7 @@ namespace OpenRA.Mods.D2.Widgets
             {
                 //добавляем сохранение в текстуру 
                 //переделываем animations у actor.rendersprites на эту текстуру
-                Rnd.TriggerCapture();
+                //Rnd.TriggerCapture();
                 SavePng(dataOut, new Size(dest_dims.Width, dest_dims.Height));
 
 
